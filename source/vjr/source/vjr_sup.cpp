@@ -617,6 +617,26 @@
 		// Constant logical
 		*cvarTrue->value.data_s8	= (s8)_LOGICAL_TRUE;
 		*cvarFalse->value.data_s8	= (s8)_LOGICAL_FALSE;
+
+		// Datetime constants for parsing
+		cvarSetDateAmerican	= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_CHARACTER, "11/22/3333 12:34:56.000 AP", -1, true);
+		cvarSetDateAnsi		= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_CHARACTER, "3333.22.11 12:34:56.000 AP", -1, true);
+		cvarSetDateBritish	= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_CHARACTER, "22/11/3333 12:34:56.000 AP", -1, true);
+		cvarSetDateFrench	= cvarSetDateBritish;
+		cvarSetDateGerman	= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_CHARACTER, "22.11.3333 12:34:56.000 AP", -1, true);
+		cvarSetDateItalian	= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_CHARACTER, "22-11-3333 12:34:56.000 AP", -1, true);
+		cvarSetDateJapan		= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_CHARACTER, "3333/11/22 12:34:56.000 AP", -1, true);
+		cvarSetDateTaiwan	= cvarSetDateJapan;
+		cvarSetDateLong		= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_CHARACTER, "Dow, Mon 22, 3333 12:34:56.000 AP", -1, true);
+		cvarSetDateShort		= cvarSetDateAmerican;
+		cvarSetDateUsa		= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_CHARACTER, "11-22-33333 12:34:56.000 AP", -1, true);
+		cvarSetDateDmy		= cvarSetDateBritish;
+		cvarSetDateMdy		= cvarSetDateAmerican;
+		cvarSetDateYmd		= cvarSetDateJapan;
+
+		// Other datetime constants for fixed date types
+		varSetDateYyyyMmDdTHhMmSsMss	= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_CHARACTER, "3333-11-22 12:34:56.000 AP", -1, true);
+		varSetDateYyyyMmDdTHhMmSs		= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_CHARACTER, "3333-11-22 12:34:56 AP", -1, true);
 	}
 
 

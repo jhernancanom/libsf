@@ -3388,6 +3388,339 @@
 
 //////////
 //
+// Function: CTOD()
+// Converts a character expression to a date expression.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.10.2015
+//////
+// Change log:
+//     Apr.10.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Character
+//
+//////
+// Returns:
+//    Date data type. CTOD( ) returns a Date value
+// 
+//////
+// Example:
+//    SET DATE MDY
+//    ?CTOD("12/25/15") &&Displays 12-25-2015
+//    ?CTOD("12/25/2015") &&Displays 12-25-2015
+//    ?CTOD("12-25-15") &&Displays 12-25-2015
+//    ?CTOD("12-25-15 12:33:44 AM") &&Displays 12-25-2015
+//    ?CTOD("12-25-15 12:33:44.555") &&Displays 12-25-2015
+//
+//////
+	SVariable* function_ctod(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* varString = returnsParams->params[0];
+
+		//Return date
+		return(ifunction_ctod_common(thisCode, varString, true));
+	}
+
+	SVariable* ifunction_ctod_common(SThisCode* thisCode, SVariable* varCtoxString, bool tlIncludeTime)
+	{
+		s8			cMark;
+		s32			lnI, lnSkip, lnStop, lnDate;
+		u32			lnYYYY, lnMM, lnDD, lnHh, lnMm, lnSs, lnMss;
+		bool		llValidate, llYear, llTimeValid;
+		s8*			lcYYYY		= NULL;
+		s8*			lcMM		= NULL;
+		s8*			lcDD		= NULL;
+		s8*			lcHh		= NULL;
+		s8*			lcMm		= NULL;
+		s8*			lcSs		= NULL;
+		s8*			lcMss		= NULL;
+		s8*			data;
+		SVariable*	varMark;
+		SVariable*	varDate;
+		SVariable*	result;
+
+
+// Untested code, breakpoint and examine
+debug_break;
+		//////////
+		// varCtoxString must be character
+		//////
+			if (!iVariable_isValid(varCtoxString) || !iVariable_isTypeCharacter(varCtoxString))
+			{
+				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varCtoxString),false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Get the expected general date format
+		//////
+			lnDate	= propGet_settings_Date(_settings);
+			data	= varCtoxString->value.data;
+			if (data[1] == '^')
+			{
+				// Can be:
+				// ^YYYY-MM-DD
+				// ^YYYY-MM-DD, 2:13p
+				// ^YYYY-MM-DD Hh:Mm
+				// ^YYYY-MM-DD Hh:Mm:Ss
+// TODO:  General purpose ^... date parser (for compile-time and runtime)
+
+			} else if (varCtoxString->value.length == 23 && data[4] == '-' && data[7] == '-' && (data[10] == 32 || data[10] == 'T') && data[13] == ':' && data[16] == ':' && data[19] == '.') {
+				// YYYY-MM-DDTHh:Mm:Ss.Mss
+				varDate = varSetDateYyyyMmDdTHhMmSsMss;
+
+			} else if (varCtoxString->value.length == 19 && data[4] == '-' && data[7] == '-' && (data[10] == 32 || data[10] == 'T') && data[13] == ':' && data[16] == ':') {
+				// YYYY-MM-DDTHh:Mm:Ss
+				varDate = varSetDateYyyyMmDdTHhMmSs;
+
+			} else {
+				// Use the current system date format
+				// Note:  varDate is a reference to the constant
+				varDate = iiVariable_get_dateTemplate(lnDate);
+			}
+
+
+		//////////
+		// Grab the SET("MARK") character
+		//////
+			// Note:  varMark is a reference to the actual _settings.mark value
+			varMark = propGet_settings_Mark(_settings);
+			if (!varMark || !iVariable_isTypeCharacter(varMark) || !varMark->value.data || varMark->value.length <= 0)
+			{
+				// Fall back on current date type
+				switch (lnDate)
+				{
+					case _SET_DATE_USA:			// mm-dd-yy
+					case _SET_DATE_ITALIAN:		// dd-mm-yy
+						cMark = '-';
+						break;
+
+					case _SET_DATE_GERMAN:		// dd.mm.yy
+					case _SET_DATE_ANSI:		// yy.mm.dd
+						cMark = '.';
+						break;
+
+					default:
+// 					case _SET_DATE_AMERICAN:	// mm/dd/yy
+// 					case _SET_DATE_BRITISH:		// dd/mm/yy
+// 					case _SET_DATE_FRENCH:		// dd/mm/yy
+// 					case _SET_DATE_JAPAN:		// yy/mm/dd
+// 					case _SET_DATE_TAIWAN:		// yy/mm/dd
+// 					case _SET_DATE_SHORT:		// m/d/yy
+// 					case _SET_DATE_DMY:			// dd/mm/yy
+// 					case _SET_DATE_MDY:			// mm/dd/yy
+// 					case _SET_DATE_YMD:			// yy/mm/dd
+						cMark = '/';
+						break;
+				}
+
+			} else {
+				// Grab the character they've set
+				cMark = varMark->value.data[0];
+			}
+
+
+		//////////
+		// Iterate through every character
+		//////
+			for (lnI = 0; lnI < varDate->value.length; )
+			{
+				llYear		= false;
+				llValidate	= true;
+				lnSkip		= 2;
+				switch (varDate->value.data[lnI])
+				{
+					case '1':
+						// Either 11 or 12, for MM or Hh
+						if (varDate->value.data[lnI + 1] == '1')	/* Is MM */		lcMM = varCtoxString->value.data + lnI;
+						else										/* Is Hh */		lcHh = varCtoxString->value.data + lnI;
+						break;
+
+					case '2':
+						// Dd
+						lcDD = varCtoxString->value.data + lnI;
+						break;
+
+					case '3':
+						// Either 33/3333 or 34, for YY/YYYY or Mm
+						if (varDate->value.data[lnI + 1] == '3')
+						{
+							// YY/YYYY
+							llYear	= true;
+							lcYYYY	= varCtoxString->value.data + lnI;
+							if (propGet_settings_Century(_settings))
+							{
+								// Add logic here to validate they have a 4-character year
+								lnSkip = 4;
+							}
+
+						} else {
+							// Mm
+							lcMm = varCtoxString->value.data + lnI;
+						}
+						break;
+
+					case '5':
+						// Ss
+						lcSs = varCtoxString->value.data + lnI;
+						break;
+
+					case '0':
+						// Mss
+						lcMss = varCtoxString->value.data + lnI;
+						break;
+
+					case 'A':
+						// AM or PM
+// TODO:  No flags are setup for this
+						break;
+
+					default:
+						lnSkip		= 1;
+						llValidate	= false;
+						if (varDate->value.data[lnI] != varCtoxString->value.data[lnI])
+						{
+							// Input syntax formatting error, and we know the offset where it occurred
+							iEngine_update_meta1(thisCode, lnI);
+							iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varCtoxString),false);
+							return(NULL);
+						}
+				}
+
+				// Validate these data positions between lnI and lnI+lnSkip
+				if (llValidate)
+				{
+					// Iterate through the source string to verify it's the same
+// TODO:  Parsing here needs developed
+					for (lnStop = lnI + lnSkip; lnI < lnStop; lnI++)
+					{
+						if (varCtoxString->value.data[lnI] < '0' || varCtoxString->value.data[lnI] > '9')
+						{
+							// Input syntax formatting error, and we know the offset where it occurred
+						}
+					}
+				}
+			}
+
+
+		//////////
+		// When we get here, we have each of them extracted, and we can obtain their integers
+		//////
+			if (lcYYYY)		lnYYYY = atoi(lcYYYY);
+			else			lnYYYY = 1600;
+
+			if (lcMM)		lnMM = atoi(lcMM);
+			else			lnMm = 1;
+
+			if (lcDD)		lnDD = atoi(lcDD);
+			else			lnDD = 1;
+
+			// Are we including time in our output variable?
+			if (tlIncludeTime)
+			{
+				// Grab Hh:Mm:Ss:Mss
+				if (lcHh)		lnHh = atoi(lcHh);
+				else			lnHh = 0;
+
+				if (lcMm)		lnMm = atoi(lcMm);
+				else			lnMm = 0;
+
+				if (lcSs)		lnSs = atoi(lcSs);
+				else			lnSs = 0;
+
+				if (lcMss)		lnMss = atoi(lcMss);
+				else			lnMss = 0;
+
+				// Validate the time is valid
+// TODO:  Test for presence of AM or PM
+				llTimeValid = (lnHh >= 0 && lnHh <= 23);
+				llTimeValid = (llTimeValid && (lnMm >= 0 && lnMm <= 59) && (lnSs >= 0 && lnSs <= 59) && (lnMss >= 0 && lnMss <= 999));
+
+			} else {
+				// Indicate the time is valid for logic below
+				llTimeValid = true;
+			}
+
+
+		//////////
+		// Validate the date is valid
+		//////
+			result = iVariable_create(thisCode, ((tlIncludeTime) ? _VAR_TYPE_DATETIME : _VAR_TYPE_DATE), NULL, false);
+			if (!llTimeValid || lnYYYY < 1600 || lnYYYY > 9999 || lnMM < 1 || lnMM > 12 || !iVariable_isDayValidForDate(lnYYYY, lnMM, lnDD))
+			{
+				// Invalid
+				// Nothing to do here, just leave the date blank
+// TODO:  Need to come up with an encoding for a datetime that is blank
+
+			} else {
+				// It's valid, populate it
+				if (tlIncludeTime)
+				{
+					// Datetime
+					result->value.data_dt->julian	= iiVariable_extract_Julian_from_YyyyMmDd(NULL, lnYYYY, lnMM, lnDD);
+					result->value.data_dt->seconds	= iiVariable_extract_seconds_from_HhMmSsMss(lnHh, lnMm, lnSs, lnMss);
+
+				} else {
+					// Just a date
+					iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd(result->value.data, lnYYYY, lnMM, lnDD);
+				}
+			}
+
+
+		//////////
+		// Construct the new date or datetime variable
+		//////
+	}
+
+
+
+
+//////////
+//
+// Function: CTOT()
+// Converts a character expression to a datetime expression.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.11.2015
+//////
+// Change log:
+//     Apr.11.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Character
+//
+//////
+// Returns:
+//    Datetime data type. CTOT( ) returns a Datetime value
+//////
+// Example:
+//    SET DATE MDY
+//    ?CTOD("12/25/15") &&Displays 12-25-2015 00:00:00
+//    ?CTOD("12/25/2015") &&Displays 12-25-2015 00:00:00
+//    ?CTOD("12-25-15") &&Displays 12-25-2015 00:00:00
+//    ?CTOD("12-25-15 12:33:44 AM") &&Displays 12-25-2015 00:33:44
+//    ?CTOD("12-25-15 12:33:44.555") &&Displays 12-25-2015 12:33:44
+//
+//////
+	SVariable* function_ctot(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* varString = returnsParams->params[0];
+
+		//Return datetime
+		return(ifunction_ctod_common(thisCode, varString, false));
+	}
+
+
+
+
+//////////
+//
 // Function: CURDIR()
 // Returns the current directory
 //
@@ -3414,9 +3747,10 @@
 		// Get the current directory
 		memset(curdir, 0, sizeof(curdir));
 		GetCurrentDirectory(_MAX_PATH, (s8*)curdir);
+		memcpy(curdir + strlen(curdir), "\\\0", 2);
 
 		// Create the output variable
-		result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, curdir, (u32)strlen(curdir), false);
+		result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, curdir + 2, (u32)strlen(curdir + 2), false);
 		if (!result)
 			iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
 
@@ -6042,7 +6376,7 @@
 				//////////
 				// Grab hour, minute, second, millisecond from datetime
 				//////
-					iiVariable_extract_HhMmSsMss_from_f32(varParam->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+					iiVariable_extract_HhMmSsMss_from_seconds(varParam->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 			} else {
 				// Use the current datetime
@@ -11437,7 +11771,7 @@ debug_break;
 				// Grab the value
 				//////
 					iiVariable_extract_YyyyMmDd_from_Julian(varParam->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-					iiVariable_extract_HhMmSsMss_from_f32(varParam->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+					iiVariable_extract_HhMmSsMss_from_seconds(varParam->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 
 				//////////
@@ -11697,7 +12031,6 @@ debug_break;
 		// The varLookup points to something that needs to be looked up indirectly
 		//////
 			compVarLookup			= iVariable_getRelatedComp(thisCode, varLookup);
-// TODO:  Need to modify this to examine dot-based variables
 			compVarLookup->iCode	= _ICODE_ALPHANUMERIC;
 			compVarLookup->start	+= 1;		// Skip leading quote for start
 			compVarLookup->length	-= 2;		// Back off for both quotes for length
@@ -11768,77 +12101,88 @@ debug_break;
 
 			} else {
 				// Standard
-				switch (var->varType)
+				if ((!var->value.data || var->value.length == 0) && tlIsVartype)
 				{
-					case _VAR_TYPE_CHARACTER:
-						c = 'C';
-						break;
+					// NULL
+					c = 'X';
 
-					case _VAR_TYPE_LOGICAL:
-						c = 'L';
-						break;
+				} else {
+					switch (var->varType)
+					{
+						case _VAR_TYPE_NULL:
+							c = ((tlIsVartype) ? 'X' : 'L');
+							break;
 
-					case _VAR_TYPE_DATE:
-						c = 'D';
-						break;
+						case _VAR_TYPE_CHARACTER:
+							c = 'C';
+							break;
 
-					case _VAR_TYPE_DATETIME:
-					case _VAR_TYPE_DATETIMEX:
-						c = 'T';
-						break;
+						case _VAR_TYPE_LOGICAL:
+							c = 'L';
+							break;
 
-					case _VAR_TYPE_FIELD:
-						// Based on the associated field type
-						switch(var->field->fr2->type)
-						{
-							case 'D':	// Date
-							case 'T':	// Datetime
-							case 'L':	// Logical
-							case 'N':	// Numeric
-							case 'Y':	// currency, which is technically an 8-byte integer (s64)
-							case 'C':	// Character
-								c = var->field->fr2->type;
+						case _VAR_TYPE_DATE:
+							c = 'D';
+							break;
 
-							case 'I':	// 4-byte integer (s32)
-							case 'F':	// Float
-							case 'B':	// Double (f64)
-								c = 'N';
-								break;
+						case _VAR_TYPE_DATETIME:
+						case _VAR_TYPE_DATETIMEX:
+							c = 'T';
+							break;
 
-							case 'M':	// Memo
-								c = 'C';
-								break;
+						case _VAR_TYPE_FIELD:
+							// Based on the associated field type
+							switch(var->field->fr2->type)
+							{
+								case 'D':	// Date
+								case 'T':	// Datetime
+								case 'L':	// Logical
+								case 'N':	// Numeric
+								case 'Y':	// currency, which is technically an 8-byte integer (s64)
+								case 'C':	// Character
+									c = var->field->fr2->type;
+
+								case 'I':	// 4-byte integer (s32)
+								case 'F':	// Float
+								case 'B':	// Double (f64)
+									c = 'N';
+									break;
+
+								case 'M':	// Memo
+									c = 'C';
+									break;
 
 // Unsupported in VJr:
-// 							case 'W':	// Blob
-// 							case 'G':	// General
-// 							case 'Q':	// Varbinary
-// 							case 'V':	// Varchar
-							default:
+// 								case 'W':	// Blob
+// 								case 'G':	// General
+// 								case 'Q':	// Varbinary
+// 								case 'V':	// Varchar
+								default:
+									c = 'U';
+									break;
+							}
+							break;
+
+						case _VAR_TYPE_OBJECT:
+							c = 'O';
+							break;
+
+						default:
+							if (var->varType == _VAR_TYPE_CURRENCY)
+							{
+								// Currency
+								c = 'Y';
+
+							} else if (var->varType >= _VAR_TYPE_NUMERIC_START && var->varType <= _VAR_TYPE_NUMERIC_END) {
+								// Numeric
+								c = 'N';
+
+							} else {
+								// Unknown
 								c = 'U';
-								break;
-						}
-						break;
-
-					case _VAR_TYPE_OBJECT:
-						c = 'O';
-						break;
-
-					default:
-						if (var->varType == _VAR_TYPE_CURRENCY)
-						{
-							// Currency
-							c = 'Y';
-
-						} else if (var->varType >= _VAR_TYPE_NUMERIC_START && var->varType <= _VAR_TYPE_NUMERIC_END) {
-							// Numeric
-							c = 'N';
-
-						} else {
-							// Unknown
-							c = 'U';
-						}
-						break;
+							}
+							break;
+					}
 				}
 			}
 
@@ -12285,7 +12629,7 @@ debug_break;
 		//////////
 		// varLookup must exist
 		//////
-			if (!iVariable_isValid(var))
+			if (!iVariable_isValidType(var))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, var), false);
 				return(NULL);

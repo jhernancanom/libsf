@@ -122,11 +122,17 @@
 	bool		iJDebiC_connect					(void);
 	s32			iJDebiC_transmit_viaPipe		(SDatum* data1, SDatum* data2, u32 tnDataType);
 	HANDLE		iJDebiC_createPipeHandle		(cs8* lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile);
+	bool		iJDebiC_alreadyProcessedItem	(SBuilder* items, void* item);
+	void		iJDebiC_recordNewItem			(SBuilder* items, void* item);
 
 	// Processes each structure into text
-	void		iJDebiC_thisCode				(SThisCode*	thisCode,	SBuilder* data);
-	void		iJDebiC_win						(SWindow*	win,		SBuilder* data);
-	void		iJDebiC_obj						(SObject*	obj,		SBuilder* data);
+	void		iJDebiC_thisCode				(SBuilder* data, SBuilder* items,	SThisCode* thisCode);
+	void		iJDebiC_sourceCode				(SBuilder* data, SBuilder* items,	SSourceCode* sourceCode);
+	void		iJDebiC_function				(SBuilder* data, SBuilder* items,	SFunction* func);
+	void		iJDebiC_variable				(SBuilder* data, SBuilder* items,	SVariable* var);
+	void		iJDebiC_sem						(SBuilder* data, SBuilder* items,	SEM* sem);
+	void		iJDebiC_win						(SBuilder* data, SBuilder* items,	SWindow* win);
+	void		iJDebiC_obj						(SBuilder* data, SBuilder* items,	SObject* obj);
 
 	// Process sub-components
 	void		iiJDebiC_decode_Rect			(s8* buffer, RECT* rc);

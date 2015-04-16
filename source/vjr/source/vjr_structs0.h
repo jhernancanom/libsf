@@ -325,10 +325,16 @@ struct SVariable
 	SVariable*	indirect;												// If non-NULL, and not an object or thisCode, this variable is an indirect reference to an underlying variable.
 	bool		isVarAllocated;											// If true, this variable structure was allocated, and needs to be released upon delete.
 
+	// If this variable is related to a component, indicate it here
+	SComp*		compRelated;											// Can vary regularly, but when available at compile time and in immediate scope, relates to a component
+
 	// Variable data
 	SDatum		name;													// Name of this variable (alway allocated)
 	u32			arrayRows;												// If created as an array, how many rows
-	u32			arrayCols;												// If created as an array, how many columns
+	union {
+		u32		arrayCols;												// If created as an array, how many columns
+		u32		vectorElements;											// If created as a vector, how many elements?
+	};
 
 	// Variable content based on type
 	u32			varType;												// Variable type (see _VAR_TYPE_* constants)
@@ -339,10 +345,9 @@ struct SVariable
 		SBitmap*		bmp;											// The bitmap this item points to
 		SField*			field;											// Pointer to a table/cursor field
 		SDatum			value;											// The actual value
+		// Note:  If it's an array, then this->value is populated with a repeating structure of SVariable pointers, one for every array element (arrayRows * arrayCols)
+		// Note:  If it's a vector, then this->value is populated with a repeating structure of SVariable pointers, one for every vector element (vectorCols)
 	};
-
-	// If this variable is related to a component, indicate it here
-	SComp*		compRelated;											// Can vary regularly, but when available at compile time and in immediate scope, relates to a component
 
 	// If assign or access
 	SEM*		firstAccess;											// Source code executed whenever this variable is accessed

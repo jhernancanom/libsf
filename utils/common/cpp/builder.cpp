@@ -971,6 +971,46 @@
 
 //////////
 //
+// Called to append the datum
+//
+//////
+	s32 iBuilder_append_label_datum(SBuilder* buffRoot, s8* tcLabelText, SDatum* datum)
+	{
+		s32	lnStart;
+
+
+		// Make sure our environment's sane
+		if (buffRoot && tcLabelText && datum && datum->data && datum->length > 0)
+		{
+			// Note our size at the stat
+			lnStart = buffRoot->populatedLength;
+
+			// Label
+			iBuilder_appendData(buffRoot, tcLabelText, strlen(tcLabelText));
+
+			// Equals
+			iBuilder_appendData(buffRoot, " = ", 3);
+
+			// Text
+			iBuilder_appendData(buffRoot, datum->data, datum->length);
+
+			// CR/LF
+			iBuilder_appendCrLf(buffRoot);
+
+			// Indicate how many bytes were written
+			return(buffRoot->populatedLength - lnStart);
+
+		} else {
+			// Failure
+			return(0);
+		}
+	}
+
+
+
+
+//////////
+//
 // Called to append a label and a logical value as "true" or "false", followed by CR/LF
 // "name = true[cr/lf]"
 //

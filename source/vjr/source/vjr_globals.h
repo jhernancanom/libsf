@@ -249,6 +249,24 @@
 	SVariable*			cvarTwoFiftyFive					= NULL;									// A numeric value of 255, used for color channels
 	SVariable*			cvarFiftyPercent					= NULL;									// An f32 0.5
 	SVariable*			cvarOneHundredPercent				= NULL;									// An f32 1.0
+	SVariable*			cvarSetDateAmerican					= NULL;
+	SVariable*			cvarSetDateAnsi						= NULL;
+	SVariable*			cvarSetDateBritish					= NULL;
+	SVariable*			cvarSetDateFrench					= NULL;
+	SVariable*			cvarSetDateGerman					= NULL;
+	SVariable*			cvarSetDateItalian					= NULL;
+	SVariable*			cvarSetDateJapan						= NULL;
+	SVariable*			cvarSetDateTaiwan					= NULL;
+	SVariable*			cvarSetDateLong						= NULL;
+	SVariable*			cvarSetDateShort						= NULL;
+	SVariable*			cvarSetDateUsa						= NULL;
+	SVariable*			cvarSetDateDmy						= NULL;
+	SVariable*			cvarSetDateMdy						= NULL;
+	SVariable*			cvarSetDateYmd						= NULL;
+	SVariable*			varSetDateYyyyMmDdTHhMmSsMss		= NULL;
+	SVariable*			varSetDateYyyyMmDdTHhMmSs			= NULL;
+
+
 
 	// Default variable values used for references
 	SVariable*			varDefault_null						= NULL;									// NULL
@@ -448,14 +466,14 @@
 	SObject*			_cmd								= NULL;
 	SObject*			_debug								= NULL;
 	SObject*			_output								= NULL;
-	SObject*			_sourceLight							= NULL;
+	SObject*			_sourceLight						= NULL;
 	SObject*			_sourceLight_empty					= NULL;
-	SObject*			_sourceCode_carousel					= NULL;
+	SObject*			_sourceCode_carousel				= NULL;
 	SObject*			_sourceCode_rider					= NULL;
 	SObject*			_sourceCode_editbox					= NULL;
 	SObject*			_locals_editbox						= NULL;
 	SObject*			_watch_editbox						= NULL;
-	SObject*			_command_editbox						= NULL;
+	SObject*			_command_editbox					= NULL;
 	SObject*			_debug_editbox						= NULL;
 	SObject*			_output_editbox						= NULL;
 	SObject*			gobj_splashListing					= NULL;

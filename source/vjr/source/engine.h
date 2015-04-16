@@ -101,6 +101,7 @@
 //////////
 // Constants for date formats
 //////
+	const u32					_SET_DATE_START	= 1;
 	const u32	_SET_DATE_AMERICAN				= 1;			// mm/dd/yy
 	const u32	_SET_DATE_ANSI					= 2;			// yy.mm.dd
 	const u32	_SET_DATE_BRITISH				= 3;			// dd/mm/yy
@@ -115,6 +116,7 @@
 	const u32	_SET_DATE_DMY					= 12;			// dd/mm/yy
 	const u32	_SET_DATE_MDY					= 13;			// mm/dd/yy
 	const u32	_SET_DATE_YMD					= 14;			// yy/mm/dd
+	const u32					_SET_DATE_END	= 14;
 
 	// First entry
 	SObject*	settings									= NULL;
@@ -141,7 +143,7 @@
 				SVariable*		locals;					// The first local variable declared
 				SVariable*		scoped;					// The first scoped/temporary variable used by the function
 
-				SEM*			sourceCode;				// The source code for this program
+				SEM*			sem;					// The source code for this program
 			};
 
 			struct SThisCode

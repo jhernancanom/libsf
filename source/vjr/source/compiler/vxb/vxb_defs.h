@@ -291,10 +291,12 @@ struct SThisCode;
 	s32						iiVariable_compareMatchingTypes				(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight, bool* tlError, u32* tnErrorNum);
 
 	// Support functions
+	SVariable*				iiVariable_get_dateTemplate					(s32 tnDateFormat);
 	s32						iiVariable_extract_Julian_from_YyyyMmDd		(f32* tnJulianDayNumber, u32  year, u32  month, u32  day);
 	void					iiVariable_extract_YyyyMmDd_from_Julian		(u32  tnJulianDayNumber, u32* year, u32* month, u32* day);
 	void					iiVariable_extract_YyyyMmDd_from_YYYYMMDD	(u8* YYYYMMDD, u32* year, u32* month, u32* day);
-	void					iiVariable_extract_HhMmSsMss_from_f32		(f32 tfSeconds, u32* hour, u32* minute, u32* second, u32* millisecond);
+	void					iiVariable_extract_HhMmSsMss_from_seconds	(f32 tfSeconds, u32* hour, u32* minute, u32* second, u32* millisecond);
+	f32						iiVariable_extract_seconds_from_HhMmSsMss	(u32 hour, u32  minute, u32  second, u32  millisecond);
 	void					iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd	(u8* YYYYMMDD, u32  year, u32  month, u32  day);
 	void					iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd	(s8* YYYYMMDD, u32  year, u32  month, u32  day);
 	s64						iiVariable_compute_DatetimeDifference		(SThisCode* thisCode, SVariable* dtVar1, SVariable* dtVar2);

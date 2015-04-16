@@ -128,6 +128,7 @@
 	s32			iBuilder_append_label_uptr					(SBuilder* buffRoot, s8* tcLabelText, uptr udata);
 	s32			iBuilder_append_label_sptr					(SBuilder* buffRoot, s8* tcLabelText, sptr sdata);
 	s32			iBuilder_append_label_text					(SBuilder* buffRoot, s8* tcLabelText, s8* tcText);
+	s32			iBuilder_append_label_datum					(SBuilder* buffRoot, s8* tcLabelText, SDatum* datum);
 	s32			iBuilder_append_label_logical				(SBuilder* buffRoot, s8* tcLabelText, bool tlValue);
 
 
