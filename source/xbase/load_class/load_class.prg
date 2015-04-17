@@ -82,7 +82,24 @@
 
 
 
-loNew = load_class("classname", "c:\path\to\classlib.vcx")
+CLOSE DATABASES all
+CLEAR ALL
+RELEASE ALL
+CLEAR
+
+CD \vfp\libs
+ADIR(laFiles, "*.vcx")
+
+CD \vfp\apps\
+FOR lnI = 1 TO ALEN(laFiles, 1)
+	USE ("libs\" + laFiles[lnI, 1]) ALIAS _vcx
+	SCAN FOR "class" $ LOWER(reserved1)
+		? "********** Loading " + objname + " in " + FULLPATH(DBF())
+		lo = load_class(objName, FULLPATH(DBF()))
+		lo = .null.
+		RELEASE lo
+	ENDSCAN
+NEXT
 SET STEP ON
 SET STEP ON
 
@@ -116,6 +133,7 @@ FUNCTION iload_class
 LPARAMETERS tcName, tcClass, tcLibrary, toParent, tlAugmentProperties
 LOCAL lnI, lnJ, lcAlias, loNew, loNewSib, loClass, lcPropName, lcPropNameDescent, lcThisName
 LOCAL lcValue, lnEqualPos, llError, lcLibraryNext, lcCodeArrayName, lnFoundRecno
+
 
 	**********
 	* Locate the library
@@ -187,7 +205,6 @@ LOCAL lcValue, lnEqualPos, llError, lcLibraryNext, lcCodeArrayName, lnFoundRecno
 			lcClassNext		= &lcAlias..class
 			lcLibraryNext	= FULLPATH(ADDBS(JUSTPATH(tcLibrary)) + ALLTRIM(&lcAlias..classloc))
 			iload_class(&lcAlias..objName, lcClassNext, lcLibraryNext, loNew, .f.)
-			
 			* Note:  Their methods are added when they are added
 		
 		ENDSCAN
@@ -200,22 +217,22 @@ LOCAL lcValue, lnEqualPos, llError, lcLibraryNext, lcCodeArrayName, lnFoundRecno
 		
 			* Create the object
 			lcName			= &lcAlias..objName
-			lcClassNext		= &lcAlias..class
+			lcClassNext		= LOWER(&lcAlias..class)
 			loNew.ADDOBJECT(lcName, lcClassNext)
 			loNewSib		= loNew.&lcName
 			
-			* Set any properties, events or methods, and their code
+			* Add any events or methods, and their code
 			iiload_class_set_properties(loNewSib, &lcAlias..properties)
 			iiload_class_add_methods(loNewSib)
 			iiload_class_populate_methods(loNewSib, &lcAlias..methods)
 
 		ENDSCAN
+		GOTO lnFoundRecno
 	
 	
 	**********
 	* Set any properties, events or methods, and their code
 	*****
-		GOTO lnFoundRecno
 		iiload_class_set_properties(loNew, &lcAlias..properties)
 		iiload_class_add_methods(loNew)
 		iiload_class_populate_methods(loNew, &lcAlias..methods)
@@ -256,7 +273,7 @@ LOCAL llIsNumeric
 				* See if every character is numeric
 				llIsNumeric = .t.
 				FOR lnI = 1 TO LEN(lcValue)
-					IF NOT SUBSTR(lcValue, lnI, 1) $ "0123456789"
+					IF NOT SUBSTR(lcValue, lnI, 1) $ "-0123456789."
 						llIsNumeric = .f.
 						EXIT
 					ENDIF
@@ -371,7 +388,8 @@ LOCAL lnI, lnJ, llFound, laMems, lcCodeArrayName
 
 FUNCTION iiload_class_populate_methods
 LPARAMETERS toObj, lcMethodCode
-LOCAL laSourceCode, lnI, lcProcName, lniStart, lniEnd, lcCodeBlock, llFound, lcCodeArrayName
+LOCAL laSourceCode, lnI, lcProcName, lniStart, lniEnd, lcCodeBlock, llFound
+LOCAL lcCodeArrayName, loObjProp, lcProcName, lcProcNameDescent
 
 
 	**********
@@ -411,79 +429,102 @@ LOCAL laSourceCode, lnI, lcProcName, lniStart, lniEnd, lcCodeBlock, llFound, lcC
 					**********
 					* See if this method name already exists
 					*****
+*						llDescentObj	= .f.
+						loObjProp		= toObj
+						llBigError		= .f.
 						IF "." $ lcProcName
 							* It is code added to a nested class
-SET STEP ON
-
-						ELSE
-							* It is code added directly to this class
-
-							**********
-							* Search for the existing method
-							*****
-								llFound = .f.
-								FOR lnJ = 1 TO ALEN(toObj.__MethodCode, 1)
-									IF LOWER(toObj.__MethodCode[lnJ, 1]) = lcProcName
-										* We found the existing
-										llFound			= .t.
-										lcCodeArrayName = toObj.__MethodCode[lnJ, 2]
-										EXIT
-									ENDIF
-								NEXT
-
-
-							**********
-							* If it was found, update it
-							*****
-								IF llFound
-									IF &lcCodeArrayName[1, 1] != toObj
-										**********
-										* It is a different object, so we insert new code before what exists
-										* Bump everything down one and assign this layer of code to itself
-										*****
-											iiload_class_bump_array_down(@&lcCodeArrayName)
-											&lcCodeArrayName[1, 1] = toObj
-
-									ELSE
-										* This method relates to this class
-										* There shouldn't already be any code here
-										* If there is, it means the method name appears
-										* twice in the class definition.
-										IF NOT EMPTY(&lcCodeArrayName[1, 2])
-											? "Duplicate method code found in " + toObj.Name + "." + lcProcName + "()"
-											SET STEP ON
-										ENDIF
-										* If we get here, we're good... we can add it
-									ENDIF
-
+*							llDescentObj		= .t.
+							llFound				= .t.
+							lcProcNameDescent	= lcProcName
+							DO WHILE "." $ lcProcNameDescent
+								lcThisName = LEFT(lcProcNameDescent, AT(".", lcProcNameDescent) - 1)
+								IF PEMSTATUS(loObjProp, lcThisName, 5)
+									* Continue downward
+									loObjProp			= loObjProp.&lcThisName
+									lcProcNameDescent	= SUBSTR(lcProcNameDescent, LEN(lcThisName) + 2)
 								ELSE
-									**********
-									* Not found, add new method to the class
-									*****
-										lcCodeArrayName	= SYS(2015)
-										PUBLIC &lcCodeArrayName
-										DIMENSION &lcCodeArrayName[1, 2]
-
-										DIMENSION toObj.__MethodCode[ALEN(toObj.__MethodCode, 1) + 1, ALEN(toObj.__MethodCode, 2)]
-										toObj.__MethodCode[ALEN(toObj.__MethodCode, 1), 1] = lcProcName
-										toObj.__MethodCode[ALEN(toObj.__MethodCode, 1), 2] = lcCodeArrayName
-
-
-									**********
-									* Insert the reference for this class at this level
-									*****
-										&lcCodeArrayName[1, 1] = toObj
-										&lcCodeArrayName[1, 2] = SPACE(0)	&& No code yet
-
+									? "Error accessing " + lcThisName + " on " + loObjProp.name + " of " + toObj.name + "." + lcProcName
+									llBigError			= .t.
+									llFound				= .f.
+*									SET STEP ON
 								ENDIF
-
+							ENDDO
+							lcProcName = lcProcNameDescent
 						ENDIF
+							* It is code added directly to this class
 
 
 					**********
-					* Append the method code
+					* Search for the existing method
 					*****
-						&lcCodeArrayName[1, 2] = lcCodeBlock
+						llFound = .f.
+						FOR lnJ = 1 TO ALEN(toObj.__MethodCode, 1)
+							IF LOWER(loObjProp.__MethodCode[lnJ, 1]) == lcProcName
+								* We found the existing
+								llFound			= .t.
+								lcCodeArrayName = loObjProp.__MethodCode[lnJ, 2]
+								EXIT
+							ENDIF
+						NEXT
+
+
+					**********
+					* If it was found, update it
+					*****
+						IF NOT llBigError
+							IF llFound
+								IF &lcCodeArrayName[1, 1] != toObj && OR llDescentObj
+									**********
+									* It is a different object, so we insert new code before what exists
+									* Bump everything down one and assign this layer of code to itself
+									*****
+										IF NOT EMPTY(&lcCodeArrayName[1, 2])
+											* Move down the code that's already here
+											iiload_class_bump_array_down(@&lcCodeArrayName)
+										ENDIF
+										&lcCodeArrayName[1, 1] = toObj
+
+								ELSE
+									* This method relates to this class
+									* There shouldn't already be any code here
+									* If there is, it means the method name appears
+									* twice in the class definition.
+									IF NOT EMPTY(&lcCodeArrayName[1, 2])
+										? "Duplicate method code found in " + toObj.Name + "." + lcProcName
+*										SET STEP ON
+									ENDIF
+									* If we get here, we're good... we can add it
+								ENDIF
+
+							ELSE
+								**********
+								* Not found, add new method to the class
+								*****
+									lcCodeArrayName	= SYS(2015)
+									PUBLIC &lcCodeArrayName
+									DIMENSION &lcCodeArrayName[1, 2]
+
+									DIMENSION toObj.__MethodCode[ALEN(toObj.__MethodCode, 1) + 1, ALEN(toObj.__MethodCode, 2)]
+									toObj.__MethodCode[ALEN(toObj.__MethodCode, 1), 1] = lcProcName
+									toObj.__MethodCode[ALEN(toObj.__MethodCode, 1), 2] = lcCodeArrayName
+
+
+								**********
+								* Insert the reference for this class at this level
+								*****
+									&lcCodeArrayName[1, 1] = toObj
+									&lcCodeArrayName[1, 2] = SPACE(0)	&& No code yet
+
+							ENDIF
+
+
+							**********
+							* Append the method code
+							*****
+								&lcCodeArrayName[1, 2] = lcCodeBlock
+
+						ENDIF
 
 
 					**********
@@ -504,69 +545,170 @@ SET STEP ON
 
 FUNCTION iiload_class_set_properties
 LPARAMETERS toObj, tcPropertyCode
-LOCAL laLines, lnLines, lnI, lnEqualPos, lcPropName, lcValue, loClass, lcPropNameDescent, lcThisName, llError
+LOCAL lnI, lnJ, lnPageCount, lnButtonCount, lnEqualPos, lcNewName, loNewObj
+LOCAL laLines, lnLines, lcPropName, lcValue, loClass, lcPropNameDescent, lcThisName, llError
 
-	DIMENSION laLines[1]
-	lnLines = ALINES(laLines, tcPropertyCode)
-	FOR lnI = 1 TO lnLines
-		lnEqualPos = AT("=", laLines[lnI])
-		IF lnEqualPos > 0
-			* Get the name = value for this line
-			lcPropName	= ALLTRIM(LEFT(laLines[lnI], lnEqualPos - 1))
-			lcValue		= ALLTRIM(SUBSTR(laLines[lnI], lnEqualPos + 1))
+	**********
+	* Break out the lines
+	*****
+		DIMENSION laLines[1]
+		lnLines = ALINES(laLines, tcPropertyCode)
+	
+	
+	**********
+	* Some classes require that their subordinate members be added mechanically
+	*****
+		DO CASE
+			CASE LOWER(toObj.baseclass) = "pageframe"
+				FOR lnI = 1 TO lnLines
+					lnEqualPos = AT("=", laLines[lnI])
+					IF lnEqualPos > 0
 
-			* Set all properties except name
-			IF LOWER(lcPropName) != "name"
+						* Get the name = value for this line
+						lcPropName	= ALLTRIM(LEFT(laLines[lnI], lnEqualPos - 1))
+						lcValue		= ALLTRIM(SUBSTR(laLines[lnI], lnEqualPos + 1))
 
-				**********
-				* Get to the property's location
-				*****
-					loClass = toObj
-					IF "." $ lcPropName
-						* Iterate downward until we get to the final object
-						lcPropNameDescent = lcPropName
-						DO WHILE "." $ lcPropNameDescent
-							lcThisName = LEFT(lcPropNameDescent, AT(".", lcPropNameDescent) - 1)
-							IF PEMSTATUS(loClass, lcThisName, 5)
-								* Continue downward
-								loClass				= loClass.&lcThisName
-								lcPropNameDescent	= SUBSTR(lcPropNameDescent, LEN(lcThisName) + 2)
-							ELSE
-								? "Error accessing " + lcThisName + " on " + loClass.name + " of " + toObj.name + "." + lcPropName
-								SET STEP ON
-							ENDIF
-						ENDDO
-						lcPropName = lcPropNameDescent
+						* If it's pagecount, we need to add that many pages
+						IF LOWER(lcPropName) == "pagecount"
+						
+							* Add every page
+							lnPageCount = VAL(lcValue)
+							FOR lnJ = 1 TO lnPageCount
+								lcNewName = "page" + TRANSFORM(lnJ)
+								IF NOT PEMSTATUS(toObj, lcNewName, 5)
+								
+									* Add the object
+									toObj.ADDOBJECT(lcNewName, "page")
+									loNewObj = toObj.&lcNewName
+
+									* Add its default methods
+									iiload_class_add_methods(loNewObj)
+
+								ENDIF
+							NEXT
+							
+							* All done
+							EXIT
+						ENDIF
+
 					ENDIF
+				NEXT
 
+			CASE LOWER(toObj.baseclass) = "optiongroup"
+				FOR lnI = 1 TO lnLines
+					lnEqualPos = AT("=", laLines[lnI])
+					IF lnEqualPos > 0
 
-				**********
-				* Add the property if need be
-				*****
-					IF !PEMSTATUS(loClass, lcPropName, 5)
-						* Property does not exist, add it
-						loClass.ADDPROPERTY(lcPropName)
+						* Get the name = value for this line
+						lcPropName	= ALLTRIM(LEFT(laLines[lnI], lnEqualPos - 1))
+						lcValue		= ALLTRIM(SUBSTR(laLines[lnI], lnEqualPos + 1))
+
+						* If it's pagecount, we need to add that many pages
+						IF LOWER(lcPropName) == "buttoncount"
+						
+							* Add every page
+							lnButtonCount = MAX(VAL(lcValue), 2)
+							FOR lnJ = 1 TO lnButtonCount
+								lcNewName = "option" + TRANSFORM(lnJ)
+								IF NOT PEMSTATUS(toObj, lcNewName, 5)
+								
+									* Add the object
+									toObj.ADDOBJECT(lcNewName, "optionbutton")
+									loNewObj = toObj.&lcNewName
+
+									* Add its default methods
+									iiload_class_add_methods(loNewObj)
+
+								ENDIF
+							NEXT
+							
+							* All done
+							EXIT
+						ENDIF
+
 					ENDIF
+				NEXT
+
+		ENDCASE
 
 
-				**********
-				* Assign it
-				*****
-					llError = .t.
-					TRY
-						loClass.&lcPropName	= iiload_class_determine_varType(lcValue)
-						llError = .f.
-					CATCH
-					ENDTRY
-					
-					IF llError
-						? "Error assigning [" + lcValue + "] to " + loClass.Name + "." + lcPropName
-						SET STEP ON
-					ENDIF
+	**********
+	* Assign properties
+	*****
+		FOR lnI = 1 TO lnLines
+			lnEqualPos = AT("=", laLines[lnI])
+			IF lnEqualPos > 0
+				* Get the name = value for this line
+				lcPropName	= ALLTRIM(LEFT(laLines[lnI], lnEqualPos - 1))
+				lcValue		= ALLTRIM(SUBSTR(laLines[lnI], lnEqualPos + 1))
+				
+				* Set all properties except name
+				IF LOWER(RIGHT(lcPropName, 5)) != ".name"
+				
+					**********
+					* Get to the property's location
+					*****
+						llBigError	= .f.
+						loClass		= toObj
+						IF "." $ lcPropName
+							* Iterate downward until we get to the final object
+							lcPropNameDescent = lcPropName
+							DO WHILE "." $ lcPropNameDescent
+								lcThisName = LEFT(lcPropNameDescent, AT(".", lcPropNameDescent) - 1)
+								IF PEMSTATUS(loClass, lcThisName, 5)
+									* Continue downward
+									loClass				= loClass.&lcThisName
+									lcPropNameDescent	= SUBSTR(lcPropNameDescent, LEN(lcThisName) + 2)
+								ELSE
+									? "Error accessing " + lcThisName + " on " + loClass.name + " of " + toObj.name + "." + lcPropName
+*									SET STEP ON
+									llBigError = .t.
+									EXIT
+								ENDIF
+							ENDDO
+							lcPropName = lcPropNameDescent
+						ENDIF
 
+
+						IF NOT llBigError
+							**********
+							* Add the property if need be
+							*****
+								llError = .t.
+								IF !PEMSTATUS(loClass, lcPropName, 5)
+									TRY
+										* Property does not exist, add it
+										loClass.ADDPROPERTY(lcPropName)
+										llError = .f.
+
+									CATCH
+										* Read-only properties generate errors when you try to add them
+									ENDTRY
+								ENDIF
+
+
+							**********
+							* Assign it
+							*****
+								IF NOT llError
+									llError = .t.
+									TRY
+										loClass.&lcPropName	= iiload_class_determine_varType(lcValue)
+										llError = .f.
+									CATCH
+									ENDTRY
+									
+									IF llError
+										? "Error assigning [" + lcValue + "] to " + loClass.Name + "." + lcPropName
+*										SET STEP ON
+									ENDIF
+								ENDIF
+								
+						ENDIF
+
+				ENDIF
 			ENDIF
-		ENDIF
-	NEXT
+		NEXT
 
 
 
