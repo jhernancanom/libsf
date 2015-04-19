@@ -4676,8 +4676,16 @@ debug_break;
 
 											case '-':
 												// Set Mark
-												if (lnPass == 1)		lnAllocationLength	+= 1;
-												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, &cMark, 1);
+												if (lnPass == 1)
+												{
+													// Increase our length
+													++lnAllocationLength;
+
+												} else {
+													// Store
+													lcResult[lnOffset] = cMark;
+													++lnOffset;
+												}
 												break;
 
 											case 'D':
@@ -4717,7 +4725,7 @@ debug_break;
 											case 'b':	// Month 4
 												sprintf(buffer, "%u\0", dt->wMonth);
 												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
-												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + 1, buffer, -1);
+												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, -1);
 												break;
 
 											case 'Y':	// Year 2015
