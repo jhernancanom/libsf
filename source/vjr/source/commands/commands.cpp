@@ -3211,7 +3211,7 @@ debug_break;
 				llValidate	= true;
 				lnSkip		= 2;
 				c1			= varDate->value.data[lnI + 0];
-				c2			= varDate->value.data[lnI + 1]
+				c2			= varDate->value.data[lnI + 1];
 				switch (c1)
 				{
 					case '1':
