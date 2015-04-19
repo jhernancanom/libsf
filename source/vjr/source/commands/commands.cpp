@@ -3099,13 +3099,13 @@
 		SVariable* varString = returnsParams->params[0];
 
 		//Return date
-		return(ifunction_ctod_common(thisCode, varString, true));
+		return(ifunction_ctox_common(thisCode, varString, true));
 	}
 
-	SVariable* ifunction_ctod_common(SThisCode* thisCode, SVariable* varCtoxString, bool tlIncludeTime)
+	SVariable* ifunction_ctox_common(SThisCode* thisCode, SVariable* varCtoxString, bool tlIncludeTime)
 	{
-		s8			cMark;
-		s32			lnI, lnSkip, lnStop, lnDate;
+		s8			c1, c2, cx, cMark;
+		s32			lnI, lnSkip, lnStop, lnDate, lnAmPm;
 		u32			lnYYYY, lnMM, lnDD, lnHh, lnMm, lnSs, lnMss;
 		bool		llValidate, llYear, llTimeValid;
 		s8*			lcYYYY		= NULL;
@@ -3205,17 +3205,19 @@ debug_break;
 		//////////
 		// Iterate through every character
 		//////
-			for (lnI = 0; lnI < varDate->value.length; )
+			for (lnI = 0, lnAmPm = -1; lnI < varDate->value.length && !lcYYYY || !lcMM || !lcDD; )
 			{
 				llYear		= false;
 				llValidate	= true;
 				lnSkip		= 2;
-				switch (varDate->value.data[lnI])
+				c1			= varDate->value.data[lnI + 0];
+				c2			= varDate->value.data[lnI + 1]
+				switch (c1)
 				{
 					case '1':
 						// Either 11 or 12, for MM or Hh
-						if (varDate->value.data[lnI + 1] == '1')	/* Is MM */		lcMM = varCtoxString->value.data + lnI;
-						else										/* Is Hh */		lcHh = varCtoxString->value.data + lnI;
+						if (c2 == '1')		/* Is MM */		lcMM = varCtoxString->value.data + lnI;
+						else				/* Is Hh */		lcHh = varCtoxString->value.data + lnI;
 						break;
 
 					case '2':
@@ -3225,16 +3227,14 @@ debug_break;
 
 					case '3':
 						// Either 33/3333 or 34, for YY/YYYY or Mm
-						if (varDate->value.data[lnI + 1] == '3')
+						if (c2 == '3')
 						{
 							// YY/YYYY
 							llYear	= true;
 							lcYYYY	= varCtoxString->value.data + lnI;
+
 							if (propGet_settings_Century(_settings))
-							{
-								// Add logic here to validate they have a 4-character year
 								lnSkip = 4;
-							}
 
 						} else {
 							// Mm
@@ -3242,31 +3242,21 @@ debug_break;
 						}
 						break;
 
-					case '5':
-						// Ss
-						lcSs = varCtoxString->value.data + lnI;
-						break;
-
-					case '0':
-						// Mss
-						lcMss = varCtoxString->value.data + lnI;
-						break;
-
-					case 'A':
-						// AM or PM
-// TODO:  No flags are setup for this
-						break;
-
 					default:
 						lnSkip		= 1;
 						llValidate	= false;
-						if (varDate->value.data[lnI] != varCtoxString->value.data[lnI])
+						cx			= varCtoxString->value.data[lnI];
+						if (cx == '/' || cx == '-' || cx == '.' || cx == cMark)
 						{
 							// Input syntax formatting error, and we know the offset where it occurred
-							iEngine_update_meta1(thisCode, lnI);
-							iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varCtoxString),false);
-							return(NULL);
+							iEngine_update_meta1(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT);
+							iEngine_update_meta2(thisCode, lnI);
+
+							// Return a blank datetime or date
+							if (tlIncludeTime)		return(iVariable_create(thisCode, _VAR_TYPE_DATETIME,	NULL, true));
+							else					return(iVariable_create(thisCode, _VAR_TYPE_DATE,		NULL, true));
 						}
+
 				}
 
 				// Validate these data positions between lnI and lnI+lnSkip
@@ -3391,7 +3381,7 @@ debug_break;
 		SVariable* varString = returnsParams->params[0];
 
 		//Return datetime
-		return(ifunction_ctod_common(thisCode, varString, false));
+		return(ifunction_ctox_common(thisCode, varString, false));
 	}
 
 

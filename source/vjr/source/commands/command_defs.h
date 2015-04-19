@@ -205,7 +205,7 @@ struct SReturnsParams;
 	SVariable*			function_cos		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_createobject						(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_ctod								(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			ifunction_ctod_common						(SThisCode* thisCode, SVariable* varString, bool tlIncludeTime);
+	SVariable*			ifunction_ctox_common						(SThisCode* thisCode, SVariable* varString, bool tlIncludeTime);
 	SVariable*			function_ctot								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_curdir								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_date		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
