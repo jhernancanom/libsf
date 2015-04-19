@@ -4416,12 +4416,13 @@ debug_break;
 		//////////
 		// All parameter 2 and later must be date/datetime type, and are translated locally into datetime types
 		//////
-			for (lnI = 1, param = returnsParams->params[1]; lnI < returnsParams->pcount && param; lnI++, param++)
+			for (lnI = 1; lnI < returnsParams->pcount; lnI++)
 			{
 
 				//////////
 				// Make sure this variable type matches the test value
 				//////
+					param = returnsParams->params[lnI];
 					if (!iVariable_isValid(param) || !(iVariable_isTypeDate(param) || iVariable_isTypeDatetime(param)))
 					{
 						// The types do not match
@@ -4481,6 +4482,35 @@ debug_break;
 	}
 
 	// Valid types are %-DdBbYyIiHhMmSsNTtJjPpAaOoL
+	//
+	// %%	-- % symbol
+	// %-	-- Current SET("MARK") symbol, typically one of [.-/].
+	// %D	-- Day of month 02
+	// %d	-- Day of month 2
+	// %B	-- Month of year 02
+	// %b	-- Month of year 2
+	// %Y	-- Year 2015
+	// %y	-- Year 15
+	// %I	-- Hour 02
+	// %H	-- Hour 14
+	// %i	-- Hour 2
+	// %h	-- Hour 14
+	// %M	-- Minute 02
+	// %m	-- Minute 2
+	// %S	-- Seconds 02
+	// %s	-- Seconds 2
+	// %N	-- Milliseconds 002
+	// %T	-- YYYYMMDDHhMmSs
+	// %t	-- YYYYMMDD
+	// %J	-- Julian day number
+	// %j	-- Day number into year
+	// %P	-- AM or PM
+	// %p	-- am or pm
+	// %A	-- Day of week Monday, Tuesday, etc...
+	// %a	-- Day of week Mon, Tue, etc...
+	// %O	-- Day of month January, February, etc...
+	// %o	-- Day of month Jan, Feb, etc...
+	// %L	-- Local or System time based on SET("TIME") setting
 	u32 ifunction_dtransform_common(SThisCode* thisCode, s8** tcResult, cs8* tcFormatStr, s32 tnFormatStrLength, SVariable* varDatesOrDatetimes[9], bool tlTextMerge)
 	{
 		s8				c, cMark;
