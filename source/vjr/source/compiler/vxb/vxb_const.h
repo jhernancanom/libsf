@@ -504,6 +504,7 @@
 	const s32		_ICODE_DTOR                                     = 1139;
 	const s32		_ICODE_DTOS                                     = 1140;
 	const s32		_ICODE_DTOT                                     = 1141;
+	const s32		_ICODE_DTRANSFORM                               = 1482;
 	const s32		_ICODE_EDITSOURCE                               = 1142;
 	const s32		_ICODE_EMPTY                                    = 1143;
 	const s32		_ICODE_ENDSWITH									= 1476;
@@ -855,7 +856,7 @@
 	// bitstr			= 1475				endswith		= 1476
 	// startswith		= 1477				endswithc		= 1478
 	// startswithc		= 1479				outside			= 1480
-	// typedetail		= 1481
+	// typedetail		= 1481				dtransform		= 1482
 
 // Temporarily added until the processing engine is coded
 	const s32		_ICODE_CONCATENATE								= 1900;
@@ -1432,6 +1433,7 @@
 	const s8		cgc_dtor[]										= "dtor";
 	const s8		cgc_dtos[]										= "dtos";
 	const s8		cgc_dtot[]										= "dtot";
+	const s8		cgc_dtransform[]								= "dtransform";
 	const s8		cgc_editsource[]								= "editsource";
 	const s8		cgc_empty[]										= "empty";
 	const s8		cgc_endswith[]									= "endswith";

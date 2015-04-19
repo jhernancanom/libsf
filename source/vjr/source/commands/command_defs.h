@@ -194,6 +194,7 @@ struct SReturnsParams;
 	SVariable*			function_bgr								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_bgra								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_cdow		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
+	u32					ifunction_dow								(u32 tnYear, u32 tnMonth, u32 tnDay);
 	SVariable*			function_ceiling	/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_chr								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_chrtran							(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -218,6 +219,10 @@ struct SReturnsParams;
 	SVariable*			function_dtor		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_dtos		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_dtot		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_dtransform	/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
+	u32					ifunction_day_of_year						(u32 tnYear, u32 tnMonth, u32 tnDay);
+	void				ifunction_dtran_concat						(SThisCode* thisCode, s8** tcResult, s32* tnLen, s8* buffer, u32 tnStart, u32 tnEnd);
+	u32					ifunction_dtran								(SThisCode* thisCode, s8** tcResult, cs8* tcFormatStr, SVariable* varParams[9], bool tlTextMerge);
 	SVariable*			function_empty		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	bool				function_isempty_common						(SThisCode* thisCode, SVariable* varExpr, SReturnsParams* returnsParams);
 	SVariable*			function_endswith							(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -445,6 +450,7 @@ struct SReturnsParams;
 		{	_ICODE_DTOR,			1,			(uptr)&function_dtor,			1,				1,				&gsSourceLight_dtor[0]			},	// DTOR() by Stefano D'Amico, VJr 0.56, Mar.16.2015
 		{	_ICODE_DTOS,			1,			(uptr)&function_dtos,			0,				1,				&gsSourceLight_dtos[0]			},	// DTOS() by Stefano D'Amico, VJr 0.57, Apr.07.2015
 		{	_ICODE_DTOT,			1,			(uptr)&function_dtot,			1,				2,				&gsSourceLight_dtot[0]			},	// DTOT() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_DTRANSFORM,		1,			(uptr)&function_dtransform,		1,				10,				&gsSourceLight_dtransform[0]	},	// DTRANSFORM() by Stefano D'Amico, VJr 0.57, Apr.16.2015
 		{	_ICODE_EMPTY,			1,			(uptr)&function_empty,			1,				1,				&gsSourceLight_empty[0]			},	// EMPTY() by Stefano D'Amico, VJr 0.56, Mar.19.2015
 		{	_ICODE_ENDSWITH,		1,			(uptr)&function_endswith,		2,				4,				&gsSourceLight_endswith[0]		},
 		{	_ICODE_ENDSWITHC,		1,			(uptr)&function_endswith,		2,				4,				&gsSourceLight_endswithc[0]		},

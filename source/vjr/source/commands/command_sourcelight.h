@@ -449,6 +449,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_dtransform[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_empty[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
@@ -910,6 +915,11 @@
 	};
 
 	SSourceLightData gsSourceLight_version[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_week[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
