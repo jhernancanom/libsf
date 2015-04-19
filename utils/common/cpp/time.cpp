@@ -189,6 +189,24 @@
 		else									return(tnHour);
 	}
 
+	cu8* iTime_amOrPm(u16 lnHour, cu8*  tcAmText, cu8*  tcPmText)
+	{
+		if (lnHour >= 12)		return(tcPmText);
+		else					return(tcAmText);
+	}
+
+	void* iTime_amOrPm(u16 lnHour, void* tcAmText, void* tcPmText)
+	{
+		if (lnHour >= 12)		return(tcPmText);
+		else					return(tcAmText);
+	}
+
+	cu8* iTime_amOrPm(u32 lnHour, cu8*  tcAmText, cu8*  tcPmText)
+	{
+		if (lnHour >= 12)		return(tcPmText);
+		else					return(tcAmText);
+	}
+
 	void* iTime_amOrPm(u32 lnHour, void* tcAmText, void* tcPmText)
 	{
 		if (lnHour >= 12)		return(tcPmText);

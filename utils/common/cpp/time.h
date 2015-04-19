@@ -104,6 +104,9 @@
 	s64						iTime_getLocalMs						(void);
 	void					iTime_getLocalOrSystem					(SYSTEMTIME* time, bool tlLocal);
 	u32						iTime_adjustHour_toAMPM					(u32 tnHour, bool tlAdjustToAmPm);
+	cu8*					iTime_amOrPm							(u16 lnHour, cu8*  tcAmText, cu8*  tcPmText);
+	void*					iTime_amOrPm							(u16 lnHour, void* tcAmText, void* tcPmText);
+	cu8*					iTime_amOrPm							(u32 lnHour, cu8*  tcAmText, cu8*  tcPmText);
 	void*					iTime_amOrPm							(u32 lnHour, void* tcAmText, void* tcPmText);
 
 

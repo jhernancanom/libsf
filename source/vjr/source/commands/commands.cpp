@@ -4400,8 +4400,8 @@ debug_break;
 
 
 // Temporarily disabled
-iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-return(NULL);
+// iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+// return(NULL);
 
 		//////////
 		// Parameters 1 must be present and character
@@ -4436,7 +4436,7 @@ return(NULL);
 		// Call the common function
 		//////
 			lcResult		= NULL;
-			lnResultLength	= ifunction_dtransform_common(thisCode, &lcResult, varFormatStr->value.data_cs8, &returnsParams->params[1], false);
+			lnResultLength	= ifunction_dtransform_common(thisCode, &lcResult, varFormatStr->value.data_cs8, varFormatStr->value.length, &returnsParams->params[1], false);
 
 
 		//////////
@@ -4467,41 +4467,40 @@ return(NULL);
 
 	}
 
-	void ifunction_dtransform_concatenate(SThisCode* thisCode, s8** tcResult, s32* tnLen, s8* buffer, u32 tnStart, u32 tnEnd)			
+	s32 iifunction_dtransform_concatenate(s8* tcDst, s8* tcSrc, s32 tnLength)
 	{
-		s8* lcTmp;
+		// Fixup length (if need be)
+		if (tnLength < 0)
+			tnLength = strlen(tcSrc);
 
-		//////////
-		// ReAlloc buffer
-		//////
-			lcTmp = (s8*)realloc(*tcResult, (*tnLen + tnEnd - tnStart) * sizeof(s8));
-			if (lcTmp)												
-				*tcResult = lcTmp;
-			else
-				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
+		// Copy
+		memcpy(tcDst, tcSrc, tnLength);
 
-		/////////
-		// Copy buffer
-		/////
-			memcpy(*tcResult + *tnLen, buffer + tnStart, (tnEnd - tnStart));	
-			*tnLen += tnEnd - tnStart;
+		// Indicate our length
+		return(tnLength);
 	}
 
-	u32 ifunction_dtransform_common(SThisCode* thisCode, s8** tcResult, cs8* tcFormatStr, SVariable* varDatesOrDatetimes[9], bool tlTextMerge)
+	// Valid types are %-DdBbYyIiHhMmSsNTtJjPpAaOoL
+	u32 ifunction_dtransform_common(SThisCode* thisCode, s8** tcResult, cs8* tcFormatStr, s32 tnFormatStrLength, SVariable* varDatesOrDatetimes[9], bool tlTextMerge)
 	{
-		s8			c, lcMark;
-		s32			lnI, lnJ, lnIndex, lnDateFormat, lnResultLen, lnMaxIndex;
-		u32			lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMilliseconds, lnJulian;
-		SVariable*	varMark;
-		f32			lfJulian;
-		s8			buffer[64];
-		SYSTEMTIME	dtInfo[9];
+		s8				c, cMark;
+		s32				lnI, lnPass, lnAllocationLength, lnOffset;
+		u32				lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMilliseconds, lnJulian;
+		f32				lfJulian;
+		bool			llLocalTime;
+		s8*				lcPtr;
+		s8*				lcResult;
+		SVariable*		varMark;
+		SYSTEMTIME*		dt;
+		SYSTEMTIME		dtInfo[9];
+		SYSTEMTIME		dtFill;
+		s8				buffer[64];
 
 
 		//////////
 		// Prepare datetime info
 		//////
-			for (lnI = 0; varDatesOrDatetimes[lnI] && lnI < (sizeof(varDatesOrDatetimes) / sizeof(varDatesOrDatetimes[0])); lnI++)
+			for (lnI = 0; varDatesOrDatetimes[lnI] && lnI < 9; lnI++)
 			{
 
 				//////////
@@ -4539,20 +4538,15 @@ return(NULL);
 					dtInfo[lnI].wDayOfWeek		= ifunction_dow_common(lnYear, lnMonth, lnDay);
 			}
 
-			// How many param?
-			lnMaxIndex = lnI;
-			if (lnMaxIndex == 0)
-			{
-				// No parameters were given
-				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
-				return(NULL);
-			}
-
 
 		//////////
-		// Get the expected general date format
+		// Fill out the rest of the parameters with the current date and time
 		//////
-			lnDateFormat = propGet_settings_Date(_settings);
+			llLocalTime = propGet_settings_TimeLocal(_settings);
+			if (llLocalTime)		GetLocalTime(&dtFill);
+			else					GetSystemTime(&dtFill);
+			for ( ; lnI < 9; lnI++)
+				memcpy(&dtInfo[lnI], &dtFill, sizeof(dtFill));
 
 
 		//////////
@@ -4563,16 +4557,18 @@ return(NULL);
 			if (!varMark || !iVariable_isTypeCharacter(varMark) || !varMark->value.data || varMark->value.length <= 0)
 			{
 				// Fall back on current date type
-				switch (lnDateFormat)
+				switch (propGet_settings_Date(_settings))
 				{
 					case _SET_DATE_USA:			// mm-dd-yy
 					case _SET_DATE_ITALIAN:		// dd-mm-yy
-						lcMark = '-';
+						// Hyphen
+						cMark = '-';
 						break;
 
 					case _SET_DATE_GERMAN:		// dd.mm.yy
 					case _SET_DATE_ANSI:		// yy.mm.dd
-						lcMark = '.';
+						// Period
+						cMark = '.';
 						break;
 
 					default:
@@ -4585,177 +4581,382 @@ return(NULL);
 // 					case _SET_DATE_DMY:			// dd/mm/yy
 // 					case _SET_DATE_MDY:			// mm/dd/yy
 // 					case _SET_DATE_YMD:			// yy/mm/dd
-						lcMark = '/';
+						cMark = '/';
 						break;
 				}
 
 		} else {
 			// Grab the character they've set
-			lcMark = varMark->value.data[0];
+			cMark = varMark->value.data[0];
 		}
 
 
 		/////////
-		// Parser format string
+		// Parser format string twice
 		//////
-			lnI = lnJ = lnResultLen = 0;
-			while (tcFormatStr[lnI] && lnI < (s32)strlen(tcFormatStr))
+			for (lnPass = 1; lnPass < 3; lnPass++)
 			{
-
 				//////////
-				// Grab char
+				// Initialize this pass
 				//////
-					lnJ	= lnI;
-					c	= tcFormatStr[lnI++];
-
-
-				/////////
-				// Examine the character:
-				//////
-					if (c == '%')
+					if (lnPass == 1)
 					{
-						/////////
-						// Examine the character after %:
-						//////
-							c = tcFormatStr[lnI++];
-							// Index?
-							if (c >= '0' && c <= '9')
-							{
-								// %#X
-								lnIndex = (s32)(c - '0') - 1;	//#
-								if (lnIndex >= 0 && lnIndex < lnMaxIndex)
-									c = tcFormatStr[lnI++];		//X
-
-								// %#% and %#- are not allowed
-								if (c == '%' || c == '-')
-								{
-									lnI--;
-									c = 0;
-								}
-
-							} else {
-								// %X
-								lnIndex = 0;				
-							}
-
-
-							/////////
-							// Examine the character encoded
-							//////
-								switch(c) 
-								{
-									case '%':	//%
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, "%", 0, 1);
-										break;
-									case '-':	//Set Mark
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, &lcMark, 0, 1);
-										break;
-									case 'D':	//Day	02
-										sprintf(buffer, "%02u", dtInfo[lnIndex].wDay);
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, 2);
-										break;
-									case 'd':	//Day	2
-										sprintf(buffer, "%u", dtInfo[lnIndex].wDay);
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, strlen(buffer));
-										break;
-									case 'B':	//Month	04
-										sprintf(buffer, "%02u", dtInfo[lnIndex].wMonth);
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, 2);
-										break;
-									case 'b':	//Month	4
-										sprintf(buffer, "%u", dtInfo[lnIndex].wMonth);
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, strlen(buffer));
-										break;
-									case 'Y':	//Year	2015
-										sprintf(buffer, "%04u", dtInfo[lnIndex].wYear);
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, 4);
-										break;
-									case 'y':	//Year	15
-										sprintf(buffer, "%02u", (dtInfo[lnIndex].wYear % 100));
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, 2);
-										break;
-									case 'I':	//Hour	02	pm
-									case 'H':	//Hour	14
-										sprintf(buffer, "%02u", iTime_adjustHour_toAMPM(dtInfo[lnIndex].wHour, c=='I'));
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, 2);
-										break;
-									case 'i':	//Hour	2	pm
-									case 'h':	//Hour	2
-										sprintf(buffer, "%u", iTime_adjustHour_toAMPM(dtInfo[lnIndex].wHour, c=='i'));
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, strlen(buffer));
-										break;
-									case 'M':	//Minute	05
-										sprintf(buffer, "%02u", dtInfo[lnIndex].wMinute);
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, 2);
-										break;
-									case 'm':	//Minute	5
-										sprintf(buffer, "%u", dtInfo[lnIndex].wMinute);
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, strlen(buffer));
-										break;
-									case 'S':	//Seconds	09
-										sprintf(buffer, "%02u", dtInfo[lnIndex].wSecond);
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, 2);
-										break;
-									case 's':	//Seconds	9
-										sprintf(buffer, "%u", dtInfo[lnIndex].wSecond);
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, strlen(buffer));
-										break;
-									case 'N':	//Milliseconds	025
-										sprintf(buffer, "%03u", dtInfo[lnIndex].wMilliseconds);
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, 3);
-										break;
-									case 'T':
-										sprintf(buffer, "%04u%02u%02u%02u%02u%02u", dtInfo[lnIndex].wYear, dtInfo[lnIndex].wMonth, dtInfo[lnIndex].wDay, dtInfo[lnIndex].wHour, dtInfo[lnIndex].wMinute, dtInfo[lnIndex].wSecond);
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, 14);
-										break;
-									case 't':
-										sprintf(buffer, "%04u%02u%02u", dtInfo[lnIndex].wYear, dtInfo[lnIndex].wMonth, dtInfo[lnIndex].wDay);
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, 8);
-										break;
-									case 'J':
-										lnJulian = (u32)iiDateMath_extract_Julian_from_YyyyMmDd(&lfJulian, dtInfo[lnIndex].wYear, dtInfo[lnIndex].wMonth, dtInfo[lnIndex].wDay);
-										sprintf(buffer, "%u", lnJulian);
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, strlen(buffer));
-										break;
-									case 'j':
-										sprintf(buffer, "%u", iDateMath_getDayNumberIntoYear(dtInfo[lnIndex].wYear, dtInfo[lnIndex].wMonth, dtInfo[lnIndex].wDay));
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, strlen(buffer));
-										break;
-									case 'P':	//AM-PM
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, (s8*)iTime_amOrPm(dtInfo[lnIndex].wHour, (void*)cgc_am_uppercase, (void*)cgc_pm_uppercase), 0, 2);
-										break;
-									case 'p':	//am-pm
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, (s8*)iTime_amOrPm(dtInfo[lnIndex].wHour, (void*)cgc_am_lowercase, (void*)cgc_pm_lowercase), 0, 2);
-										break;
-									case 'A':	//Day of week
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, cgcDayOfWeekNames[dtInfo[lnIndex].wDayOfWeek], 0, strlen(cgcDayOfWeekNames[dtInfo[lnIndex].wDayOfWeek]));
-										break;
-									case 'a':	//Day of week short
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, cgcDayOfWeekNamesShort[dtInfo[lnIndex].wDayOfWeek], 0, 3);
-										break;
-									case 'O':	//Cmonth
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, cgcMonthNames[dtInfo[lnIndex].wMonth - 1], 0, strlen(cgcMonthNames[dtInfo[lnIndex].wMonth - 1]));
-										break;
-									case 'o':	//Cmonth short
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, cgcMonthNamesShort[dtInfo[lnIndex].wMonth - 1], 0, 3);
-										break;
-									default:	//Copy %#X
-										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, (s8*)tcFormatStr, lnJ, lnI);
-								}
+						// Compute allocation length
+						lnAllocationLength = 0;
 
 					} else {
-						// Copy c in result
-						ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, &c, 0, 1);
+						// Physically store the data
+						lcResult = (s8*)malloc(lnAllocationLength + 1);
+						if (!lcResult)
+						{
+							iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
+							*tcResult = NULL;
+							return(NULL);
+						}
+
+						// Store the allocated pointer
+						*tcResult = lcResult;
+
+						// Prepare for storage
+						lcResult[lnAllocationLength]	= 0;
+						lnOffset						= 0;
 					}
-					// go ahead
-					lnJ = lnI;
+
+
+				//////////
+				// Iterate through our format string, and expand out based on length
+				//////
+					for (lnI = 0; tcFormatStr[lnI] && lnI < tnFormatStrLength; )
+					{
+
+						//////////
+						// Grab char
+						//////
+							c = tcFormatStr[lnI++];
+
+
+						/////////
+						// Examine the character:
+						//////
+							if (c == '%')
+							{
+								/////////
+								// Examine the character after %:
+								//////
+									c = tcFormatStr[lnI++];
+									if (c >= '0' && c <= '9')
+									{
+										// %#
+										dt	= &dtInfo[(s32)(c - '0') - 1];
+										c	= tcFormatStr[lnI++];
+
+									} else {
+										// %x
+										dt	= &dtInfo[0];
+									}
+
+
+									/////////
+									// Examine the character encoded
+									//////
+										switch (c)
+										{
+											case '%':
+												// %
+												if (lnPass == 1)
+												{
+													// Increase our length
+													++lnAllocationLength;
+
+												} else {
+													lcResult[lnOffset] = '%';
+													++lnOffset;
+												}
+												break;
+
+											case '-':
+												// Set Mark
+												if (lnPass == 1)		lnAllocationLength	+= 1;
+												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, &cMark, 1);
+												break;
+
+											case 'D':
+												// Day 02
+												if (lnPass == 1)
+												{
+													// Increase our length
+													lnAllocationLength += 2;
+
+												} else {
+													// Compute and store
+													sprintf(buffer, "%02u", dt->wDay);
+													lnOffset += iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, 2);
+												}
+												break;
+
+											case 'd':
+												// Day 2
+												sprintf(buffer, "%u\0", dt->wDay);
+												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
+												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, -1);
+												break;
+
+											case 'B':	// Month 04
+												if (lnPass == 1)
+												{
+													// Increase our length
+													lnAllocationLength += 2;
+
+												} else {
+													// Compute and store
+													sprintf(buffer, "%02u", dt->wMonth);
+													lnOffset += iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, 2);
+												}
+												break;
+
+											case 'b':	// Month 4
+												sprintf(buffer, "%u\0", dt->wMonth);
+												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
+												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + 1, buffer, -1);
+												break;
+
+											case 'Y':	// Year 2015
+												if (lnPass == 1)
+												{
+													// Increase our length
+													lnAllocationLength += 4;
+
+												} else {
+													// Compute and store
+													sprintf(buffer, "%04u", dt->wYear);
+													lnOffset += iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, 4);
+												}
+												break;
+
+											case 'y':	// Year 15
+												if (lnPass == 1)
+												{
+													// Increase our length
+													lnAllocationLength += 2;
+
+												} else {
+													// Compute and store
+													sprintf(buffer, "%02u", (dt->wYear % 100));
+													lnOffset += iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, 2);
+												}
+												break;
+
+											case 'I':	// Hour 02
+											case 'H':	// Hour 14
+												sprintf(buffer, "%02u\0", iTime_adjustHour_toAMPM(dt->wHour, (c == 'I')));
+												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
+												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, -1);
+												break;
+
+											case 'i':	// Hour 2
+											case 'h':	// Hour 14
+												sprintf(buffer, "%u\0", iTime_adjustHour_toAMPM(dt->wHour, (c == 'i')));
+												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
+												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, -1);
+												break;
+
+											case 'M':
+												// Minute 05
+												if (lnPass == 1)
+												{
+													// Increase our length
+													lnAllocationLength += 2;
+
+												} else {
+													// Compute and store
+													sprintf(buffer, "%02u", dt->wMinute);
+													lnOffset += iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, 2);
+												}
+												break;
+
+											case 'm':
+												// Minute 5
+												sprintf(buffer, "%u\0", dt->wMinute);
+												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
+												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, -1);
+												break;
+
+											case 'S':
+												// Seconds 09
+												if (lnPass == 1)
+												{
+													// Increase our length
+													lnAllocationLength += 2;
+
+												} else {
+													// Compute and store
+													sprintf(buffer, "%02u", dt->wSecond);
+													lnOffset += iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, 2);
+												}
+												break;
+
+											case 's':
+												// Seconds 9
+												sprintf(buffer, "%u\0", dt->wSecond);
+												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
+												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, -1);
+												break;
+
+											case 'N':
+												// Milliseconds 025
+												if (lnPass == 1)
+												{
+													// Increase our length
+													lnAllocationLength += 3;
+
+												} else {
+													// Compute and store
+													sprintf(buffer, "%03u", dt->wMilliseconds);
+													lnOffset += iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, 3);
+												}
+												break;
+
+											case 'T':
+												// YYYYMMDDHhMmSs
+												if (lnPass == 1)
+												{
+													// Increase our length
+													lnAllocationLength += 14;
+
+												} else {
+													// Compute and store
+													sprintf(buffer, "%04u%02u%02u%02u%02u%02u", dt->wYear, dt->wMonth, dt->wDay, dt->wHour, dt->wMinute, dt->wSecond);
+													lnOffset += iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, 14);
+												}
+												break;
+
+											case 't':
+												// YYYYMMDD
+												if (lnPass == 1)
+												{
+													// Increase our length
+													lnAllocationLength += 8;
+
+												} else {
+													// Compute and store
+													sprintf(buffer, "%04u%02u%02u", dt->wYear, dt->wMonth, dt->wDay);
+													lnOffset += iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, 8);
+												}
+												break;
+
+											case 'J':
+												// Julian day number
+												lnJulian = (u32)iiDateMath_extract_Julian_from_YyyyMmDd(&lfJulian, dt->wYear, dt->wMonth, dt->wDay);
+												sprintf(buffer, "%u", lnJulian);
+												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
+												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, -1);
+												break;
+
+											case 'j':
+												// Day number into year
+												sprintf(buffer, "%u\0", iDateMath_getDayNumberIntoYear(dt->wYear, dt->wMonth, dt->wDay));
+												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
+												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, -1);
+												break;
+
+											case 'P':
+												// AM-PM
+												if (lnPass == 1)
+												{
+													// Increase our length
+													lnAllocationLength	+= 2;
+
+												} else {
+													// Compute and store
+													lcPtr		= (s8*)iTime_amOrPm(dt->wHour, cgc_am_uppercase, cgc_pm_uppercase);
+													lnOffset	+= iifunction_dtransform_concatenate(lcResult + lnOffset, lcPtr, 2);
+												}
+												break;
+
+											case 'p':
+												// am-pm
+												if (lnPass == 1)
+												{
+													// Increase our length
+													lnAllocationLength	+= 2;
+
+												} else {
+													// Compute and store
+													lcPtr		= (s8*)iTime_amOrPm(dt->wHour, cgc_am_lowercase, cgc_pm_lowercase);
+													lnOffset	+= iifunction_dtransform_concatenate(lcResult + lnOffset, lcPtr, 2);
+												}
+												break;
+
+											case 'A':	// Day of week
+												if (lnPass == 1)		lnAllocationLength	+= strlen(cgcDayOfWeekNames[dt->wDayOfWeek]);
+												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, cgcDayOfWeekNames[dt->wDayOfWeek], -1);
+												break;
+
+											case 'a':	// Day of week short
+												if (lnPass == 1)		lnAllocationLength	+= 3;
+												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, cgcDayOfWeekNamesShort[dt->wDayOfWeek], 3);
+												break;
+
+											case 'O':	// Cmonth
+												if (lnPass == 1)		lnAllocationLength	+= strlen(cgcMonthNames[dt->wMonth - 1]);
+												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, cgcMonthNames[dt->wMonth - 1], -1);
+												break;
+
+											case 'o':	// Cmonth short
+												if (lnPass == 1)		lnAllocationLength	+= 3;
+												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, cgcMonthNamesShort[dt->wMonth - 1], 3);
+												break;
+
+											case 'L':
+												// Local-System (current SET("TIME") setting)
+												if (lnPass == 1)
+												{
+													// Increase our length
+													lnAllocationLength	+= ((llLocalTime) ? sizeof(cgc_local) - 1 : sizeof(cgc_system) - 1);
+
+												} else {
+													// Compute and store
+													lcPtr		= (s8*)((llLocalTime) ? cgc_local : cgc_system);
+													lnOffset	+= iifunction_dtransform_concatenate(lcResult + lnOffset, lcPtr, -1);
+												}
+												break;
+
+											default:	// Copy a question mark
+												if (lnPass == 1)
+												{
+													// Increase our length
+													++lnAllocationLength;
+
+												} else {
+													// Store
+													lcResult[lnOffset] = '?';
+													++lnOffset;
+												}
+										}
+
+							} else {
+								// Copy over directly
+								if (lnPass == 1)
+								{
+									// Increase our length
+									++lnAllocationLength;
+
+								} else {
+									// Store
+									lcResult[lnOffset] = c;
+									++lnOffset;
+								}
+							}
+
+					}
+
 			}
 
 
 		///////////
 		// Return length buffer
 		/////
-			return(lnResultLen);
+			return(lnAllocationLength);
 	}
 
 
@@ -11899,7 +12100,7 @@ debug_break;
 							// Adjust for our 24-hour settings
 							llHour24		= propGet_settings_Hours24(_settings);
 							lnHourAdjusted	= iTime_adjustHour_toAMPM(lnHour, !llHour24);
-							lcAmPmText		= (cs8*)((llHour24) ? "" : (cs8*)iTime_amOrPm(lnHour, (void*)cgc_space_am_uppercase, (void*)cgc_space_pm_lowercase));
+							lcAmPmText		= (cs8*)((llHour24) ? "" : (cs8*)iTime_amOrPm(lnHour, cgc_space_am_uppercase, cgc_space_pm_lowercase));
 
 							if (propGet_settings_ncset_datetimeMilliseconds(_settings))
 							{

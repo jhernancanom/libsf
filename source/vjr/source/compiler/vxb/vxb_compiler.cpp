@@ -7917,7 +7917,7 @@ debug_break;
 						// Adjust for our 24-hour settings
 						llHour24		= propGet_settings_Hours24(_settings);
 						lnHourAdjusted	= iTime_adjustHour_toAMPM(lnHour, !llHour24);
-						lcAmPmText		= (cs8*)((llHour24) ? "" : (cs8*)iTime_amOrPm(lnHour, (void*)cgc_space_am_uppercase, (void*)cgc_space_pm_lowercase));
+						lcAmPmText		= (cs8*)((llHour24) ? "" : (cs8*)iTime_amOrPm(lnHour, cgc_space_am_uppercase, cgc_space_pm_lowercase));
 
 // TODO:  We need to honor the SET DATE settings.  For now we use MM/DD/YYYY HH:MM:SS.Mss AM
 						// Format for century settings
