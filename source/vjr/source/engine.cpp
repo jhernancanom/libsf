@@ -675,6 +675,12 @@ debug_nop;
 
 
 						//////////
+						// Update the pcount
+						//////
+							returnsParams.pcount = lnParamsFound;
+
+
+						//////////
 						// Perform the function
 						//////
 							returnsParams.returns[0] = lfl->func(NULL, &returnsParams);

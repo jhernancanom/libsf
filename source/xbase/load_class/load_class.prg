@@ -314,6 +314,9 @@ FUNCTION iiload_class_add_methods
 LPARAMETERS toObj
 LOCAL lnI, lnJ, llFound, laMems, lcCodeArrayName
 
+IF LOWER(toObj.baseclass) = "grid"
+	SET STEP ON
+ENDIF
 	**********
 	* Make sure it has a __MethodCode[] array
 	*****

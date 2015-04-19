@@ -2279,35 +2279,38 @@
 //    ? CDOW(dt)		&& Displays Monday
 //    ? CDOW()          && Displays current date's character day of week
 //////
-	static cs8 cgCdowData[] = { 0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4 };
-
-	u32	ifunction_dow(u32 tnYear, u32 tnMonth, u32 tnDay)
+	u32	ifunction_dow_common(u32 tnYear, u32 tnMonth, u32 tnDay)
 	{
-		u32 lnYear, lnDow;
+		u32			lnYear, lnDow;
+		static cs8	cgCdowData[] = { 0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4 };
+
+
 		//////////
 		// Adjust for leap year calculation
 		//////
-		lnYear = tnYear;
-		if (tnMonth <= 2)
-			--lnYear;									// Leap year is in February
+			lnYear = tnYear;
+			if (tnMonth <= 2)
+				--lnYear;									// Leap year is in February
 
 
 		//////////
 		// Compute the day of week
 		//////
-		lnDow =				(lnYear +						// Base year
-			(lnYear / 4)					// Leap years
-			-	(lnYear / 100)					// Not centuries not evenly divisible by 100
-			+	(lnYear / 400)					// And centuries evenly divisible by 400
-			+	cgCdowData[tnMonth - 1]			// Plus the "magic" month number
-		+	tnDay)				// Plus day of month
-			/*-------------------------------*/
-			%	7;								// Modulo to a day of week
+			lnDow =			(lnYear +						// Base year
+							(lnYear / 4)					// Leap years
+						-	(lnYear / 100)					// Not centuries not evenly divisible by 100
+						+	(lnYear / 400)					// And centuries evenly divisible by 400
+						+	cgCdowData[tnMonth - 1]			// Plus the "magic" month number
+						+	tnDay)							// Plus day of month
+					/*-------------------------------*/
+						%	7;								// Modulo to a day of week
+
 
 		//////////
 		// Result the day of week
 		//////
-		return(lnDow);
+			return(lnDow);
+
 	}
 
 	SVariable* function_cdow(SThisCode* thisCode, SReturnsParams* returnsParams)
@@ -2335,8 +2338,8 @@
 			//////////
 			// Grab year, month, day from datetime or date
 			//////
-				if (iVariable_isTypeDatetime(varParam))			iiVariable_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-				else /* date */									iiVariable_extract_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+				if (iVariable_isTypeDatetime(varParam))			iiDateMath_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+				else /* date */									iiDateMath_extract_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
 
 			} else {
 				// Use the current date
@@ -2351,7 +2354,7 @@
 		//////////
 		// Compute the day of week
 		//////
-			lnDow	= ifunction_dow(lnYear, lnMonth, lnDay);
+			lnDow	= ifunction_dow_common(lnYear, lnMonth, lnDay);
 
 
 		//////////
@@ -2721,8 +2724,8 @@
 				//////////
 				// Grab year, month, day from datetime or date
 				//////
-					if (iVariable_isTypeDatetime(varParam))			iiVariable_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-					else /* date */									iiVariable_extract_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+					if (iVariable_isTypeDatetime(varParam))			iiDateMath_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+					else /* date */									iiDateMath_extract_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
 
 
 			} else {
@@ -3158,7 +3161,7 @@ debug_break;
 			} else {
 				// Use the current system date format
 				// Note:  varDate is a reference to the constant
-				varDate = iiVariable_get_dateTemplate(lnDate);
+				varDate = iiDateMath_get_dateTemplate(lnDate);
 			}
 
 
@@ -3318,7 +3321,7 @@ debug_break;
 		// Validate the date is valid
 		//////
 			result = iVariable_create(thisCode, ((tlIncludeTime) ? _VAR_TYPE_DATETIME : _VAR_TYPE_DATE), NULL, false);
-			if (!llTimeValid || lnYYYY < 1600 || lnYYYY > 9999 || lnMM < 1 || lnMM > 12 || !iVariable_isDayValidForDate(lnYYYY, lnMM, lnDD))
+			if (!llTimeValid || lnYYYY < 1600 || lnYYYY > 9999 || lnMM < 1 || lnMM > 12 || !iDateMath_isDayValidForDate(lnYYYY, lnMM, lnDD))
 			{
 				// Invalid
 				// Nothing to do here, just leave the date blank
@@ -3329,12 +3332,12 @@ debug_break;
 				if (tlIncludeTime)
 				{
 					// Datetime
-					result->value.data_dt->julian	= iiVariable_extract_Julian_from_YyyyMmDd(NULL, lnYYYY, lnMM, lnDD);
-					result->value.data_dt->seconds	= iiVariable_extract_seconds_from_HhMmSsMss(lnHh, lnMm, lnSs, lnMss);
+					result->value.data_dt->julian	= iiDateMath_extract_Julian_from_YyyyMmDd(NULL, lnYYYY, lnMM, lnDD);
+					result->value.data_dt->seconds	= iiDateMath_extract_seconds_from_HhMmSsMss(lnHh, lnMm, lnSs, lnMss);
 
 				} else {
 					// Just a date
-					iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd(result->value.data, lnYYYY, lnMM, lnDD);
+					iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd(result->value.data, lnYYYY, lnMM, lnDD);
 				}
 			}
 
@@ -3531,7 +3534,7 @@ debug_break;
 						return(NULL);
 					}
 					lst.wDay = (u16)iiVariable_getAs_s32(thisCode, varDay, false, &error, &errorNum);
-					if (!error && !iVariable_isDayValidForDate(lst.wYear, lst.wMonth, lst.wDay))
+					if (!error && !iDateMath_isDayValidForDate(lst.wYear, lst.wMonth, lst.wDay))
 					{
 						iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varDay), false);
 						return(NULL);
@@ -3545,7 +3548,7 @@ debug_break;
 		// Convert lst.* into a VJr date variable
 		//////
 			// Date is stored as YYYYMMDD
-			iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lst.wYear, lst.wMonth, lst.wDay);
+			iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lst.wYear, lst.wMonth, lst.wDay);
 			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
 			if (!result)
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
@@ -3676,7 +3679,7 @@ debug_break;
 						return(NULL);
 					}
 					lst.wDay = (u16)iiVariable_getAs_s32(thisCode, varDay, false, &error, &errorNum);
-					if (!error && !iVariable_isDayValidForDate(lst.wYear, lst.wMonth, lst.wDay))
+					if (!error && !iDateMath_isDayValidForDate(lst.wYear, lst.wMonth, lst.wDay))
 					{
 						iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varDay), false);
 						return(NULL);
@@ -3778,7 +3781,7 @@ debug_break;
 			dt = (SDateTime*)result->value.data;
 
 			// Date is stored as julian day number
-			dt->julian	= iiVariable_extract_Julian_from_YyyyMmDd(&lfJulian, lst.wYear, lst.wMonth, lst.wDay);
+			dt->julian	= iiDateMath_extract_Julian_from_YyyyMmDd(&lfJulian, lst.wYear, lst.wMonth, lst.wDay);
 
 			// Time is stored as seconds since midnight
 			dt->seconds = (f32)(lst.wHour * 60 * 60) + (f32)(lst.wMinute * 60) + (f32)lst.wSecond + ((f32)lst.wMilliseconds / 1000.0f);
@@ -3849,8 +3852,8 @@ debug_break;
 				//////////
 				// Grab year, month, day from datetime or date
 				//////
-					if (iVariable_isTypeDatetime(varParam))			iiVariable_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-					else /* date */									iiVariable_extract_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+					if (iVariable_isTypeDatetime(varParam))			iiDateMath_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+					else /* date */									iiDateMath_extract_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
 
 
 			} else {
@@ -3949,8 +3952,8 @@ debug_break;
 				//////////
 				// Grab year, month, day from datetime or date
 				//////
-					if (iVariable_isTypeDatetime(varParam))			iiVariable_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-					else /* date */									iiVariable_extract_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+					if (iVariable_isTypeDatetime(varParam))			iiDateMath_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+					else /* date */									iiDateMath_extract_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
 
 
 			} else {
@@ -3984,7 +3987,7 @@ debug_break;
 
 				case _DMY_COMMON_DTOS:
 					// Date is stored as YYYYMMDD
-					iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
+					iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
 					break;
 
 				// Should never happen
@@ -4133,7 +4136,7 @@ debug_break;
 				//////////
 				// Grab year, month, day from datetime
 				//////
-					iiVariable_extract_YyyyMmDd_from_Julian (varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+					iiDateMath_extract_YyyyMmDd_from_Julian (varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
 
 
 			} else {
@@ -4150,7 +4153,7 @@ debug_break;
 		// Convert datetime or lst.* into a VJr date variable
 		//////
 			// Date is stored as YYYYMMDD
-			iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
+			iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
 			varTempDate = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
 			if (!varTempDate)
 			{
@@ -4300,7 +4303,7 @@ debug_break;
 		//////////
 		// Grab year, month, day from date
 		//////
-			iiVariable_extract_YyyyMmDd_from_YYYYMMDD(varParam->value.data_u8, &lnYear, &lnMonth, &lnDay);
+			iiDateMath_extract_YyyyMmDd_from_YYYYMMDD(varParam->value.data_u8, &lnYear, &lnMonth, &lnDay);
 
 
 		//////////
@@ -4313,7 +4316,7 @@ debug_break;
 				iError_report(thisCode, cgcInternalError, false);
 
 			} else {
-				result->value.data_dt->julian	= iiVariable_extract_Julian_from_YyyyMmDd(&lfJulian, lnYear, lnMonth, lnDay);
+				result->value.data_dt->julian	= iiDateMath_extract_Julian_from_YyyyMmDd(&lfJulian, lnYear, lnMonth, lnDay);
 				result->value.data_dt->seconds	= lfSeconds;
 			}
 
@@ -4388,15 +4391,17 @@ debug_break;
 //////
 	SVariable* function_dtransform(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-
 		SVariable* varFormatStr = returnsParams->params[0];
 
-		s32			lnI;
+		s32			lnI, lnResultLength;
 		s8*			lcResult;
+		SVariable*	param;
 		SVariable*	result;
-		u32			errorNum;
-		bool		error;
-		s8*			lcBuffer;
+
+
+// Temporarily disabled
+iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+return(NULL);
 
 		//////////
 		// Parameters 1 must be present and character
@@ -4409,64 +4414,50 @@ debug_break;
 
 
 		//////////
-		// Each type must be date/datetime type
+		// All parameter 2 and later must be date/datetime type, and are translated locally into datetime types
 		//////
-			for (lnI = 1; lnI < _MAX_PARAMETER_COUNT && returnsParams->params[lnI]; lnI++)
+			for (lnI = 1, param = returnsParams->params[1]; lnI < returnsParams->pcount && param; lnI++, param++)
 			{
 
 				//////////
 				// Make sure this variable type matches the test value
 				//////
-					if (!iVariable_isValid(returnsParams->params[lnI]) || !(iVariable_isTypeDate(returnsParams->params[lnI]) || iVariable_isTypeDatetime(returnsParams->params[lnI])))
+					if (!iVariable_isValid(param) || !(iVariable_isTypeDate(param) || iVariable_isTypeDatetime(param)))
 					{
 						// The types do not match
-						iError_reportByNumber(thisCode, _ERROR_DATA_TYPE_MISMATCH, iVariable_getRelatedComp(thisCode, returnsParams->params[lnI]), false);
+						iError_reportByNumber(thisCode, _ERROR_DATA_TYPE_MISMATCH, iVariable_getRelatedComp(thisCode, param), false);
 						return(NULL);
 					}
 
 			}
 
-		//////////
-		// Alloc the temporary buffer
-		/////
-			lcBuffer = (s8*)malloc(varFormatStr->value.length + 1);
-			if (!lcBuffer)
-				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varFormatStr), false);
 
 		//////////
-		// Copy format string in buffer with terminate string
+		// Call the common function
 		//////
-			memcpy(lcBuffer, varFormatStr->value.data, varFormatStr->value.length);
-			lcBuffer[varFormatStr->value.length] = 0;
-
-
-		//////////
-		// Call dtran
-		//////
-			lcResult = NULL;
-			lnI = ifunction_dtran(thisCode, &lcResult, (cs8*)lcBuffer, &returnsParams->params[1], false);
-
-
-		//////////
-		// Release the temporary buffer
-		//////
-			free(lcBuffer);
+			lcResult		= NULL;
+			lnResultLength	= ifunction_dtransform_common(thisCode, &lcResult, varFormatStr->value.data_cs8, &returnsParams->params[1], false);
 
 
 		//////////
 		// Create our result
 		//////
-			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, (cs8*)lcResult, lnI, false);
+			if (lnResultLength != 0 && lcResult)		result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, (cs8*)lcResult, lnResultLength, false);
+			else										result = NULL;
 
 
 		//////////
 		// Release the temporary buffer
 		//////
-			free(lcResult);
+			if (lcResult)
+				free(lcResult);
 
 
-		if (!result)
-			iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varFormatStr), false);
+		//////////
+		// Are we good?
+		//////
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varFormatStr), false);
 
 
 		//////////
@@ -4476,29 +4467,7 @@ debug_break;
 
 	}
 
-
-	u32 cgDayOfYear[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
-
-	u32	ifunction_day_of_year(u32 tnYear, u32 tnMonth, u32 tnDay)
-	{
-		u32 result;
-
-		/////////
-		// Compute the day of year
-		//////
-			result = cgDayOfYear[tnMonth - 1] + tnDay;
-
-			// is leap year? Add a day
-			if (tnMonth > 2 && iVariable_isLeapYear(tnYear))
-				result++;
-
-		/////////
-		// Return the day of year
-		//////
-			return(result);
-	}
-
-	void ifunction_dtran_concat(SThisCode* thisCode, s8** tcResult, s32* tnLen, s8* buffer, u32 tnStart, u32 tnEnd)			
+	void ifunction_dtransform_concatenate(SThisCode* thisCode, s8** tcResult, s32* tnLen, s8* buffer, u32 tnStart, u32 tnEnd)			
 	{
 		s8* lcTmp;
 
@@ -4518,60 +4487,73 @@ debug_break;
 			*tnLen += tnEnd - tnStart;
 	}
 
-	u32 ifunction_dtran(SThisCode* thisCode, s8** tcResult, cs8* tcFormatStr, SVariable* varParams[9], bool tlTextMerge)
+	u32 ifunction_dtransform_common(SThisCode* thisCode, s8** tcResult, cs8* tcFormatStr, SVariable* varDatesOrDatetimes[9], bool tlTextMerge)
 	{
-		s32			lnI, lnJ, lnIndex, lnDate, lnResultLen, lnMaxIndex;
-		u32			lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMilliseconds, lnJulian;
 		s8			c, lcMark;
+		s32			lnI, lnJ, lnIndex, lnDateFormat, lnResultLen, lnMaxIndex;
+		u32			lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMilliseconds, lnJulian;
 		SVariable*	varMark;
-		s8			buffer[64];
 		f32			lfJulian;
+		s8			buffer[64];
 		SYSTEMTIME	dtInfo[9];
+
 
 		//////////
 		// Prepare datetime info
 		//////
-			for (lnI = 0; varParams[lnI] && lnI < 9; lnI++)
+			for (lnI = 0; varDatesOrDatetimes[lnI] && lnI < (sizeof(varDatesOrDatetimes) / sizeof(varDatesOrDatetimes[0])); lnI++)
 			{
+
 				//////////
 				// Grab year, month, day, time from date/datetime
 				//////
-					if (iVariable_isTypeDatetime(varParams[lnI]))
+					if (iVariable_isTypeDatetime(varDatesOrDatetimes[lnI]))
 					{
+						// Datetime
+						iiDateMath_extract_YyyyMmDd_from_Julian	(varDatesOrDatetimes[lnI]->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+						iiDateMath_extract_HhMmSsMss_from_seconds(varDatesOrDatetimes[lnI]->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMilliseconds);
 
-						iiVariable_extract_YyyyMmDd_from_Julian	(varParams[lnI]->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-						iiVariable_extract_HhMmSsMss_from_seconds(varParams[lnI]->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMilliseconds);
+					} else if (iVariable_isTypeDate(varDatesOrDatetimes[lnI])) {
+						// Date
+						iiDateMath_extract_YyyyMmDd_from_YYYYMMDD (varDatesOrDatetimes[lnI]->value.data_u8, &lnYear, &lnMonth, &lnDay);
 
-					} else if (iVariable_isTypeDate(varParams[lnI])){
-						/* date */
-						iiVariable_extract_YyyyMmDd_from_YYYYMMDD (varParams[lnI]->value.data_u8, &lnYear, &lnMonth, &lnDay);
 						// 00:00:00.000
 						lnHour = lnMinute = lnSecond = lnMilliseconds = 0;
 
 					} else {
-						iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParams[lnI]), false);
+						iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varDatesOrDatetimes[lnI]), false);
 						return(NULL);
 					}
 
-					dtInfo[lnI].wYear = lnYear;
-					dtInfo[lnI].wMonth = lnMonth;
-					dtInfo[lnI].wDay = lnDay;
-					dtInfo[lnI].wHour = lnHour;
-					dtInfo[lnI].wMinute = lnMinute;
-					dtInfo[lnI].wSecond = lnSecond;
-					dtInfo[lnI].wMilliseconds = lnMilliseconds;
-					dtInfo[lnI].wDayOfWeek = ifunction_dow(lnYear, lnMonth, lnDay);
+
+				//////////
+				// Store formally
+				//////
+					dtInfo[lnI].wYear			= lnYear;
+					dtInfo[lnI].wMonth			= lnMonth;
+					dtInfo[lnI].wDay			= lnDay;
+					dtInfo[lnI].wHour			= lnHour;
+					dtInfo[lnI].wMinute			= lnMinute;
+					dtInfo[lnI].wSecond			= lnSecond;
+					dtInfo[lnI].wMilliseconds	= lnMilliseconds;
+					dtInfo[lnI].wDayOfWeek		= ifunction_dow_common(lnYear, lnMonth, lnDay);
 			}
 
 			// How many param?
 			lnMaxIndex = lnI;
-			if(lnMaxIndex < 1) //No param
+			if (lnMaxIndex == 0)
+			{
+				// No parameters were given
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
+				return(NULL);
+			}
+
 
 		//////////
 		// Get the expected general date format
 		//////
-			lnDate	= propGet_settings_Date(_settings);
+			lnDateFormat = propGet_settings_Date(_settings);
+
 
 		//////////
 		// Grab the SET("MARK") character
@@ -4581,7 +4563,7 @@ debug_break;
 			if (!varMark || !iVariable_isTypeCharacter(varMark) || !varMark->value.data || varMark->value.length <= 0)
 			{
 				// Fall back on current date type
-				switch (lnDate)
+				switch (lnDateFormat)
 				{
 					case _SET_DATE_USA:			// mm-dd-yy
 					case _SET_DATE_ITALIAN:		// dd-mm-yy
@@ -4594,15 +4576,15 @@ debug_break;
 						break;
 
 					default:
-						// 					case _SET_DATE_AMERICAN:	// mm/dd/yy
-						// 					case _SET_DATE_BRITISH:		// dd/mm/yy
-						// 					case _SET_DATE_FRENCH:		// dd/mm/yy
-						// 					case _SET_DATE_JAPAN:		// yy/mm/dd
-						// 					case _SET_DATE_TAIWAN:		// yy/mm/dd
-						// 					case _SET_DATE_SHORT:		// m/d/yy
-						// 					case _SET_DATE_DMY:			// dd/mm/yy
-						// 					case _SET_DATE_MDY:			// mm/dd/yy
-						// 					case _SET_DATE_YMD:			// yy/mm/dd
+// 					case _SET_DATE_AMERICAN:	// mm/dd/yy
+// 					case _SET_DATE_BRITISH:		// dd/mm/yy
+// 					case _SET_DATE_FRENCH:		// dd/mm/yy
+// 					case _SET_DATE_JAPAN:		// yy/mm/dd
+// 					case _SET_DATE_TAIWAN:		// yy/mm/dd
+// 					case _SET_DATE_SHORT:		// m/d/yy
+// 					case _SET_DATE_DMY:			// dd/mm/yy
+// 					case _SET_DATE_MDY:			// mm/dd/yy
+// 					case _SET_DATE_YMD:			// yy/mm/dd
 						lcMark = '/';
 						break;
 				}
@@ -4617,13 +4599,14 @@ debug_break;
 		// Parser format string
 		//////
 			lnI = lnJ = lnResultLen = 0;
-			while(tcFormatStr[lnI] && lnI < (s32)strlen(tcFormatStr))
+			while (tcFormatStr[lnI] && lnI < (s32)strlen(tcFormatStr))
 			{
+
 				//////////
 				// Grab char
 				//////
-					lnJ = lnI;
-					c = tcFormatStr[lnI++];
+					lnJ	= lnI;
+					c	= tcFormatStr[lnI++];
 
 
 				/////////
@@ -4662,110 +4645,112 @@ debug_break;
 								switch(c) 
 								{
 									case '%':	//%
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, "%", 0, 1);
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, "%", 0, 1);
 										break;
 									case '-':	//Set Mark
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, &lcMark, 0, 1);
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, &lcMark, 0, 1);
 										break;
 									case 'D':	//Day	02
 										sprintf(buffer, "%02u", dtInfo[lnIndex].wDay);
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, buffer, 0, 2);
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, 2);
 										break;
 									case 'd':	//Day	2
 										sprintf(buffer, "%u", dtInfo[lnIndex].wDay);
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, buffer, 0, strlen(buffer));
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, strlen(buffer));
 										break;
 									case 'B':	//Month	04
 										sprintf(buffer, "%02u", dtInfo[lnIndex].wMonth);
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, buffer, 0, 2);
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, 2);
 										break;
 									case 'b':	//Month	4
 										sprintf(buffer, "%u", dtInfo[lnIndex].wMonth);
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, buffer, 0, strlen(buffer));
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, strlen(buffer));
 										break;
 									case 'Y':	//Year	2015
 										sprintf(buffer, "%04u", dtInfo[lnIndex].wYear);
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, buffer, 0, 4);
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, 4);
 										break;
 									case 'y':	//Year	15
 										sprintf(buffer, "%02u", (dtInfo[lnIndex].wYear % 100));
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, buffer, 0, 2);
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, 2);
 										break;
 									case 'I':	//Hour	02	pm
 									case 'H':	//Hour	14
 										sprintf(buffer, "%02u", iTime_adjustHour_toAMPM(dtInfo[lnIndex].wHour, c=='I'));
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, buffer, 0, 2);
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, 2);
 										break;
 									case 'i':	//Hour	2	pm
 									case 'h':	//Hour	2
 										sprintf(buffer, "%u", iTime_adjustHour_toAMPM(dtInfo[lnIndex].wHour, c=='i'));
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, buffer, 0, strlen(buffer));
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, strlen(buffer));
 										break;
 									case 'M':	//Minute	05
 										sprintf(buffer, "%02u", dtInfo[lnIndex].wMinute);
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, buffer, 0, 2);
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, 2);
 										break;
 									case 'm':	//Minute	5
 										sprintf(buffer, "%u", dtInfo[lnIndex].wMinute);
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, buffer, 0, strlen(buffer));
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, strlen(buffer));
 										break;
 									case 'S':	//Seconds	09
 										sprintf(buffer, "%02u", dtInfo[lnIndex].wSecond);
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, buffer, 0, 2);
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, 2);
 										break;
 									case 's':	//Seconds	9
 										sprintf(buffer, "%u", dtInfo[lnIndex].wSecond);
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, buffer, 0, strlen(buffer));
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, strlen(buffer));
 										break;
 									case 'N':	//Milliseconds	025
 										sprintf(buffer, "%03u", dtInfo[lnIndex].wMilliseconds);
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, buffer, 0, 3);
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, 3);
 										break;
 									case 'T':
 										sprintf(buffer, "%04u%02u%02u%02u%02u%02u", dtInfo[lnIndex].wYear, dtInfo[lnIndex].wMonth, dtInfo[lnIndex].wDay, dtInfo[lnIndex].wHour, dtInfo[lnIndex].wMinute, dtInfo[lnIndex].wSecond);
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, buffer, 0, 14);
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, 14);
 										break;
 									case 't':
 										sprintf(buffer, "%04u%02u%02u", dtInfo[lnIndex].wYear, dtInfo[lnIndex].wMonth, dtInfo[lnIndex].wDay);
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, buffer, 0, 8);
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, 8);
 										break;
 									case 'J':
-										lnJulian = (u32)iiVariable_extract_Julian_from_YyyyMmDd(&lfJulian, dtInfo[lnIndex].wYear, dtInfo[lnIndex].wMonth, dtInfo[lnIndex].wDay);
+										lnJulian = (u32)iiDateMath_extract_Julian_from_YyyyMmDd(&lfJulian, dtInfo[lnIndex].wYear, dtInfo[lnIndex].wMonth, dtInfo[lnIndex].wDay);
 										sprintf(buffer, "%u", lnJulian);
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, buffer, 0, strlen(buffer));
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, strlen(buffer));
 										break;
 									case 'j':
-										sprintf(buffer, "%u", ifunction_day_of_year(dtInfo[lnIndex].wYear, dtInfo[lnIndex].wMonth, dtInfo[lnIndex].wDay));
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, buffer, 0, strlen(buffer));
+										sprintf(buffer, "%u", iDateMath_getDayNumberIntoYear(dtInfo[lnIndex].wYear, dtInfo[lnIndex].wMonth, dtInfo[lnIndex].wDay));
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, buffer, 0, strlen(buffer));
 										break;
 									case 'P':	//AM-PM
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, (s8*)iTime_amOrPm(dtInfo[lnIndex].wHour, (void*)cgc_am_uppercase, (void*)cgc_pm_uppercase), 0, 2);
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, (s8*)iTime_amOrPm(dtInfo[lnIndex].wHour, (void*)cgc_am_uppercase, (void*)cgc_pm_uppercase), 0, 2);
 										break;
 									case 'p':	//am-pm
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, (s8*)iTime_amOrPm(dtInfo[lnIndex].wHour, (void*)cgc_am_lowercase, (void*)cgc_pm_lowercase), 0, 2);
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, (s8*)iTime_amOrPm(dtInfo[lnIndex].wHour, (void*)cgc_am_lowercase, (void*)cgc_pm_lowercase), 0, 2);
 										break;
 									case 'A':	//Day of week
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, cgcDayOfWeekNames[dtInfo[lnIndex].wDayOfWeek], 0, strlen(cgcDayOfWeekNames[dtInfo[lnIndex].wDayOfWeek]));
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, cgcDayOfWeekNames[dtInfo[lnIndex].wDayOfWeek], 0, strlen(cgcDayOfWeekNames[dtInfo[lnIndex].wDayOfWeek]));
 										break;
 									case 'a':	//Day of week short
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, cgcDayOfWeekNamesShort[dtInfo[lnIndex].wDayOfWeek], 0, 3);
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, cgcDayOfWeekNamesShort[dtInfo[lnIndex].wDayOfWeek], 0, 3);
 										break;
 									case 'O':	//Cmonth
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, cgcMonthNames[dtInfo[lnIndex].wMonth - 1], 0, strlen(cgcMonthNames[dtInfo[lnIndex].wMonth - 1]));
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, cgcMonthNames[dtInfo[lnIndex].wMonth - 1], 0, strlen(cgcMonthNames[dtInfo[lnIndex].wMonth - 1]));
 										break;
 									case 'o':	//Cmonth short
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, cgcMonthNamesShort[dtInfo[lnIndex].wMonth - 1], 0, 3);
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, cgcMonthNamesShort[dtInfo[lnIndex].wMonth - 1], 0, 3);
 										break;
 									default:	//Copy %#X
-										ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, (s8*)tcFormatStr, lnJ, lnI);
+										ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, (s8*)tcFormatStr, lnJ, lnI);
 								}
+
 					} else {
 						// Copy c in result
-						ifunction_dtran_concat(thisCode, tcResult, &lnResultLen, &c, 0, 1);
+						ifunction_dtransform_concatenate(thisCode, tcResult, &lnResultLen, &c, 0, 1);
 					}
 					// go ahead
 					lnJ = lnI;
 			}
+
 
 		///////////
 		// Return length buffer
@@ -6247,8 +6232,8 @@ debug_break;
 		//////////
 		// Grab year, month, day from datetime or date
 		//////
-			if (iVariable_isTypeDatetime(varParam))			iiVariable_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	(u32*)&lnYear, (u32*)&lnMonth, &lnDay);
-			else /* date */									iiVariable_extract_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			(u32*)&lnYear, (u32*)&lnMonth, &lnDay);
+			if (iVariable_isTypeDatetime(varParam))			iiDateMath_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	(u32*)&lnYear, (u32*)&lnMonth, &lnDay);
+			else /* date */									iiDateMath_extract_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			(u32*)&lnYear, (u32*)&lnMonth, &lnDay);
 
 
 
@@ -6317,7 +6302,7 @@ debug_break;
 					if (lnDay > 28)
 					{
 						// Grab last day of month
-						if (lnMonth == 2 && iVariable_isLeapYear(lnYear))
+						if (lnMonth == 2 && iDateMath_isLeapYear(lnYear))
 						{
 							// February leap year
 							lnLastDay = 29;
@@ -6342,13 +6327,13 @@ debug_break;
 						if (result)
 						{
 							// Date is stored as julian day number
-							result->value.data_dt->julian	= iiVariable_extract_Julian_from_YyyyMmDd(&lfJulian, lnYear, (u32)lnMonth, lnDay);
+							result->value.data_dt->julian	= iiDateMath_extract_Julian_from_YyyyMmDd(&lfJulian, lnYear, (u32)lnMonth, lnDay);
 							result->value.data_dt->seconds = varParam->value.data_dt->seconds;
 						}
 
 					} else {
 						// Date is stored as YYYYMMDD
-						iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, (u32)lnMonth, lnDay);
+						iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, (u32)lnMonth, lnDay);
 						result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
 					}
 
@@ -6492,7 +6477,7 @@ debug_break;
 				//////////
 				// Grab hour, minute, second, millisecond from datetime
 				//////
-					iiVariable_extract_HhMmSsMss_from_seconds(varParam->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+					iiDateMath_extract_HhMmSsMss_from_seconds(varParam->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 			} else {
 				// Use the current datetime
@@ -9092,8 +9077,8 @@ debug_break;
 				//////////
 				// Grab year, month, day from datetime or date
 				//////
-					if (iVariable_isTypeDatetime(varParam))			iiVariable_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-					else /* date */									iiVariable_extract_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+					if (iVariable_isTypeDatetime(varParam))			iiDateMath_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+					else /* date */									iiDateMath_extract_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
 
 
 			} else {
@@ -11151,7 +11136,7 @@ debug_break;
 					//////////
 					// Convert to julian
 					//////
-						iiVariable_extract_Julian_from_YyyyMmDd(&lfJulian, lst.wYear, lst.wMonth, lst.wDay);
+						iiDateMath_extract_Julian_from_YyyyMmDd(&lfJulian, lst.wYear, lst.wMonth, lst.wDay);
 						sprintf(buffer, "%d\0", (s32)lfJulian);
 
 
@@ -11229,14 +11214,14 @@ debug_break;
 					//////////
 					// Translate into standard year, month, day
 					//////
-						iiVariable_extract_YyyyMmDd_from_Julian((u32)lfJulian, &lnYear, &lnMonth, &lnDay);
+						iiDateMath_extract_YyyyMmDd_from_Julian((u32)lfJulian, &lnYear, &lnMonth, &lnDay);
 
 
 					//////////
 					// Convert julian date into a VJr date variable
 					//////
 						// Date is stored as YYYYMMDD
-						iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
+						iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
 						varTemp = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
 						if (!varTemp)
 						{
@@ -11886,8 +11871,8 @@ debug_break;
 				//////////
 				// Grab the value
 				//////
-					iiVariable_extract_YyyyMmDd_from_Julian(varParam->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-					iiVariable_extract_HhMmSsMss_from_seconds(varParam->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+					iiDateMath_extract_YyyyMmDd_from_Julian(varParam->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+					iiDateMath_extract_HhMmSsMss_from_seconds(varParam->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 
 				//////////
@@ -12021,14 +12006,14 @@ debug_break;
 		//////////
 		// Grab year, month, day from datetime
 		//////
-			iiVariable_extract_YyyyMmDd_from_Julian(varParam->value.data_dt->julian, (u32*)&lnYear, (u32*)&lnMonth, &lnDay);
+			iiDateMath_extract_YyyyMmDd_from_Julian(varParam->value.data_dt->julian, (u32*)&lnYear, (u32*)&lnMonth, &lnDay);
 
 
 		//////////
 		// Convert datetime into a VJr date variable
 		//////
 			// Date is stored as YYYYMMDD
-			iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
+			iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
 			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
 
 

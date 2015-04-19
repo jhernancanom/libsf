@@ -272,6 +272,7 @@ struct SThisCode;
 	void					iVariable_delete							(SThisCode* thisCode, SVariable* var, bool tlDeleteSelf);
 	void					iVariable_politelyDeleteChain				(SThisCode* thisCode, SVariable** root, bool tlDeleteSelf);
 	void					iVariable_politelyDeleteChain_callback		(SLLCallback* cb);
+	SVariable*				iiVariable_getAs_datetime					(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
 	bool					iiVariable_getAs_bool						(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
 	s8						iiVariable_getAs_s8							(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
 	s16						iiVariable_getAs_s16						(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
@@ -289,19 +290,21 @@ struct SThisCode;
 	s32						iiVariable_compareNonmatchingTypesAs_s64	(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
 	s32						iiVariable_compareNonmatchingTypesAs_u64	(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
 	s32						iiVariable_compareMatchingTypes				(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight, bool* tlError, u32* tnErrorNum);
+	s64						iiVariable_compute_DatetimeDifference_getAs_s64(SThisCode* thisCode, SVariable* dtVar1, SVariable* dtVar2);
+	f64						iiVariable_compute_DatetimeDifference_getAs_f64(SThisCode* thisCode, SVariable* dtVar1, SVariable* dtVar2);
 
 	// Support functions
-	SVariable*				iiVariable_get_dateTemplate					(s32 tnDateFormat);
-	s32						iiVariable_extract_Julian_from_YyyyMmDd		(f32* tnJulianDayNumber, u32  year, u32  month, u32  day);
-	void					iiVariable_extract_YyyyMmDd_from_Julian		(u32  tnJulianDayNumber, u32* year, u32* month, u32* day);
-	void					iiVariable_extract_YyyyMmDd_from_YYYYMMDD	(u8* YYYYMMDD, u32* year, u32* month, u32* day);
-	void					iiVariable_extract_HhMmSsMss_from_seconds	(f32 tfSeconds, u32* hour, u32* minute, u32* second, u32* millisecond);
-	f32						iiVariable_extract_seconds_from_HhMmSsMss	(u32 hour, u32  minute, u32  second, u32  millisecond);
-	void					iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd	(u8* YYYYMMDD, u32  year, u32  month, u32  day);
-	void					iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd	(s8* YYYYMMDD, u32  year, u32  month, u32  day);
-	s64						iiVariable_compute_DatetimeDifference		(SThisCode* thisCode, SVariable* dtVar1, SVariable* dtVar2);
-	bool					iVariable_isDayValidForDate					(u32 year, u32 month, u32 day);
-	bool					iVariable_isLeapYear						(u32 year);
+	SVariable*				iiDateMath_get_dateTemplate					(s32 tnDateFormat);
+	s32						iiDateMath_extract_Julian_from_YyyyMmDd		(f32* tnJulianDayNumber, u32  year, u32  month, u32  day);
+	void					iiDateMath_extract_YyyyMmDd_from_Julian		(u32  tnJulianDayNumber, u32* year, u32* month, u32* day);
+	void					iiDateMath_extract_YyyyMmDd_from_YYYYMMDD	(u8* YYYYMMDD, u32* year, u32* month, u32* day);
+	void					iiDateMath_extract_HhMmSsMss_from_seconds	(f32 tfSeconds, u32* hour, u32* minute, u32* second, u32* millisecond);
+	f32						iiDateMath_extract_seconds_from_HhMmSsMss	(u32 hour, u32  minute, u32  second, u32  millisecond);
+	void					iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd	(u8* YYYYMMDD, u32  year, u32  month, u32  day);
+	void					iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd	(s8* YYYYMMDD, u32  year, u32  month, u32  day);
+	bool					iDateMath_isDayValidForDate					(u32 year, u32 month, u32 day);
+	bool					iDateMath_isLeapYear						(u32 year);
+	u32						iDateMath_getDayNumberIntoYear				(u32 tnYear, u32 tnMonth, u32 tnDay);
 
 	// Op functions
 	bool					iOp_setNull									(SOp* op);

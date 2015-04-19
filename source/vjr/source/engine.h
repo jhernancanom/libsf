@@ -164,7 +164,10 @@
 	struct SReturnsParams
 	{
 		SVariable*		returns[_MAX_RETURN_COUNT];			// Return parameters
+		s32				rcount;								// Number of return parameters specified
+
 		SVariable*		params[_MAX_PARAMETER_COUNT];		// Input parameters
+		s32				pcount;								// Number of input parameters actually passed
 	};
 
 

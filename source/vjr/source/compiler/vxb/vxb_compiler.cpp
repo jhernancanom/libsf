@@ -7911,8 +7911,8 @@ debug_break;
 					case _VAR_TYPE_DATETIME:
 						// Translate from encoded form to components, then assemble as MM/DD/YYYY HH:MM:SS AM/PM
 						dt = (SDateTime*)var->value.data;
-						iiVariable_extract_YyyyMmDd_from_Julian(dt->julian, &lnYear, &lnMonth, &lnDay);
-						iiVariable_extract_HhMmSsMss_from_seconds(dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+						iiDateMath_extract_YyyyMmDd_from_Julian(dt->julian, &lnYear, &lnMonth, &lnDay);
+						iiDateMath_extract_HhMmSsMss_from_seconds(dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 						// Adjust for our 24-hour settings
 						llHour24		= propGet_settings_Hours24(_settings);
@@ -8150,6 +8150,67 @@ debug_break;
 	{
 		// Delete this variable appropriately
 		iVariable_delete(cb->thisCode, (SVariable*)cb->node, false);
+	}
+
+
+
+
+//////////
+//
+// Called to translate a date or datetime to a datetime
+//
+//////
+	SVariable* iiVariable_getAs_datetime(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
+	{
+		u32			year, month, day;
+		SVariable*	result;
+
+
+		// Make sure our environment is sane
+		if (var)
+		{
+			switch (var->varType)
+			{
+				case _VAR_TYPE_DATE:
+					// Translate to datetime
+					result = iVariable_create(thisCode, _VAR_TYPE_DATETIME, NULL, true);
+					if (!result)
+					{
+						*tlError	= true;
+						*tnErrorNum	= _ERROR_INTERNAL_ERROR;
+						return(NULL);
+					}
+
+					// Convert the date to a julian day number
+					iiDateMath_extract_YyyyMmDd_from_YYYYMMDD(var->value.data_u8, &year, &month, &day);
+					result->value.data_dt->julian = iiDateMath_extract_Julian_from_YyyyMmDd(NULL, year, month, day);
+
+					// Indicate success
+					*tlError	= false;
+					*tnErrorNum	= _ERROR_OKAY;
+					return(result);
+
+				case _VAR_TYPE_DATETIME:
+					// Copy
+					result = iVariable_copy(thisCode, var, false);
+					if (!result)
+					{
+						*tlError	= true;
+						*tnErrorNum	= _ERROR_INTERNAL_ERROR;
+						return(NULL);
+					}
+
+					// Indicate success
+					*tlError	= false;
+					*tnErrorNum	= _ERROR_OKAY;
+					return(result);
+			}
+		}
+
+		// Failure
+		*tlError	= true;
+		*tnErrorNum	= _ERROR_INVALID_ARGUMENT_TYPE_COUNT;
+		return(NULL);
 	}
 
 
@@ -8813,7 +8874,7 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
 					//////
-						lnValue_s64 = iiVariable_compute_DatetimeDifference(thisCode, var, _datetime_Jan_01_2000);
+						lnValue_s64 = iiVariable_compute_DatetimeDifference_getAs_s64(thisCode, var, _datetime_Jan_01_2000);
 						if (lnValue_s64 >= (s64)_s16_min && lnValue_s64 <= (s64)_s16_max)
 							return((s16)lnValue_s64);
 
@@ -9105,7 +9166,7 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
 					//////
-						lnValue_s64 = iiVariable_compute_DatetimeDifference(thisCode, var, _datetime_Jan_01_2000);
+						lnValue_s64 = iiVariable_compute_DatetimeDifference_getAs_s64(thisCode, var, _datetime_Jan_01_2000);
 						if (lnValue_s64 > (s64)_s32_min && lnValue_s64 < (s64)_s32_max)
 							return((s32)lnValue_s64);
 
@@ -9370,7 +9431,7 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an u32 then we're good to go
 					//////
-						lnValue_s64 = iiVariable_compute_DatetimeDifference(thisCode, var, _datetime_Jan_01_2000);
+						lnValue_s64 = iiVariable_compute_DatetimeDifference_getAs_s64(thisCode, var, _datetime_Jan_01_2000);
 						if (lnValue_s64 >= 0 && lnValue_s64 <= (s64)_u16_max)
 							return((u16)lnValue_s64);
 
@@ -9634,7 +9695,7 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an u32 then we're good to go
 					//////
-						lnValue_s64 = iiVariable_compute_DatetimeDifference(thisCode, var, _datetime_Jan_01_2000);
+						lnValue_s64 = iiVariable_compute_DatetimeDifference_getAs_s64(thisCode, var, _datetime_Jan_01_2000);
 						if (lnValue_s64 >= 0 && lnValue_s64 <= (s64)_u32_max)
 							return((u32)lnValue_s64);
 
@@ -9834,8 +9895,8 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric
 					//////
-						iiVariable_extract_YyyyMmDd_from_Julian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-						iiVariable_extract_HhMmSsMss_from_seconds(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+						iiDateMath_extract_YyyyMmDd_from_Julian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+						iiDateMath_extract_HhMmSsMss_from_seconds(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 						// Create the string for the numeric portion
 						sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
@@ -10007,8 +10068,8 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric
 					//////
-						iiVariable_extract_YyyyMmDd_from_Julian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-						iiVariable_extract_HhMmSsMss_from_seconds(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+						iiDateMath_extract_YyyyMmDd_from_Julian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+						iiDateMath_extract_HhMmSsMss_from_seconds(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 						// Create the string for the numeric portion
 						sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
@@ -10154,8 +10215,8 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric
 					//////
-						iiVariable_extract_YyyyMmDd_from_Julian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-						iiVariable_extract_HhMmSsMss_from_seconds(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+						iiDateMath_extract_YyyyMmDd_from_Julian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+						iiDateMath_extract_HhMmSsMss_from_seconds(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 						// Create the string for the numeric portion
 						sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
@@ -10284,7 +10345,7 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
 					//////
-						return((f64)iiVariable_compute_DatetimeDifference(thisCode, var, _datetime_Jan_01_2000));
+						return((f64)iiVariable_compute_DatetimeDifference_getAs_s64(thisCode, var, _datetime_Jan_01_2000));
 				}
 				break;
 		}
@@ -10405,8 +10466,8 @@ debug_break;
 					{
 						case _VAR_TYPE_DATETIME:
 							// Grab related information from the datetime
-							iiVariable_extract_YyyyMmDd_from_Julian(varLeft->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-							iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
+							iiDateMath_extract_YyyyMmDd_from_Julian(varLeft->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+							iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
 
 							// Indicate our result
 							return(memcmp(varLeft->value.data_s8, buffer, varRight->value.length));
@@ -10461,8 +10522,8 @@ debug_break;
 
 				} else if (varLeft->varType == _VAR_TYPE_DATETIME) {
 					// Datetimes can be compared to 64-bit numeric values
-					iiVariable_extract_YyyyMmDd_from_Julian(varLeft->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-					iiVariable_extract_HhMmSsMss_from_seconds(varLeft->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+					iiDateMath_extract_YyyyMmDd_from_Julian(varLeft->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+					iiDateMath_extract_HhMmSsMss_from_seconds(varLeft->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 					// Create the string for the numeric portion
 					sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
@@ -10750,10 +10811,57 @@ debug_break;
 
 //////////
 //
+// Called to compute the number of seconds between the two datetimes using the
+// formula:  result = (dt1 - dt2).
+//
+//////
+	s64 iiVariable_compute_DatetimeDifference_getAs_s64(SThisCode* thisCode, SVariable* dtVar1, SVariable* dtVar2)
+	{
+		return((s64)iiVariable_compute_DatetimeDifference_getAs_f64(thisCode, dtVar1, dtVar2));
+	}
+
+	f64 iiVariable_compute_DatetimeDifference_getAs_f64(SThisCode* thisCode, SVariable* dtVar1, SVariable* dtVar2)
+	{
+		SDateTime*	dt1;
+		SDateTime*	dt2;
+		f64			diffJulian, diffSeconds;
+
+
+		// De-reference the variables
+		dtVar1 = iiVariable_terminateIndirect(thisCode, dtVar1);
+		dtVar2 = iiVariable_terminateIndirect(thisCode, dtVar2);
+
+
+		//////////
+		// Setup the pointers
+		//////
+			dt1 = dtVar1->value.data_dt;
+			dt2 = dtVar2->value.data_dt;
+
+
+		//////////
+		// Compute the differences
+		//////
+// TODO:  This is not a proper algorithm.  Since Stefano's now completed iDateMath_getDayNumberIntoYear(), we should use that.
+			diffJulian	= (f64)((s64)dt1->julian  - (s64)dt2->julian)  * 365.25 * 24.0 * 60.0 * 60.0;
+			diffSeconds	= (f64)     (dt1->seconds -      dt2->seconds)          * 24.0 * 60.0 * 60.0;
+
+
+		//////////
+		// Compute the result
+		//////
+			return(diffJulian + diffSeconds);
+	}
+
+
+
+
+//////////
+//
 // Called to retrieve the current system date setting template
 //
 //////
-	SVariable* iiVariable_get_dateTemplate(s32 tnDateFormat)
+	SVariable* iiDateMath_get_dateTemplate(s32 tnDateFormat)
 	{
 		SThisCode* thisCode = NULL;
 
@@ -10827,7 +10935,7 @@ debug_break;
 //		julian		-- The julian day number
 //
 //////
-	s32 iiVariable_extract_Julian_from_YyyyMmDd(f32* tfJulianDayNumber, u32 year, u32 month, u32 day)
+	s32 iiDateMath_extract_Julian_from_YyyyMmDd(f32* tfJulianDayNumber, u32 year, u32 month, u32 day)
 	{
 		s32		monthAdjust1, monthAdjust2;
 		f64		a, y, m;
@@ -10891,7 +10999,7 @@ debug_break;
 //		day			-- The day
 //
 //////
-	void iiVariable_extract_YyyyMmDd_from_Julian(u32 tnJulianDayNumber, u32* year, u32* month, u32* day)
+	void iiDateMath_extract_YyyyMmDd_from_Julian(u32 tnJulianDayNumber, u32* year, u32* month, u32* day)
 	{
 		u32 a, b, c, d, e, m;
 
@@ -10919,7 +11027,7 @@ debug_break;
 //		day			-- The day
 //
 //////
-	void iiVariable_extract_YyyyMmDd_from_YYYYMMDD(u8* YYYYMMDD, u32* year, u32* month, u32* day)
+	void iiDateMath_extract_YyyyMmDd_from_YYYYMMDD(u8* YYYYMMDD, u32* year, u32* month, u32* day)
 	{
 		s8 buffer[16];
 
@@ -10947,7 +11055,7 @@ debug_break;
 // Takes the number of seconds elapsed since midnight and computes the time.
 //
 //////
-	void iiVariable_extract_HhMmSsMss_from_seconds(f32 tfSeconds, u32* hour, u32* minute, u32* second, u32* millisecond)
+	void iiDateMath_extract_HhMmSsMss_from_seconds(f32 tfSeconds, u32* hour, u32* minute, u32* second, u32* millisecond)
 	{
 		// Compute hour
 		*hour			= (u32)tfSeconds / (60 * 60);
@@ -10973,7 +11081,7 @@ debug_break;
 // Takes the hour, minute, second, and millisecond, and creates a seconds
 //
 //////
-	f32 iiVariable_extract_seconds_from_HhMmSsMss(u32 hour, u32 minute, u32 second, u32 millisecond)
+	f32 iiDateMath_extract_seconds_from_HhMmSsMss(u32 hour, u32 minute, u32 second, u32 millisecond)
 	{
 		f32 lfSeconds;
 
@@ -11005,12 +11113,12 @@ debug_break;
 //		YYYYMMDD[0..7] populated with the 8-character string
 //
 //////
-	void iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd(u8* YYYYMMDD, u32 year, u32 month, u32 day)
+	void iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd(u8* YYYYMMDD, u32 year, u32 month, u32 day)
 	{
-		return(iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd((s8*)YYYYMMDD, year, month, day));
+		return(iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd((s8*)YYYYMMDD, year, month, day));
 	}
 
-	void iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd(s8* YYYYMMDD, u32 year, u32 month, u32 day)
+	void iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd(s8* YYYYMMDD, u32 year, u32 month, u32 day)
 	{
 		// Make sure they're in range for target
 		year	= max(min(year, 9999), 1600);
@@ -11026,60 +11134,10 @@ debug_break;
 
 //////////
 //
-// Called to compute the number of seconds between the two datetimes using the
-// formula:  result = (dt1 - dt2).
-//
-//////
-	s64 iiVariable_compute_DatetimeDifference(SThisCode* thisCode, SVariable* dtVar1, SVariable* dtVar2)
-	{
-		SDateTime*	dt1;
-		SDateTime*	dt2;
-		f64			diffJulian, diffSeconds;
-		s64			result;
-
-
-		// De-reference the variables
-		dtVar1 = iiVariable_terminateIndirect(thisCode, dtVar1);
-		dtVar2 = iiVariable_terminateIndirect(thisCode, dtVar2);
-
-
-		//////////
-		// Setup the pointers
-		//////
-			dt1 = (SDateTime*)dtVar1->value.data;
-			dt2 = (SDateTime*)dtVar2->value.data;
-
-
-		//////////
-		// Compute the differences
-		//////
-// TODO:  This is not a proper algorithm for converting days into a floating point value.
-// Note:  It needs to be hard computed using references.
-			diffJulian	= (f64)((s64)dt1->julian - (s64)dt2->julian) * 365.25 * 24.0 * 60.0 * 60.0;
-			diffSeconds	= (f64)(dt1->seconds - dt2->seconds) * 24.0 * 60.0 * 60.0;
-
-
-		//////////
-		// Compute the result
-		//////
-			result = (s64)(diffJulian + diffSeconds);
-
-
-		//////////
-		// Return the result truncated to nearest integer (nearest second)
-		//////
-			return(result);
-	}
-
-
-
-
-//////////
-//
 // Called to calculate if the indicated day number is appropriate for the month.
 //
 //////
-	bool iVariable_isDayValidForDate(u32 year, u32 month, u32 day)
+	bool iDateMath_isDayValidForDate(u32 year, u32 month, u32 day)
 	{
 		// The only valid days are 1..31
 		if (day < 1 || day > 31)
@@ -11102,7 +11160,7 @@ debug_break;
 			return(false);
 
 		// We'll only get here if we're in February
-		if (iVariable_isLeapYear(year) && day <= 29)
+		if (iDateMath_isLeapYear(year) && day <= 29)
 			return(true);		// We are in a leap year, 29 days or less is valid
 
 		// If we get here, it's not a leap year, so we're invalid
@@ -11118,9 +11176,42 @@ debug_break;
 // Leap years occur every 4 years, except in century years, except for centuries evenly divisible by 400
 //
 //////
-	bool iVariable_isLeapYear(u32 year)
+	bool iDateMath_isLeapYear(u32 year)
 	{
 		return((year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)));
+	}
+
+
+
+
+//////////
+//
+// Called to obtain the day number into the year
+//
+//////
+	u32	iDateMath_getDayNumberIntoYear(u32 tnYear, u32 tnMonth, u32 tnDay)
+	{
+		u32				result;
+		static cu32		cgDayOfYear[] = { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 };
+
+
+		/////////
+		// Compute the day of year
+		//////
+			result = cgDayOfYear[tnMonth - 1] + tnDay;
+
+
+		//////////
+		// Adjust for leap year
+		//////
+			if (tnMonth > 2 && iDateMath_isLeapYear(tnYear))
+				++result;
+
+
+		/////////
+		// Return the day of year
+		//////
+			return(result);
 	}
 
 
