@@ -4506,7 +4506,7 @@ debug_break;
 	{
 		s8				c, cMark;
 		s32				lnI, lnJ, lnPass, lnAllocationLength, lnOffset;
-		u32				lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMilliseconds, lnJulian;
+		u32				lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, lnNanosecond, lnJulian;
 		f32				lfJulian;
 		bool			llLocalTime, llManufactured, llProcessed;
 		s8*				lcPtr;
@@ -4516,6 +4516,7 @@ debug_break;
 		SVariable*		varTextmerge;
 		SVariable*		varDisplay;
 		SVariable*		varMark;
+		SVariable*		var;
 		SYSTEMTIME*		dt;
 		SYSTEMTIME		dtInfo[9];
 		SYSTEMTIME		dtFill;
@@ -4525,30 +4526,41 @@ debug_break;
 		//////////
 		// Prepare datetime info for dtransform()
 		//////
-			lnI = 0;
 			if (tlDateCodes)
 			{
-				for ( ; varDatesOrDatetimes[lnI] && lnI < 9; lnI++)
+				for (lnI = 0; varDatesOrDatetimes[lnI] && lnI < 9; lnI++)
 				{
 
 					//////////
 					// Grab year, month, day, time from date/datetime
 					//////
-						if (iVariable_isTypeDatetime(varDatesOrDatetimes[lnI]))
+						var = varDatesOrDatetimes[lnI];
+						if (!iVariable_isValid(var))
 						{
-							// Datetime
-							iiDateMath_extract_YyyyMmDd_from_Julian	(varDatesOrDatetimes[lnI]->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-							iiDateMath_extract_HhMmSsMss_from_seconds(varDatesOrDatetimes[lnI]->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMilliseconds);
+							// Invalid variable type
 
-						} else if (iVariable_isTypeDate(varDatesOrDatetimes[lnI])) {
+						} else if (iVariable_isTypeDatetime(var)) {
+							// Datetime
+							iiDateMath_extract_YyyyMmDd_from_Julian	(var->value.data_dt->julian,	&lnYear, &lnMonth,  &lnDay);
+							iiDateMath_extract_HhMmSsMss_from_seconds(var->value.data_dt->seconds,  &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+
+						} else if (iVariable_isTypeDatetimeX(var)) {
 							// Date
-							iiDateMath_extract_YyyyMmDd_from_YYYYMMDD (varDatesOrDatetimes[lnI]->value.data_u8, &lnYear, &lnMonth, &lnDay);
+							iiDateMath_extract_Julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX(var->value.data_dtx->jseconds, NULL, NULL, &lnYear, &lnMonth, &lnDay, &lnHour, &lnMinute, &lnSecond, &lnMillisecond, &lnNanosecond);
 
 							// 00:00:00.000
-							lnHour = lnMinute = lnSecond = lnMilliseconds = 0;
+							lnHour = lnMinute = lnSecond = lnMillisecond = 0;
+
+						} else if (iVariable_isTypeDate(var)) {
+							// Date
+							iiDateMath_extract_YyyyMmDd_from_YYYYMMDD (var->value.data_u8, &lnYear, &lnMonth, &lnDay);
+
+							// 00:00:00.000
+							lnHour = lnMinute = lnSecond = lnMillisecond = 0;
 
 						} else {
-							iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varDatesOrDatetimes[lnI]), false);
+							// Something else
+							iError_reportByNumber(thisCode, _ERROR_DATA_TYPE_MISMATCH, iVariable_getRelatedComp(thisCode, var), false);
 							return(NULL);
 						}
 
@@ -4562,22 +4574,23 @@ debug_break;
 						dtInfo[lnI].wHour			= lnHour;
 						dtInfo[lnI].wMinute			= lnMinute;
 						dtInfo[lnI].wSecond			= lnSecond;
-						dtInfo[lnI].wMilliseconds	= lnMilliseconds;
+						dtInfo[lnI].wMilliseconds	= lnMillisecond;
 						dtInfo[lnI].wDayOfWeek		= ifunction_dow_common(lnYear, lnMonth, lnDay);
 				}
+
+
+			//////////
+			// Fill out the rest of the parameters with the current date and time
+			//////
+				llLocalTime = propGet_settings_TimeLocal(_settings);
+				if (llLocalTime)		GetLocalTime(&dtFill);
+				else					GetSystemTime(&dtFill);
+
+				// Every other date detaults to current date and time
+				for ( ; lnI < 9; lnI++)
+					memcpy(&dtInfo[lnI], &dtFill, sizeof(dtFill));
+
 			}
-
-
-		//////////
-		// Fill out the rest of the parameters with the current date and time
-		//////
-			llLocalTime = propGet_settings_TimeLocal(_settings);
-			if (llLocalTime)		GetLocalTime(&dtFill);
-			else					GetSystemTime(&dtFill);
-
-			// Every other date detaults to current date and time
-			for ( ; lnI < 9; lnI++)
-				memcpy(&dtInfo[lnI], &dtFill, sizeof(dtFill));
 
 
 		//////////

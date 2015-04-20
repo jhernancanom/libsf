@@ -10910,6 +10910,69 @@ debug_break;
 
 //////////
 //
+// Extracts the full year, month, day, hour, minute, second, millisecond from a datetimex variable
+//
+//////
+	void iiDateMath_extract_Julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX(s64 tnDtx, f64* tfDtx, u32* julian, u32* year, u32* month, u32* day, u32* hour, u32* minute, u32* second, u32* millisecond, u32* nanosecond)
+	{
+//////////
+// TODO:  Code this.  DatetimeX is the sum of:		*nanosecond  / 1000000
+//													*millisecond / 1000
+//													second
+//													minute      * 60
+//													hour        * 60 * 60
+//													julian      * 60 * 60 * 24
+//////
+		debug_break;
+	}
+
+
+
+
+//////////
+//
+// Extracts the datetimex value from the year, month, day, hour, minute, second, millisecond or nanosecond
+//
+//////
+	void iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(s64* tnDtx, f64* tfDtx, u32 year, u32 month, u32 day, u32 hour, u32 minute, u32 second, u32 millisecond, u32 nanosecond)
+	{
+//////////
+// TODO:  Code this.  DatetimeX is the sum of:		*nanosecond  / 1000000
+//													*millisecond / 1000
+//													second
+//													minute      * 60
+//													hour        * 60 * 60
+//													julian      * 60 * 60 * 24
+//////
+		debug_break;
+	}
+
+
+
+
+//////////
+//
+// Extracts the datetimex value from the julian, hour, minute, second, millisecond or nanosecond
+//
+//////
+	void iiDateMath_extract_DatetimeX_from_Julian_and_HhMmSsMssNss(s64* tnDtx, f64* tfDtx, u32 julian, u32 hour, u32 minute, u32 second, u32 millisecond, u32 nanosecond)
+	{
+//////////
+// TODO:  Code this.  DatetimeX is the sum of:		*nanosecond  / 1000000
+//													*millisecond / 1000
+//													second
+//													minute      * 60
+//													hour        * 60 * 60
+//													julian      * 60 * 60 * 24
+//////
+		debug_break;
+	}
+
+
+
+
+//////////
+//
 // Computes the julian day number from a day, month, year.
 // Algorithm used from:
 //		https://en.wikipedia.org/wiki/Julian_day#Calculation

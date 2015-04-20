@@ -184,6 +184,7 @@ typedef SEM**		SEMpp;
 	#define iVariable_isTypeCurrency(var)				(var->varType == _VAR_TYPE_CURRENCY)
 	#define iVariable_isTypeDate(var)					(var->varType == _VAR_TYPE_DATE)
 	#define iVariable_isTypeDatetime(var)				(var->varType == _VAR_TYPE_DATETIME)
+	#define iVariable_isTypeDatetimeX(var)				(var->varType == _VAR_TYPE_DATETIMEX)
 	#define iVariable_isTypeDouble(var)					(var->varType == _VAR_TYPE_F64)
 	#define iVariable_isTypeFloat(var)					(var->varType == _VAR_TYPE_F32)
 	#define iVariable_isTypeFloatingPoint(var)			(var->varType == _VAR_TYPE_F32 || var->varType == _VAR_TYPE_F64)
