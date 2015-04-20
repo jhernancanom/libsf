@@ -348,7 +348,6 @@
 		f64			lfValue;
 		bool		llDot;
 		SVariable*	var;
-		SVariable*	varCopy;
 
 
 // TODO:  Need to have this search for dot variables as well
@@ -506,63 +505,12 @@
 				case _ICODE_ALPHANUMERIC:
 				case _ICODE_ALPHA:
 					// It's some kind of text, could be a field or variable
-
-debug_nop;
-// TODO:  Working here, making the retrieve variable logic smarter ...
-// In the component parser, needs to recognize filename patterns (drive:\...\... and \\server\...\... forms) before further processing so they do not hit as alpha or alphanumeric
-					if (propGet_settings_VariablesFirst(_settings))
-					{
-						// Searching variables first, field names last.
-						if ((var = iVariable_searchForName(thisCode, comp->line->sourceCode->data + comp->start, comp->length, comp, true)))
-						{
-							// It was found in the global variables
-
-/* We do not have work areas setup yet, so we cannot search them. :-)
-						} else if (var = iWorkarea_searchFieldName(comp->line->sourceCode->data + comp->start, comp->length)) {
-							// It was found in a table field
-							return(var);*/
-						}
-
-					} else {
-						// Search field names first, variables last.
-/*						if (var = iWorkarea_searchFieldName(comp->line->sourceCode->data + comp->start, comp->length))
-						{
-							// It was found in a table field
-							return(var);
-
-						} else*/ if ((var = iVariable_searchForName(thisCode, comp->line->sourceCode->data + comp->start, comp->length, comp, true))) {
-							// It was found in the global variables
-						}
-					}
-
-					if (var)
-					{
-						// Create a copy of the variable
-						if (var->varType == _VAR_TYPE_OBJECT)
-						{
-							// It's an object
-							varCopy = iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL, true);
-							if (varCopy)
-								iDatum_duplicate(&varCopy->value, cgcObjectText, -1);
-
-						} else if (var->varType == _VAR_TYPE_THISCODE) {
-							// It's a thisCode reference
-							varCopy = iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL, true);
-							if (varCopy)
-								iDatum_duplicate(&varCopy->value, cgcThisCodeText, -1);
-
-						} else {
-							// It's a traditional variable
-							varCopy = iVariable_copy(NULL, var, false);
-						}
-						varCopy->compRelated = comp;
-						return(varCopy);
-					}
-					break;
+					return(iEngine_get_variableName_fromText(thisCode, comp->line->sourceCode->data_cs8 + comp->start, comp->length, comp, tlManufactured));
 
 
 				case _ICODE_SINGLE_QUOTED_TEXT:
 				case _ICODE_DOUBLE_QUOTED_TEXT:		// It's quoted text
+
 					//////////
 					// Create and populate our output variable
 					//////
@@ -587,6 +535,82 @@ debug_nop;
 		// If we get here, failure
 		return(NULL);
 	}
+
+
+
+
+//////////
+//
+// Called to lookup the variable based on text
+//
+//////
+	SVariable* iEngine_get_variableName_fromText(SThisCode* thisCode, cs8* tcText, u32 tnTextLength, SComp* comp, bool* tlManufactured)
+	{
+		SVariable* var;
+		SVariable* varCopy;
+
+
+		//////////
+		// Are we searching variables first?
+		//////
+			if (propGet_settings_VariablesFirst(_settings))
+			{
+				// Searching variables first, field names last.
+				if ((var = iVariable_searchForName(thisCode, tcText, tnTextLength, NULL, true)))
+				{
+					// It was found in the global variables
+
+/* We do not have work areas setup yet, so we cannot search them. :-)
+				} else if (var = iWorkarea_searchFieldName(comp->line->sourceCode->data + comp->start, comp->length)) {
+					// It was found in a table field
+					return(var);*/
+				}
+
+			} else {
+				// Search field names first, variables last.
+/*				if (var = iWorkarea_searchFieldName(comp->line->sourceCode->data + comp->start, comp->length))
+				{
+					// It was found in a table field
+					return(var);
+
+				} else*/ if ((var = iVariable_searchForName(thisCode, tcText, tnTextLength, NULL, true))) {
+					// It was found in the global variables
+				}
+			}
+
+
+		//////////
+		// If we found it, make a copy
+		//////
+			if (var)
+			{
+				// Create a copy of the variable
+				if (var->varType == _VAR_TYPE_OBJECT)
+				{
+					// It's an object
+					varCopy = iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL, true);
+					if (varCopy)
+						iDatum_duplicate(&varCopy->value, cgcObjectText, -1);
+
+				} else if (var->varType == _VAR_TYPE_THISCODE) {
+					// It's a thisCode reference
+					varCopy = iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL, true);
+					if (varCopy)
+						iDatum_duplicate(&varCopy->value, cgcThisCodeText, -1);
+
+				} else {
+					// It's a traditional variable
+					varCopy = iVariable_copy(NULL, var, false);
+				}
+				varCopy->compRelated = comp;
+				return(varCopy);
+			}
+
+
+		// If we get here, failure
+		return(NULL);
+	}
+
 
 
 

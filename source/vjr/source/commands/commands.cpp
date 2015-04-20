@@ -4437,7 +4437,7 @@ debug_break;
 		// Call the common function
 		//////
 			lcResult		= NULL;
-			lnResultLength	= ifunction_dtransform_common(thisCode, &lcResult, varFormatStr->value.data_cs8, varFormatStr->value.length, &returnsParams->params[1], false);
+			lnResultLength	= ifunction_dtransform_common(thisCode, &lcResult, varFormatStr->value.data_cs8, varFormatStr->value.length, &returnsParams->params[1], true);
 
 
 		//////////
@@ -4484,6 +4484,7 @@ debug_break;
 	// Valid types are %-DdBbYyIiHhMmSsNTtJjPpAaOoL
 	//
 	// %%	-- % symbol
+	// %<	-- < symbol (allows overriding textmerge)
 	// %-	-- Current SET("MARK") symbol, typically one of [.-/].
 	// %D	-- Day of month 02
 	// %d	-- Day of month 2
@@ -4514,12 +4515,14 @@ debug_break;
 	u32 ifunction_dtransform_common(SThisCode* thisCode, s8** tcResult, cs8* tcFormatStr, s32 tnFormatStrLength, SVariable* varDatesOrDatetimes[9], bool tlTextMerge)
 	{
 		s8				c, cMark;
-		s32				lnI, lnPass, lnAllocationLength, lnOffset;
+		s32				lnI, lnJ, lnPass, lnAllocationLength, lnOffset;
 		u32				lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMilliseconds, lnJulian;
 		f32				lfJulian;
-		bool			llLocalTime;
+		bool			llLocalTime, llManufactured, llProcessed;
 		s8*				lcPtr;
 		s8*				lcResult;
+		SVariable*		varTextmerge;
+		SVariable*		varDisplay;
 		SVariable*		varMark;
 		SYSTEMTIME*		dt;
 		SYSTEMTIME		dtInfo[9];
@@ -4626,6 +4629,7 @@ debug_break;
 		//////
 			for (lnPass = 1; lnPass < 3; lnPass++)
 			{
+
 				//////////
 				// Initialize this pass
 				//////
@@ -4691,6 +4695,7 @@ debug_break;
 									//////
 										switch (c)
 										{
+											case '<':
 											case '%':
 												// %
 												if (lnPass == 1)
@@ -4699,7 +4704,7 @@ debug_break;
 													++lnAllocationLength;
 
 												} else {
-													lcResult[lnOffset] = '%';
+													lcResult[lnOffset] = c;
 													++lnOffset;
 												}
 												break;
@@ -4971,6 +4976,74 @@ debug_break;
 													++lnOffset;
 												}
 										}
+
+							} else if (tlTextMerge && c == '<') {
+								// Could be a textmerge
+								varTextmerge = NULL;
+								if (tcFormatStr[lnI] == '<')
+								{
+									// It begins with <<
+									// Search forward for the closing tag and extract the content out between
+									for (lnJ = lnI + 1; lnJ < tnFormatStrLength - 1; lnJ++)
+									{
+										// Is it >> ?
+										if (tcFormatStr[lnJ] == '>' && tcFormatStr[lnJ + 1] == '>')
+										{
+											// We've found the range
+											varTextmerge = iEngine_get_variableName_fromText(thisCode, tcFormatStr + lnI + 1, lnJ - lnI - 1, NULL, &llManufactured);
+											break;
+										}
+									}
+								}
+
+								// Did we find it?
+								llProcessed = false;
+								if (varTextmerge)
+								{
+									// Yes
+									lnI = lnJ + 2;
+
+									// Convert it for display
+									varDisplay = iVariable_convertForDisplay(thisCode, varTextmerge);
+
+									// Clean house
+									if (llManufactured)
+										iVariable_delete(thisCode, varTextmerge, true);
+
+									if (varDisplay)
+									{
+										// Perform the operation
+										llProcessed = true;
+										if (lnPass == 1)
+										{
+											// Increase our length
+											lnAllocationLength += varDisplay->value.length;
+
+										} else {
+											// Store
+											lnOffset += iifunction_dtransform_concatenate(lcResult + lnOffset, varDisplay->value.data, varDisplay->value.length);
+										}
+
+										// Delete the variable
+										iVariable_delete(thisCode, varDisplay, true);
+									}
+								}
+
+								// If we haven't processed it yet, just copy it over
+								if (!llProcessed)
+								{
+									// Copy over directly
+									if (lnPass == 1)
+									{
+										// Increase our length
+										++lnAllocationLength;
+
+									} else {
+										// Store
+										lcResult[lnOffset] = c;
+										++lnOffset;
+									}
+								}
 
 							} else {
 								// Copy over directly

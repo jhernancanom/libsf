@@ -177,6 +177,7 @@
 	bool					iEngine_executeStandaloneCommand		(SThisCode* thisCode, SLine* line);
 	SComp*					iEngine_parseSourceCodeLine				(SThisCode* thisCode, SLine* line);
 	SVariable*				iEngine_get_variableName_fromComponent	(SThisCode* thisCode, SComp* comp, bool* tlManufactured);
+	SVariable*				iEngine_get_variableName_fromText		(SThisCode* thisCode, cs8* tcText, u32 tnTextLength, SComp* comp, bool* tlManufactured);
 	SVariable*				iEngine_get_contiguousComponents		(SThisCode* thisCode, SComp* comp, bool* tlManufactured, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount);
 	SVariable*				iEngine_get_functionResult				(SThisCode* thisCode, SComp* comp);
 	void					iEngine_executeSetter					(SThisCode* thisCode, cs8* name, SVariable* varOld, SVariable* varNew);

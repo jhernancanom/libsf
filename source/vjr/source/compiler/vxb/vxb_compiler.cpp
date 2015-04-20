@@ -5111,7 +5111,7 @@ debug_break;
 //        rather than a name-driven model.  However, names are still used nearly everywhere. :-)
 //
 //////
-	SVariable* iVariable_searchForName(SThisCode* thisCode, s8* tcVarName, u32 tnVarNameLength, SComp* comp, bool tlCreateAsReference)
+	SVariable* iVariable_searchForName(SThisCode* thisCode, cs8* tcVarName, u32 tnVarNameLength, SComp* comp, bool tlCreateAsReference)
 	{
 		SThisCode*	thisCodeSearch;
 		SVariable*	var;
@@ -5238,7 +5238,7 @@ debug_break;
 			return(NULL);
 	}
 
-	SVariable* iiVariable_searchForName_variables(SThisCode* thisCode, SVariable* varRoot, s8* tcVarName, u32 tnVarNameLength, SComp* comp, bool tlCreateAsReference)
+	SVariable* iiVariable_searchForName_variables(SThisCode* thisCode, SVariable* varRoot, cs8* tcVarName, u32 tnVarNameLength, SComp* comp, bool tlCreateAsReference)
 	{
 		s32			lnDepth;
 		SComp*		compNext1;
@@ -5297,7 +5297,7 @@ debug_break;
 		return(var);
 	}
 
-	SVariable* iiVariable_searchForName_fields(SThisCode* thisCode, s8* tcVarName, u32 tnVarNameLength, SComp* comp, bool tlCreateAsReference)
+	SVariable* iiVariable_searchForName_fields(SThisCode* thisCode, cs8* tcVarName, u32 tnVarNameLength, SComp* comp, bool tlCreateAsReference)
 	{
 		return(iDbf_getField_byName2_asVariable(thisCode, iDbf_get_workArea_current_wa(thisCode, cgcDbfKeyName), (u8*)tcVarName, tnVarNameLength, tlCreateAsReference));
 	}
