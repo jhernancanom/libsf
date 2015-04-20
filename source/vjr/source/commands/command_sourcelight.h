@@ -834,6 +834,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_textmerge[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_transform[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}

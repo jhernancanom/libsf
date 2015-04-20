@@ -4394,14 +4394,11 @@ debug_break;
 		SVariable* varFormatStr = returnsParams->params[0];
 
 		s32			lnI, lnResultLength;
+		SDatum		leftDelim, rightDelim;
 		s8*			lcResult;
 		SVariable*	param;
 		SVariable*	result;
 
-
-// Temporarily disabled
-// iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-// return(NULL);
 
 		//////////
 		// Parameters 1 must be present and character
@@ -4434,24 +4431,26 @@ debug_break;
 
 
 		//////////
+		// Setup delimiters
+		//////
+			leftDelim.data_cs8	= &cgc_textmerge_leftDelim[0];
+			leftDelim.length	= sizeof(cgc_textmerge_leftDelim) - 1;
+			rightDelim.data_cs8	= &cgc_textmerge_rightDelim[0];
+			rightDelim.length	= sizeof(cgc_textmerge_rightDelim) - 1;
+
+
+		//////////
 		// Call the common function
 		//////
 			lcResult		= NULL;
-			lnResultLength	= ifunction_dtransform_common(thisCode, &lcResult, varFormatStr->value.data_cs8, varFormatStr->value.length, &returnsParams->params[1], true);
+			lnResultLength	= ifunction_dtransform_textmerge_common(thisCode, &lcResult, varFormatStr->value.data_cs8, varFormatStr->value.length, &leftDelim, &rightDelim, &returnsParams->params[1], true, true);
 
 
 		//////////
 		// Create our result
 		//////
-			if (lnResultLength != 0 && lcResult)		result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, (cs8*)lcResult, lnResultLength, false);
+			if (lnResultLength != 0 && lcResult)		result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, (cs8*)lcResult, lnResultLength, true);
 			else										result = NULL;
-
-
-		//////////
-		// Release the temporary buffer
-		//////
-			if (lcResult)
-				free(lcResult);
 
 
 		//////////
@@ -4468,7 +4467,7 @@ debug_break;
 
 	}
 
-	s32 iifunction_dtransform_concatenate(s8* tcDst, s8* tcSrc, s32 tnLength)
+	s32 iifunction_append_text(s8* tcDst, s8* tcSrc, s32 tnLength)
 	{
 		// Fixup length (if need be)
 		if (tnLength < 0)
@@ -4512,7 +4511,8 @@ debug_break;
 	// %O	-- Day of month January, February, etc...
 	// %o	-- Day of month Jan, Feb, etc...
 	// %L	-- Local or System time based on SET("TIME") setting
-	u32 ifunction_dtransform_common(SThisCode* thisCode, s8** tcResult, cs8* tcFormatStr, s32 tnFormatStrLength, SVariable* varDatesOrDatetimes[9], bool tlTextMerge)
+	//
+	u32 ifunction_dtransform_textmerge_common(SThisCode* thisCode, s8** tcResult, cs8* tcFormatStr, s32 tnFormatStrLength, SDatum* leftTextmergeDelim, SDatum* rightTextmergeDelim, SVariable* varDatesOrDatetimes[9], bool tlDateCodes, bool tlTextMerge)
 	{
 		s8				c, cMark;
 		s32				lnI, lnJ, lnPass, lnAllocationLength, lnOffset;
@@ -4672,7 +4672,7 @@ debug_break;
 						/////////
 						// Examine the character:
 						//////
-							if (c == '%')
+							if (tlDateCodes && c == '%')
 							{
 								/////////
 								// Examine the character after %:
@@ -4733,7 +4733,7 @@ debug_break;
 												} else {
 													// Compute and store
 													sprintf(buffer, "%02u", dt->wDay);
-													lnOffset += iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, 2);
+													lnOffset += iifunction_append_text(lcResult + lnOffset, buffer, 2);
 												}
 												break;
 
@@ -4741,7 +4741,7 @@ debug_break;
 												// Day 2
 												sprintf(buffer, "%u\0", dt->wDay);
 												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
-												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, -1);
+												else					lnOffset			+= iifunction_append_text(lcResult + lnOffset, buffer, -1);
 												break;
 
 											case 'B':	// Month 04
@@ -4753,14 +4753,14 @@ debug_break;
 												} else {
 													// Compute and store
 													sprintf(buffer, "%02u", dt->wMonth);
-													lnOffset += iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, 2);
+													lnOffset += iifunction_append_text(lcResult + lnOffset, buffer, 2);
 												}
 												break;
 
 											case 'b':	// Month 4
 												sprintf(buffer, "%u\0", dt->wMonth);
 												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
-												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, -1);
+												else					lnOffset			+= iifunction_append_text(lcResult + lnOffset, buffer, -1);
 												break;
 
 											case 'Y':	// Year 2015
@@ -4772,7 +4772,7 @@ debug_break;
 												} else {
 													// Compute and store
 													sprintf(buffer, "%04u", dt->wYear);
-													lnOffset += iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, 4);
+													lnOffset += iifunction_append_text(lcResult + lnOffset, buffer, 4);
 												}
 												break;
 
@@ -4785,7 +4785,7 @@ debug_break;
 												} else {
 													// Compute and store
 													sprintf(buffer, "%02u", (dt->wYear % 100));
-													lnOffset += iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, 2);
+													lnOffset += iifunction_append_text(lcResult + lnOffset, buffer, 2);
 												}
 												break;
 
@@ -4793,14 +4793,14 @@ debug_break;
 											case 'H':	// Hour 14
 												sprintf(buffer, "%02u\0", iTime_adjustHour_toAMPM(dt->wHour, (c == 'I')));
 												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
-												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, -1);
+												else					lnOffset			+= iifunction_append_text(lcResult + lnOffset, buffer, -1);
 												break;
 
 											case 'i':	// Hour 2
 											case 'h':	// Hour 14
 												sprintf(buffer, "%u\0", iTime_adjustHour_toAMPM(dt->wHour, (c == 'i')));
 												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
-												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, -1);
+												else					lnOffset			+= iifunction_append_text(lcResult + lnOffset, buffer, -1);
 												break;
 
 											case 'M':
@@ -4813,7 +4813,7 @@ debug_break;
 												} else {
 													// Compute and store
 													sprintf(buffer, "%02u", dt->wMinute);
-													lnOffset += iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, 2);
+													lnOffset += iifunction_append_text(lcResult + lnOffset, buffer, 2);
 												}
 												break;
 
@@ -4821,7 +4821,7 @@ debug_break;
 												// Minute 5
 												sprintf(buffer, "%u\0", dt->wMinute);
 												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
-												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, -1);
+												else					lnOffset			+= iifunction_append_text(lcResult + lnOffset, buffer, -1);
 												break;
 
 											case 'S':
@@ -4834,7 +4834,7 @@ debug_break;
 												} else {
 													// Compute and store
 													sprintf(buffer, "%02u", dt->wSecond);
-													lnOffset += iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, 2);
+													lnOffset += iifunction_append_text(lcResult + lnOffset, buffer, 2);
 												}
 												break;
 
@@ -4842,7 +4842,7 @@ debug_break;
 												// Seconds 9
 												sprintf(buffer, "%u\0", dt->wSecond);
 												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
-												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, -1);
+												else					lnOffset			+= iifunction_append_text(lcResult + lnOffset, buffer, -1);
 												break;
 
 											case 'N':
@@ -4855,7 +4855,7 @@ debug_break;
 												} else {
 													// Compute and store
 													sprintf(buffer, "%03u", dt->wMilliseconds);
-													lnOffset += iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, 3);
+													lnOffset += iifunction_append_text(lcResult + lnOffset, buffer, 3);
 												}
 												break;
 
@@ -4869,7 +4869,7 @@ debug_break;
 												} else {
 													// Compute and store
 													sprintf(buffer, "%04u%02u%02u%02u%02u%02u", dt->wYear, dt->wMonth, dt->wDay, dt->wHour, dt->wMinute, dt->wSecond);
-													lnOffset += iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, 14);
+													lnOffset += iifunction_append_text(lcResult + lnOffset, buffer, 14);
 												}
 												break;
 
@@ -4883,7 +4883,7 @@ debug_break;
 												} else {
 													// Compute and store
 													sprintf(buffer, "%04u%02u%02u", dt->wYear, dt->wMonth, dt->wDay);
-													lnOffset += iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, 8);
+													lnOffset += iifunction_append_text(lcResult + lnOffset, buffer, 8);
 												}
 												break;
 
@@ -4892,14 +4892,14 @@ debug_break;
 												lnJulian = (u32)iiDateMath_extract_Julian_from_YyyyMmDd(&lfJulian, dt->wYear, dt->wMonth, dt->wDay);
 												sprintf(buffer, "%u", lnJulian);
 												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
-												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, -1);
+												else					lnOffset			+= iifunction_append_text(lcResult + lnOffset, buffer, -1);
 												break;
 
 											case 'j':
 												// Day number into year
 												sprintf(buffer, "%u\0", iDateMath_getDayNumberIntoYear(dt->wYear, dt->wMonth, dt->wDay));
 												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
-												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, buffer, -1);
+												else					lnOffset			+= iifunction_append_text(lcResult + lnOffset, buffer, -1);
 												break;
 
 											case 'P':
@@ -4912,7 +4912,7 @@ debug_break;
 												} else {
 													// Compute and store
 													lcPtr		= (s8*)iTime_amOrPm(dt->wHour, cgc_am_uppercase, cgc_pm_uppercase);
-													lnOffset	+= iifunction_dtransform_concatenate(lcResult + lnOffset, lcPtr, 2);
+													lnOffset	+= iifunction_append_text(lcResult + lnOffset, lcPtr, 2);
 												}
 												break;
 
@@ -4926,28 +4926,28 @@ debug_break;
 												} else {
 													// Compute and store
 													lcPtr		= (s8*)iTime_amOrPm(dt->wHour, cgc_am_lowercase, cgc_pm_lowercase);
-													lnOffset	+= iifunction_dtransform_concatenate(lcResult + lnOffset, lcPtr, 2);
+													lnOffset	+= iifunction_append_text(lcResult + lnOffset, lcPtr, 2);
 												}
 												break;
 
 											case 'A':	// Day of week
 												if (lnPass == 1)		lnAllocationLength	+= strlen(cgcDayOfWeekNames[dt->wDayOfWeek]);
-												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, cgcDayOfWeekNames[dt->wDayOfWeek], -1);
+												else					lnOffset			+= iifunction_append_text(lcResult + lnOffset, cgcDayOfWeekNames[dt->wDayOfWeek], -1);
 												break;
 
 											case 'a':	// Day of week short
 												if (lnPass == 1)		lnAllocationLength	+= 3;
-												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, cgcDayOfWeekNamesShort[dt->wDayOfWeek], 3);
+												else					lnOffset			+= iifunction_append_text(lcResult + lnOffset, cgcDayOfWeekNamesShort[dt->wDayOfWeek], 3);
 												break;
 
 											case 'O':	// Cmonth
 												if (lnPass == 1)		lnAllocationLength	+= strlen(cgcMonthNames[dt->wMonth - 1]);
-												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, cgcMonthNames[dt->wMonth - 1], -1);
+												else					lnOffset			+= iifunction_append_text(lcResult + lnOffset, cgcMonthNames[dt->wMonth - 1], -1);
 												break;
 
 											case 'o':	// Cmonth short
 												if (lnPass == 1)		lnAllocationLength	+= 3;
-												else					lnOffset			+= iifunction_dtransform_concatenate(lcResult + lnOffset, cgcMonthNamesShort[dt->wMonth - 1], 3);
+												else					lnOffset			+= iifunction_append_text(lcResult + lnOffset, cgcMonthNamesShort[dt->wMonth - 1], 3);
 												break;
 
 											case 'L':
@@ -4960,7 +4960,7 @@ debug_break;
 												} else {
 													// Compute and store
 													lcPtr		= (s8*)((llLocalTime) ? cgc_local : cgc_system);
-													lnOffset	+= iifunction_dtransform_concatenate(lcResult + lnOffset, lcPtr, -1);
+													lnOffset	+= iifunction_append_text(lcResult + lnOffset, lcPtr, -1);
 												}
 												break;
 
@@ -4977,7 +4977,9 @@ debug_break;
 												}
 										}
 
-							} else if (tlTextMerge && c == '<') {
+// TOOD:  Working here ... need to not look at hard-coded << and >>, but rather to leftTextmergeDelim and rightTextmergeDelim
+// TOOD:  Compile broken on purpose to drive attention here:  Needs "tlTextMerge" not "tlText Merge" on next line
+							} else if (tlText Merge && c == '<') {
 								// Could be a textmerge
 								varTextmerge = NULL;
 								if (tcFormatStr[lnI] == '<')
@@ -5021,7 +5023,7 @@ debug_break;
 
 										} else {
 											// Store
-											lnOffset += iifunction_dtransform_concatenate(lcResult + lnOffset, varDisplay->value.data, varDisplay->value.length);
+											lnOffset += iifunction_append_text(lcResult + lnOffset, varDisplay->value.data, varDisplay->value.length);
 										}
 
 										// Delete the variable
@@ -12003,6 +12005,155 @@ debug_break;
 		/////
 			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_LOGICAL, (cs8*)((llValid) ? &_LOGICAL_TRUE : &_LOGICAL_FALSE), 1, true);
 			return(result);
+	}
+
+
+
+
+//////////
+//
+// Function: TEXTMERGE()
+// Receives an input string, and processes into it encoded variables.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.20.2015
+//////
+// Change log:
+//     Apr.20.2015 - Initial creation
+//////
+// Parameters:
+//     pFormat		-- Character, the format codes
+//     pRecursive	-- (Optional) Logical, should it process recursively?
+//     pLeftDelim	-- (Optional) Character, the left-side delimiter overriding the default <<
+//     pRightDelim	-- (Optional) Character, the right-side delimiter overriding the default >>
+//
+//////
+// Returns:
+//    Character		-- The string after text merging
+//////
+	SVariable* function_textmerge(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* varFormatStr		= returnsParams->params[0];
+		SVariable* varRecursive		= returnsParams->params[1];
+		SVariable* varLeftDelim		= returnsParams->params[2];
+		SVariable* varRightDelim	= returnsParams->params[3];
+
+		s32			lnResultLength;
+		bool		llRecursive;
+		SDatum		leftDelim;
+		SDatum		rightDelim;
+		s8*			lcResult;
+		SVariable*	result;
+		bool		error;
+		u32			errorNum;
+
+
+		//////////
+		// Parameters 1 must be present and character
+		//////
+			if (!iVariable_isValid(varFormatStr) || !iVariable_isTypeCharacter(varFormatStr))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varFormatStr), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// If present, parameter 2 must be logical
+		//////
+			if (varRecursive)
+			{
+				// Logical
+				if (!iVariable_isValid(varRecursive) || !iVariable_isFundamentalTypeLogical(varRecursive))
+				{
+					iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varRecursive), false);
+					return(NULL);
+				}
+
+				// Grab its value
+				llRecursive = iiVariable_getAs_bool(thisCode, varRecursive, false, &error, &errorNum);
+				if (error)
+				{
+					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varRecursive), false);
+					return(NULL);
+				}
+
+			} else {
+				// Not recursive
+				llRecursive = false;
+			}
+
+
+		//////////
+		// If present, parameters 3 and 4 must be character
+		//////
+			if (varLeftDelim)
+			{
+				// Character
+				if (!iVariable_isValid(varLeftDelim) || !iVariable_isTypeCharacter(varLeftDelim))
+				{
+					iError_reportByNumber(thisCode, _ERROR_P3_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varLeftDelim), false);
+					return(NULL);
+				}
+
+				// Store the delimiter
+				leftDelim.data_cs8	= varLeftDelim->value.data_cs8;
+				leftDelim.length	= varLeftDelim->value.length;
+
+			} else {
+				// Use the default format
+				leftDelim.data_cs8	= &cgc_textmerge_leftDelim[0];
+				leftDelim.length	= sizeof(cgc_textmerge_leftDelim) - 1;
+			}
+
+			if (varRightDelim)
+			{
+				// Character
+				if (!iVariable_isValid(varRightDelim) || !iVariable_isTypeCharacter(varRightDelim))
+				{
+					iError_reportByNumber(thisCode, _ERROR_P3_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varRightDelim), false);
+					return(NULL);
+				}
+
+				// Store the delimiter
+				rightDelim.data_cs8	= varRightDelim->value.data_cs8;
+				rightDelim.length	= varRightDelim->value.length;
+
+			} else {
+				// Use the default format
+				rightDelim.data_cs8	= &cgc_textmerge_rightDelim[0];
+				rightDelim.length	= sizeof(cgc_textmerge_rightDelim) - 1;
+			}
+
+
+		//////////
+		// Call the common function
+		//////
+			lcResult		= NULL;
+			lnResultLength	= ifunction_dtransform_textmerge_common(thisCode, &lcResult, varFormatStr->value.data_cs8, varFormatStr->value.length, &leftDelim, &rightDelim, &returnsParams->params[1], false, true);
+
+
+		//////////
+		// Create our result
+		//////
+			if (lnResultLength != 0 && lcResult)		result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, (cs8*)lcResult, lnResultLength, true);
+			else										result = NULL;
+
+
+		//////////
+		// Are we good?
+		//////
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varFormatStr), false);
+
+
+		//////////
+		// Indicate our result
+		//////
+			return(result);		
+
 	}
 
 
