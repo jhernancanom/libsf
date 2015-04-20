@@ -4394,7 +4394,6 @@ debug_break;
 		SVariable* varFormatStr = returnsParams->params[0];
 
 		s32			lnI, lnResultLength;
-		SDatum		leftDelim, rightDelim;
 		s8*			lcResult;
 		SVariable*	param;
 		SVariable*	result;
@@ -4431,19 +4430,10 @@ debug_break;
 
 
 		//////////
-		// Setup delimiters
-		//////
-			leftDelim.data_cs8	= &cgc_textmerge_leftDelim[0];
-			leftDelim.length	= sizeof(cgc_textmerge_leftDelim) - 1;
-			rightDelim.data_cs8	= &cgc_textmerge_rightDelim[0];
-			rightDelim.length	= sizeof(cgc_textmerge_rightDelim) - 1;
-
-
-		//////////
 		// Call the common function
 		//////
 			lcResult		= NULL;
-			lnResultLength	= ifunction_dtransform_textmerge_common(thisCode, &lcResult, varFormatStr->value.data_cs8, varFormatStr->value.length, &leftDelim, &rightDelim, &returnsParams->params[1], true, true);
+			lnResultLength	= ifunction_dtransform_textmerge_common(thisCode, &lcResult, varFormatStr->value.data_cs8, varFormatStr->value.length, NULL, NULL, &returnsParams->params[1], true, true);
 
 
 		//////////
@@ -4521,6 +4511,8 @@ debug_break;
 		bool			llLocalTime, llManufactured, llProcessed;
 		s8*				lcPtr;
 		s8*				lcResult;
+		SDatum			leftDelim;
+		SDatum			rightDelim;
 		SVariable*		varTextmerge;
 		SVariable*		varDisplay;
 		SVariable*		varMark;
@@ -4531,44 +4523,48 @@ debug_break;
 
 
 		//////////
-		// Prepare datetime info
+		// Prepare datetime info for dtransform()
 		//////
-			for (lnI = 0; varDatesOrDatetimes[lnI] && lnI < 9; lnI++)
+			lnI = 0;
+			if (tlDateCodes)
 			{
+				for ( ; varDatesOrDatetimes[lnI] && lnI < 9; lnI++)
+				{
 
-				//////////
-				// Grab year, month, day, time from date/datetime
-				//////
-					if (iVariable_isTypeDatetime(varDatesOrDatetimes[lnI]))
-					{
-						// Datetime
-						iiDateMath_extract_YyyyMmDd_from_Julian	(varDatesOrDatetimes[lnI]->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-						iiDateMath_extract_HhMmSsMss_from_seconds(varDatesOrDatetimes[lnI]->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMilliseconds);
+					//////////
+					// Grab year, month, day, time from date/datetime
+					//////
+						if (iVariable_isTypeDatetime(varDatesOrDatetimes[lnI]))
+						{
+							// Datetime
+							iiDateMath_extract_YyyyMmDd_from_Julian	(varDatesOrDatetimes[lnI]->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+							iiDateMath_extract_HhMmSsMss_from_seconds(varDatesOrDatetimes[lnI]->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMilliseconds);
 
-					} else if (iVariable_isTypeDate(varDatesOrDatetimes[lnI])) {
-						// Date
-						iiDateMath_extract_YyyyMmDd_from_YYYYMMDD (varDatesOrDatetimes[lnI]->value.data_u8, &lnYear, &lnMonth, &lnDay);
+						} else if (iVariable_isTypeDate(varDatesOrDatetimes[lnI])) {
+							// Date
+							iiDateMath_extract_YyyyMmDd_from_YYYYMMDD (varDatesOrDatetimes[lnI]->value.data_u8, &lnYear, &lnMonth, &lnDay);
 
-						// 00:00:00.000
-						lnHour = lnMinute = lnSecond = lnMilliseconds = 0;
+							// 00:00:00.000
+							lnHour = lnMinute = lnSecond = lnMilliseconds = 0;
 
-					} else {
-						iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varDatesOrDatetimes[lnI]), false);
-						return(NULL);
-					}
+						} else {
+							iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varDatesOrDatetimes[lnI]), false);
+							return(NULL);
+						}
 
 
-				//////////
-				// Store formally
-				//////
-					dtInfo[lnI].wYear			= lnYear;
-					dtInfo[lnI].wMonth			= lnMonth;
-					dtInfo[lnI].wDay			= lnDay;
-					dtInfo[lnI].wHour			= lnHour;
-					dtInfo[lnI].wMinute			= lnMinute;
-					dtInfo[lnI].wSecond			= lnSecond;
-					dtInfo[lnI].wMilliseconds	= lnMilliseconds;
-					dtInfo[lnI].wDayOfWeek		= ifunction_dow_common(lnYear, lnMonth, lnDay);
+					//////////
+					// Store formally
+					//////
+						dtInfo[lnI].wYear			= lnYear;
+						dtInfo[lnI].wMonth			= lnMonth;
+						dtInfo[lnI].wDay			= lnDay;
+						dtInfo[lnI].wHour			= lnHour;
+						dtInfo[lnI].wMinute			= lnMinute;
+						dtInfo[lnI].wSecond			= lnSecond;
+						dtInfo[lnI].wMilliseconds	= lnMilliseconds;
+						dtInfo[lnI].wDayOfWeek		= ifunction_dow_common(lnYear, lnMonth, lnDay);
+				}
 			}
 
 
@@ -4578,8 +4574,28 @@ debug_break;
 			llLocalTime = propGet_settings_TimeLocal(_settings);
 			if (llLocalTime)		GetLocalTime(&dtFill);
 			else					GetSystemTime(&dtFill);
+
+			// Every other date detaults to current date and time
 			for ( ; lnI < 9; lnI++)
 				memcpy(&dtInfo[lnI], &dtFill, sizeof(dtFill));
+
+
+		//////////
+		// Fill in missing delimiters
+		//////
+			if (!leftTextmergeDelim)
+			{
+				leftDelim.data_cs8		= &cgc_textmerge_leftDelim[0];
+				leftDelim.length		= sizeof(cgc_textmerge_leftDelim) - 1;
+				leftTextmergeDelim		= &leftDelim;
+			}
+
+			if (!rightTextmergeDelim)
+			{
+				rightDelim.data_cs8		= &cgc_textmerge_rightDelim[0];
+				rightDelim.length		= sizeof(cgc_textmerge_rightDelim) - 1;
+				rightTextmergeDelim		= &rightDelim;
+			}
 
 
 		//////////
@@ -4666,7 +4682,7 @@ debug_break;
 						//////////
 						// Grab char
 						//////
-							c = tcFormatStr[lnI++];
+							c = tcFormatStr[lnI];
 
 
 						/////////
@@ -4677,16 +4693,18 @@ debug_break;
 								/////////
 								// Examine the character after %:
 								//////
-									c = tcFormatStr[lnI++];
+									c = tcFormatStr[lnI + 1];
 									if (c >= '0' && c <= '9')
 									{
 										// %#
 										dt	= &dtInfo[(s32)(c - '0') - 1];
 										c	= tcFormatStr[lnI++];
+										lnI	+= 2;
 
 									} else {
 										// %x
 										dt	= &dtInfo[0];
+										++lnI;
 									}
 
 
@@ -4977,24 +4995,17 @@ debug_break;
 												}
 										}
 
-// TOOD:  Working here ... need to not look at hard-coded << and >>, but rather to leftTextmergeDelim and rightTextmergeDelim
-// TOOD:  Compile broken on purpose to drive attention here:  Needs "tlTextMerge" not "tlText Merge" on next line
-							} else if (tlText Merge && c == '<') {
-								// Could be a textmerge
-								varTextmerge = NULL;
-								if (tcFormatStr[lnI] == '<')
+							} else if (tlTextMerge && lnI + leftTextmergeDelim->length <= tnFormatStrLength && iDatum_compare(leftTextmergeDelim, tcFormatStr + lnI, leftTextmergeDelim->length) == 0) {
+								// It's the start of a text merge
+								// Search forward for the closing tag and extract the content out between
+								for (lnJ = lnI + leftTextmergeDelim->length, varTextmerge = NULL; lnJ <= tnFormatStrLength - rightTextmergeDelim->length; lnJ++)
 								{
-									// It begins with <<
-									// Search forward for the closing tag and extract the content out between
-									for (lnJ = lnI + 1; lnJ < tnFormatStrLength - 1; lnJ++)
+									// Is it the right delimiter?
+									if (iDatum_compare(rightTextmergeDelim, tcFormatStr + lnJ, rightTextmergeDelim->length) == 0)
 									{
-										// Is it >> ?
-										if (tcFormatStr[lnJ] == '>' && tcFormatStr[lnJ + 1] == '>')
-										{
-											// We've found the range
-											varTextmerge = iEngine_get_variableName_fromText(thisCode, tcFormatStr + lnI + 1, lnJ - lnI - 1, NULL, &llManufactured);
-											break;
-										}
+										// We've found the range
+										varTextmerge = iEngine_get_variableName_fromText(thisCode, tcFormatStr + lnI + leftTextmergeDelim->length, lnJ - lnI - rightTextmergeDelim->length, NULL, &llManufactured);
+										break;
 									}
 								}
 
@@ -5003,7 +5014,7 @@ debug_break;
 								if (varTextmerge)
 								{
 									// Yes
-									lnI = lnJ + 2;
+									lnI = lnJ + rightTextmergeDelim->length;
 
 									// Convert it for display
 									varDisplay = iVariable_convertForDisplay(thisCode, varTextmerge);
@@ -5045,6 +5056,9 @@ debug_break;
 										lcResult[lnOffset] = c;
 										++lnOffset;
 									}
+
+									// Move past this character
+									++lnI;
 								}
 
 							} else {
@@ -5059,6 +5073,9 @@ debug_break;
 									lcResult[lnOffset] = c;
 									++lnOffset;
 								}
+
+								// Move past this character
+								++lnI;
 							}
 
 					}

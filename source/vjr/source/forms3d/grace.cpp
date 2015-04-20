@@ -588,6 +588,7 @@
 		// Render if we have something to render
 		if (glGraceInitialized && gWinJDebi && gWinJDebi->obj)
 		{
+
 			//////////
 			// We will be building centered around the origin
 			//////
@@ -614,6 +615,7 @@
 				}
 				// End
 				iGrace_renderEnd();
+
 		}
 	}
 
