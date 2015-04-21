@@ -215,7 +215,7 @@ struct SReturnsParams;
 	SVariable*			ifunction_day_month_year_common				(SThisCode* thisCode, SVariable* varParam, u32 tnFunctionType);
 	SVariable*			function_dmy		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			ifunction_dtoc_common						(SThisCode* thisCode, SVariable* varParam, u32 tnFunctionType);
-	SVariable*			function_dow		/* Hernan Canon */		(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_dow		/* Hernan Cano */		(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_dtoc		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_dtor		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_dtos		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -313,7 +313,7 @@ struct SReturnsParams;
 	SVariable*			function_tan		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function__test								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_textmerge							(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_time								(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_time		/* Hernan Cano */		(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_transform							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_ttoc		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_ttod		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -448,7 +448,7 @@ struct SReturnsParams;
 		{	_ICODE_DATETIME,		1,			(uptr)&function_datetime,		0,				7,				&gsSourceLight_datetime[0]		},
 		{	_ICODE_DAY,				1,			(uptr)&function_day,			0,				1,				&gsSourceLight_day[0]			},	// DAY() by Stefano D'Amico, VJr 0.57, Apr.04.2015
 		{	_ICODE_DMY,				1,			(uptr)&function_dmy,			0,				1,				&gsSourceLight_dmy[0]			},	// DMY() by Stefano D'Amico, VJr 0.57, Apr.07.2015
-		{	_ICODE_DOW,				1,			(uptr)&function_dow,			0,				2,				&gsSourceLight_dow[0]			},	// DOW() by Hernan Canon, VJr 0.75, Apr.20.2015
+		{	_ICODE_DOW,				1,			(uptr)&function_dow,			0,				2,				&gsSourceLight_dow[0]			},	// DOW() by Hernan Cano, VJr 0.75, Apr.20.2015
 		{	_ICODE_DTOC,			1,			(uptr)&function_dtoc,			0,				2,				&gsSourceLight_dtoc[0]			},	// DTOC() by Stefano D'Amico, VJr 0.57, Apr.07.2015
 		{	_ICODE_DTOR,			1,			(uptr)&function_dtor,			1,				1,				&gsSourceLight_dtor[0]			},	// DTOR() by Stefano D'Amico, VJr 0.56, Mar.16.2015
 		{	_ICODE_DTOS,			1,			(uptr)&function_dtos,			0,				1,				&gsSourceLight_dtos[0]			},	// DTOS() by Stefano D'Amico, VJr 0.57, Apr.07.2015
@@ -533,7 +533,7 @@ struct SReturnsParams;
 		{	_ICODE_TAN,				1,			(uptr)&function_tan,			1,				1,				&gsSourceLight_tan[0]			},	// TAN() by Stefano D'Amico, VJr 0.56, Mar.19.2015
 		{	_ICODE__TEST,			1,			(uptr)&function__test,			1,				1,				NULL							},
 		{	_ICODE_TEXTMERGE,		1,			(uptr)&function_textmerge,		1,				4,				&gsSourceLight_textmerge[0]		},
-		{	_ICODE_TIME,			1,			(uptr)&function_time,			0,				2,				&gsSourceLight_time[0]			},
+		{	_ICODE_TIME,			1,			(uptr)&function_time,			0,				2,				&gsSourceLight_time[0]			},	// TIME() by Hernan Cano, VJr 0.57, Apr.20.2015
 		{	_ICODE_TRANSFORM,		1,			(uptr)&function_transform,		1,				2,				&gsSourceLight_transform[0]		},
 		{	_ICODE_TTOC,			1,			(uptr)&function_ttoc,			1,				2,				&gsSourceLight_ttoc[0]			},	// TTOC() by Stefano D'Amico, VJr 0.57, Apr.07.2015
 		{	_ICODE_TTOD,			1,			(uptr)&function_ttod,			1,				1,				&gsSourceLight_ttod[0]			},	// TTOD() by Stefano D'Amico, VJr 0.57, Apr.07.2015

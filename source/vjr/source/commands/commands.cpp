@@ -4022,10 +4022,10 @@ debug_break;
 //////
 // Version 0.57????????????????????????????????
 // Last update:
-//     2015.04.06
+//     Apr.20.2015
 //////
 // Change log:
-//     2015.04.06 - Initial creation by Hernan Cano M
+//     Apr.20.2015 - Initial creation by Hernan Cano
 //////
 // Parameters:
 //     p1			-- (optional) Date or DateTime
@@ -12354,10 +12354,10 @@ debug_break;
 //////
 // Version 0.57????????????????????????????????
 // Last update:
-//     2015.04.06
+//     Apr.20.2015
 //////
 // Change log:
-//     2015.04.06 - Initial creation by Hernan Cano M
+//     Apr.20.2015 - Initial creation by Hernan Cano
 //////
 // Parameters:
 //     pDatetime	-- (optional) Datetime, any value, if they want the time from that datetime
