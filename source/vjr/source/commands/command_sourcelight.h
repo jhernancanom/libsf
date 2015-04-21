@@ -429,6 +429,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_dow[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_dtoc[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
@@ -835,6 +840,11 @@
 	};
 
 	SSourceLightData gsSourceLight_textmerge[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_time[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};

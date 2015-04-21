@@ -2279,6 +2279,65 @@
 //    ? CDOW(dt)		&& Displays Monday
 //    ? CDOW()          && Displays current date's character day of week
 //////
+	SVariable* function_cdow(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* varParam = returnsParams->params[0];
+		
+		u32			lnYear, lnMonth, lnDay;
+		s8			lnDow;
+		SYSTEMTIME	lst;
+		SVariable*	result;
+
+
+		//////////
+		// If provided, parameter 1 must be date or datetime
+		//////
+			if (varParam)
+			{
+// TODO:  Must also support DATETIMEX at some point
+				if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
+				{
+					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
+					return(NULL);
+				}
+
+			//////////
+			// Grab year, month, day from datetime or date
+			//////
+				if (iVariable_isTypeDatetime(varParam))			iiDateMath_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+				else /* date */									iiDateMath_extract_YyyyMmDd_from_YYYYMMDD	(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+
+			} else {
+				// Use the current date
+				if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
+				else				GetLocalTime(&lst);
+				lnYear	= lst.wYear;
+				lnMonth	= lst.wMonth;
+				lnDay	= lst.wDay;
+			}
+
+
+		//////////
+		// Compute the day of week
+		//////
+			lnDow	= ifunction_dow_common(lnYear, lnMonth, lnDay);
+
+
+		//////////
+		// Create our result
+		//////
+			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, (cs8*)cgcDayOfWeekNames[lnDow], (u32)strlen(cgcDayOfWeekNames[lnDow]), false);
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
+
+
+		//////////
+		// Indicate our result
+		//////
+			return(result);
+
+	}
+
 	u32	ifunction_dow_common(u32 tnYear, u32 tnMonth, u32 tnDay)
 	{
 		u32			lnYear, lnDow;
@@ -2310,65 +2369,6 @@
 		// Result the day of week
 		//////
 			return(lnDow);
-
-	}
-
-	SVariable* function_cdow(SThisCode* thisCode, SReturnsParams* returnsParams)
-	{
-		SVariable* varParam = returnsParams->params[0];
-		
-		u32			lnYear, lnMonth, lnDay;
-		s8			lnDow;
-		SYSTEMTIME	lst;
-		SVariable*	result;
-
-
-		//////////
-		// If provided, parameter 1 must be date or datetime
-		//////
-			if (varParam)
-			{
-// TODO:  Must also support DATETIMEX at some point
-				if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
-				{
-					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
-					return(NULL);
-				}
-
-			//////////
-			// Grab year, month, day from datetime or date
-			//////
-				if (iVariable_isTypeDatetime(varParam))			iiDateMath_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-				else /* date */									iiDateMath_extract_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
-
-			} else {
-				// Use the current date
-				if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
-				else				GetLocalTime(&lst);
-				lnYear	= lst.wYear;
-				lnMonth	= lst.wMonth;
-				lnDay	= lst.wDay;
-			}
-
-
-		//////////
-		// Compute the day of week
-		//////
-			lnDow	= ifunction_dow_common(lnYear, lnMonth, lnDay);
-
-
-		//////////
-		// Create our result
-		//////
-			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, (cs8*)cgcDayOfWeekNames[lnDow], (u32)strlen(cgcDayOfWeekNames[lnDow]), false);
-			if (!result)
-				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
-
-
-		//////////
-		// Indicate our result
-		//////
-			return(result);
 
 	}
 
@@ -4011,38 +4011,159 @@ debug_break;
 
 	}
 
-
+	
 
 //////////
 //
-// Function: DTOR()
-// Converts degrees to radians.
+// Function: DOW()
+// Returns the number day of the week from a given Date or DateTime expression.
+// ToDo: receive a second parameter for the first day of the week (from 0 to 7); currently assumes 1 for Sunday.
 //
 //////
-// Version 0.56
+// Version 0.57????????????????????????????????
 // Last update:
-//     Mar.16.2015
+//     2015.04.06
 //////
 // Change log:
-//     Mar.16.2015 - Initial creation by Stefano D'Amico
+//     2015.04.06 - Initial creation by Hernan Cano M
 //////
 // Parameters:
-//     p1			-- Numeric or floating point
+//     p1			-- (optional) Date or DateTime
+//     p2 ---TODO-- -- (optional) nFirstDayOfWeek, Numeric from 0 to 7
 //
 //////
 // Returns:
-//    DTOR(n) of the value in p1
+//    DOW() returns the day of the week as a number.
 //////
 // Example:
-//    ? DTOR(180)		&& Display 3.14
+//	  dt = datetime()	&& Apr.06.2015
+//    ? DOW(dt)		    && Displays 1 (for Monday)
+//    ? DOW()           && Displays current date's number day of week
+//
 //////
-    SVariable* function_dtor(SThisCode* thisCode, SReturnsParams* returnsParams)
-    {
-		SVariable* varNumber = returnsParams->params[0];
+	//static cs8 cgCdowData[] = { 0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4 };
+
+	SVariable* function_dow(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* varDateOrDatetime	= returnsParams->params[0];
+		SVariable* varFirstDow			= returnsParams->params[1];
+		
+		u32			lnYear, lnMonth, lnDay;
+		s32			lnDow, lnFirstDow;
+		SYSTEMTIME	lst;
+		SVariable*	result;
+		bool		error;
+		u32			errorNum;
 
 
-		// Return dtor
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_DTOR, _VAR_TYPE_F64, false, false, returnsParams));
+		//////////
+		// If provided, parameter 1 must be date or datetime
+		//////
+			if (varDateOrDatetime)
+			{
+// TODO:  Must also support DATETIMEX at some point
+				if (!iVariable_isValid(varDateOrDatetime) || !(iVariable_isTypeDate(varDateOrDatetime) || iVariable_isTypeDatetime(varDateOrDatetime)))
+				{
+					iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varDateOrDatetime), false);
+					return(NULL);
+				}
+
+			//////////
+			// Grab year, month, day from datetime or date
+			//////
+				if iVariable_isTypeDatetime(varDateOrDatetime)		iiDateMath_extract_YyyyMmDd_from_Julian  (varDateOrDatetime->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+				else /* date */										iiDateMath_extract_YyyyMmDd_from_YYYYMMDD(varDateOrDatetime->value.data_u8,         &lnYear, &lnMonth, &lnDay);
+
+			} else {
+				// Use the current date
+				GetLocalTime(&lst);
+				lnYear	= lst.wYear;
+				lnMonth	= lst.wMonth;
+				lnDay	= lst.wDay;
+			}
+
+
+		//////////
+		// Grab day of week
+		//////
+			lnDow = (s32)ifunction_dow_common(lnYear, lnMonth, lnDay);
+
+
+		//////////
+		// Adjust for starting day of week
+		//////
+			if (varFirstDow)
+			{
+
+				//////////
+				// We may need to adjust the starting day
+				//////
+					if (!iVariable_isValid(varFirstDow) || !iVariable_isTypeNumeric(varFirstDow))
+					{
+						iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varFirstDow), false);
+						return(NULL);
+					}
+
+
+				//////////
+				// Grab the value
+				//////
+					lnFirstDow = iiVariable_getAs_s32(thisCode, varFirstDow, false, &error, &errorNum);
+					if (error)
+					{
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varFirstDow), false);
+						return(NULL);
+					}
+					if (lnFirstDow < 0 || lnFirstDow > 7)
+					{
+						iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varFirstDow), false);
+						return(NULL);
+					}
+
+
+				//////////
+				// Adjust by setting
+				//////
+					if (lnFirstDow == 0)
+					{
+						// Use regional settings
+// TODO:  Regional settings, for now we'll just use the default
+						lnFirstDow = 1;
+					}
+
+					// Adjust forward, and wrap around if need be
+					if (lnFirstDow != 1)
+					{
+						// Subtract off the starting day of week
+						lnDow -= (lnFirstDow - 1);
+
+						// If we're negative, bring positive again
+						if (lnDow < 0)
+							lnDow += 7;
+					}
+
+			}
+
+
+		//////////
+		// Adjust base-0 to base-1
+		//////
+			++lnDow;
+
+
+		//////////
+		// Create and populate our output variable
+		//////
+			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_U32, (cs8*)&lnDow, 4, false);
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varDateOrDatetime), false);
+
+
+		//////////
+		// Indicate our result
+		//////
+			return(result);
+
 	}
 
 
@@ -4182,6 +4303,41 @@ debug_break;
 		//////
 			return(result);
 
+	}
+
+
+
+
+//////////
+//
+// Function: DTOR()
+// Converts degrees to radians.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.16.2015
+//////
+// Change log:
+//     Mar.16.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    DTOR(n) of the value in p1
+//////
+// Example:
+//    ? DTOR(180)		&& Display 3.14
+//////
+    SVariable* function_dtor(SThisCode* thisCode, SReturnsParams* returnsParams)
+    {
+		SVariable* varNumber = returnsParams->params[0];
+
+
+		// Return dtor
+		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_DTOR, _VAR_TYPE_F64, false, false, returnsParams));
 	}
 
 
@@ -5100,6 +5256,7 @@ debug_break;
 		// Return length buffer
 		/////
 			return(lnAllocationLength);
+
 	}
 
 
@@ -12183,6 +12340,190 @@ debug_break;
 		// Indicate our result
 		//////
 			return(result);		
+
+	}
+
+
+
+
+//////////
+//
+// Function: TIME()
+// Returns the time in Hh:Mm:Ss or Hh:Mm:Ss:Mss format
+//
+//////
+// Version 0.57????????????????????????????????
+// Last update:
+//     2015.04.06
+//////
+// Change log:
+//     2015.04.06 - Initial creation by Hernan Cano M
+//////
+// Parameters:
+//     pDatetime	-- (optional) Datetime, any value, if they want the time from that datetime
+//     pSeconds		-- (optional) Floating point, any value 0..86400, if they want the time from a SECONDS() value
+//     pMillisecond	-- (optional) Logical, if we want to include milliseconds
+//
+//////
+// Returns:
+//    Character		-- Current time() as HH:MM:SS.mmm if we want milliseconds
+//                                    as HH:MM:SS     if we don't want milliseconds
+//
+//////
+	SVariable* function_time(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable*	varP1	= returnsParams->params[0];
+		SVariable*	varP2	= returnsParams->params[1];
+
+		f32			lfSeconds;
+		bool		llMilliseconds, llExtractDatetime, llExtractSeconds;
+		SVariable*	varDatetime;
+		SVariable*	varSeconds;
+		SVariable*	result;
+		SYSTEMTIME	lst;
+		s8			buffer[16];
+		bool		error;
+		u32			errorNum;
+
+
+		// How many parameters did they give us?
+		llMilliseconds		= false;
+		llExtractSeconds	= false;
+		llExtractDatetime	= false;
+		switch (returnsParams->pcount)
+		{
+			case 0:
+				// Grab the current time
+				iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
+				break;
+
+			case 1:
+				// It's either logical, or a datetime/floating point
+				if (!iVariable_isValid(varP1))
+				{
+					iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP1), false);
+					return(NULL);
+				}
+
+				if (iVariable_isTypeFloatingPoint(varP1))
+				{
+					// It's numeric, meaning they want us to convert the SECONDS() value
+					varSeconds			= varP1;
+					llExtractSeconds	= true;
+
+				} else if (iVariable_isTypeDatetime(varP1)) {
+					// It's datetime, meaning they want the seconds from this value
+					varDatetime			= varP1;
+					llExtractDatetime	= true;
+
+				} else if (iVariable_isFundamentalTypeLogical(varP1)) {
+					// It's logical, which means they're indicating if they want the milliseconds
+					llMilliseconds = iiVariable_getAs_bool(thisCode, varP1, false, &error, &errorNum);
+					if (error)
+					{
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP1), false);
+						return(NULL);
+					}
+
+					// Grab the time
+					iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
+
+				} else {
+					// Invalid
+					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varP1), false);
+					return(NULL);
+				}
+				break;
+
+
+			case 2:
+				//////////
+				// P1 must be datetime/floating point
+				//////
+					if (iVariable_isTypeNumeric(varP1))
+					{
+						// It's numeric, meaning they want us to convert the SECONDS() value
+						varSeconds			= varP1;
+						llExtractSeconds	= true;
+
+					} else if (iVariable_isTypeDatetime(varP1)) {
+						// It's datetime, meaning they want the seconds from this value
+						varDatetime			= varP1;
+						llExtractDatetime	= true;
+
+					} else {
+						// Invalid
+						iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP1), false);
+						return(NULL);
+					}
+
+
+				//////////
+				// P2 must be logical
+				//////
+					if (!iVariable_isFundamentalTypeLogical(varP2))
+					{
+						iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP2), false);
+						return(NULL);
+					}
+
+					// Grab the milliseconds flag
+					llMilliseconds = iiVariable_getAs_bool(thisCode, varP2, false, &error, &errorNum);
+					if (error)
+					{
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP2), false);
+						return(NULL);
+					}
+					break;
+
+		}
+
+
+		//////////
+		// Extract the seconds if need be
+		//////
+			if (llExtractSeconds)
+			{
+				// Grab the seconds
+				lfSeconds = iiVariable_getAs_f32(thisCode, varSeconds, false, &error, &errorNum);
+				if (error)
+				{
+					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varSeconds), false);
+					return(NULL);
+				}
+
+				// Convert the seconds value to a time
+				iiDateMath_convertTo_SYSTEMTIME_from_SECONDS(&lst, lfSeconds);
+			}
+
+
+		//////////
+		// Extract the datetime if need be
+		//////
+			if (llExtractDatetime)
+				iiDateMath_convertTo_SYSTEMTIME_from_SECONDS(&lst, varP1->value.data_dt->seconds);
+
+			
+		//////////
+		// Convert lst.* into a VJr date variable
+		//////
+			// Time is stored as HH:MM:SS.mmm
+			if (llMilliseconds)		sprintf(buffer, "%02u:%02u:%02u.%03u\0", lst.wHour, lst.wMinute, lst.wSecond, lst.wMilliseconds);
+			else					sprintf(buffer, "%02u:%02u:%02u\0"     , lst.wHour, lst.wMinute, lst.wSecond);
+
+
+		//////////
+		// Create the result
+		//////
+			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, buffer, (u32)strlen(buffer), false);
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
+
+
+		//////////
+		// Return our converted result
+		//////
+			return(result);
 
 	}
 

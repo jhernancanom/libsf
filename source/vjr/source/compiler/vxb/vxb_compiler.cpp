@@ -5636,7 +5636,7 @@ if (!gsProps_master[lnI].varInit)
 			//////////
 			// Are they both of the same fundamental type?
 			//////
-				if (iVariable_fundamentalType(thisCode, var1) && iVariable_fundamentalType(thisCode, var2))
+				if (iVariable_fundamentalType(thisCode, var1) == iVariable_fundamentalType(thisCode, var2))
 					return(true);
 
 
@@ -10149,7 +10149,7 @@ debug_break;
 				// We can return the value after verifying it is not out of range for a 32-bit signed integer
 				//////
 					lnValue_f64 = *(f64*)var->value.data;
-					if (lnValue_f64 < (f64)_f32_min || lnValue_f64 > (f64)_f32_max)
+					if (lnValue_f64 >= (f64)_f32_min && lnValue_f64 <= (f64)_f32_max)
 						return((f32)lnValue_f64);
 
 
@@ -11190,6 +11190,42 @@ debug_break;
 
 		// Render
 		sprintf(YYYYMMDD, "%04u%02u%02u", year, month, day);
+	}
+
+
+
+
+//////////
+//
+// Called to convert a SECONDS() into time values, and store them in the SYSTEMTIME variable
+//
+//////
+	void iiDateMath_convertTo_SYSTEMTIME_from_SECONDS(SYSTEMTIME* st, f32 tfSeconds)
+	{
+		if (tfSeconds >= 0.0f && tfSeconds <= 86400.0f)
+		{
+			// Hour
+			st->wHour			= (u16)(tfSeconds / (60.0f * 60.0f));
+			tfSeconds			-= (f32)(st->wHour * 60 * 60);
+
+			// Minutes
+			st->wMinute			= (u16)(tfSeconds / 60.0f);
+			tfSeconds			-= (f32)(st->wMinute * 60);
+
+			// Seconds
+			st->wSecond			= (u16)tfSeconds;
+			tfSeconds			-= (f32)st->wSecond;
+
+			// Milliseconds
+			st->wMilliseconds	= (u16)(tfSeconds * 1000.0f);
+
+		} else {
+			// Invalid, default to midnight
+			st->wHour			= 0;
+			st->wMinute			= 0;
+			st->wSecond			= 0;
+			st->wMilliseconds	= 0;
+		}
 	}
 
 
