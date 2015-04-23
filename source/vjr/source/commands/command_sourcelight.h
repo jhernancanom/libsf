@@ -549,6 +549,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_isnull[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_justdrive[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}

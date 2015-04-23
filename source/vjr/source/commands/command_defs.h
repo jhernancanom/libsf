@@ -245,6 +245,8 @@ struct SReturnsParams;
 	SVariable*			function_iif								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_inlist								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_int								(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_isnull		/* Hernan Cano */		(SThisCode* thisCode, SReturnsParams* returnsParams);
+	bool				ifunction_isnull_common						(SThisCode* thisCode, SVariable* varExpr);
 	SVariable*			function_justdrive							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_justext							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_justfname							(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -472,6 +474,7 @@ struct SReturnsParams;
 		{	_ICODE_IIF,				1,			(uptr)&function_iif,			2,				3,				&gsSourceLight_iif[0]			},
 		{	_ICODE_INLIST,			1,			(uptr)&function_inlist,			2,				26,				&gsSourceLight_inlist[0]		},
 		{	_ICODE_INT,				1,			(uptr)&function_int,			1,				1,				&gsSourceLight_int[0]			},
+		{	_ICODE_ISNULL,			1,			(uptr)&function_isnull,			1,				1,				&gsSourceLight_isnull[0]		},	// ISNULL() by Hernan Cano, VJr 0.57, Apr.22.2015
 		{	_ICODE_JUSTDRIVE,		1,			(uptr)&function_justdrive,		1,				1,				&gsSourceLight_justdrive[0]		},
 		{	_ICODE_JUSTEXT,			1,			(uptr)&function_justext,		1,				1,				&gsSourceLight_justext[0]		},
 		{	_ICODE_JUSTFNAME,		1,			(uptr)&function_justfname,		1,				1,				&gsSourceLight_justfname[0]		},

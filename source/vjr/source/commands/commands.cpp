@@ -4041,8 +4041,6 @@ debug_break;
 //    ? DOW()           && Displays current date's number day of week
 //
 //////
-	//static cs8 cgCdowData[] = { 0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4 };
-
 	SVariable* function_dow(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
 		SVariable* varDateOrDatetime	= returnsParams->params[0];
@@ -7297,6 +7295,120 @@ debug_break;
 		//////
 	        return(result);
     }
+
+
+
+
+//////////
+//
+// Function: ISNULL()
+// Determines whether an expression evaluates to null.
+//
+//////
+// Version 0.57????????????????????????????????
+// Last update:
+//     Apr.22.2015
+//////
+// Change log:
+//     Apr.06.2015 - Initial creation by Hernan Cano M
+//////
+// Parameters:
+//     p1	-- Specifies the expression that ISNULL() evaluates.
+//
+//////
+// Returns:
+//    ISNULL() returns True (.T.) if the expression eExpression evaluates to null;
+//    otherwise, ISNULL() returns False (.F.)
+//////
+// Example:
+//    ? ISNULL("AA")	&& Display .F.
+//    ? ISNULL("  ")	&& Display .F.
+//    ? ISNULL(0.0)  	&& Display .F.
+//    ? ISNULL(.null.)  && Display .T.
+//////
+	SVariable* function_isnull(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable*	varExpr = returnsParams->params[0];
+
+		bool		llIsNull;
+		SVariable*	result;
+
+
+		//////////
+		// Verify the variable is of a valid format
+		//////
+			if (!iVariable_isValidType(varExpr))
+			{
+				iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varExpr), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Create and populate the return variable
+		//////
+			llIsNull	= ifunction_isnull_common(thisCode, varExpr);
+			result		= iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_LOGICAL, (cs8*)((llIsNull) ? &_LOGICAL_TRUE : &_LOGICAL_FALSE), 1, true);
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varExpr), false);
+
+
+		//////////
+		// Signify our result
+		//////
+			return(result);
+
+	}
+
+	bool ifunction_isnull_common(SThisCode* thisCode, SVariable* varExpr)
+	{
+		bool llIsNull;
+
+
+		//////////
+		// Determine what we're evaluating
+		//////
+			llIsNull = true;
+			switch (varExpr->varType)
+			{
+				case _VAR_TYPE_NULL:
+					llIsNull = true;
+					break;
+
+				case _VAR_TYPE_DATE:
+				case _VAR_TYPE_CHARACTER:
+				case _VAR_TYPE_NUMERIC:
+				case _VAR_TYPE_DATETIME:
+				case _VAR_TYPE_LOGICAL:
+				case _VAR_TYPE_S8:
+				case _VAR_TYPE_U8:
+				case _VAR_TYPE_S16:
+				case _VAR_TYPE_U16:
+				case _VAR_TYPE_S32:
+				case _VAR_TYPE_U32:
+				case _VAR_TYPE_S64:
+				case _VAR_TYPE_U64:
+				case _VAR_TYPE_CURRENCY:
+				case _VAR_TYPE_F32:
+				case _VAR_TYPE_F64:
+				case _VAR_TYPE_BI:  // Big integer
+				case _VAR_TYPE_BFP: // Big floating point
+					llIsNull = (!varExpr->value.data || varExpr->value.length == 0);
+					break;
+
+
+				default:
+					iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+					return(NULL);
+			}
+
+
+		//////////
+		// Signify our result
+		//////
+			return(llIsNull);
+
+	}
 
 
 
