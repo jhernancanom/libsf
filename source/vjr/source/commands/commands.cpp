@@ -11778,6 +11778,7 @@ debug_break;
 		f32			lfJulian;
 		u32			lnYear, lnMonth, lnDay;
 		s8			buffer[64];
+		s8			curdir[_MAX_PATH];
 		u32			lnExtraPrefixWidth, lnExtraPostfixWidth;
 		s64			ln2015;
 		u32			errorNum;
@@ -11862,7 +11863,24 @@ debug_break;
 						}
 
 
-				// SYS(3) -- Character date from a Julian day number 
+				//////////
+				// SYS(3) -- Legal filename
+				// case 3: -- In VJr, is same as SYS(2015), so please see SYS(2015) below, or search for "case 3:" and find the next instance
+				//////////
+
+
+				// SYS(5) -- Equivalent of JUSTDRIVE(CURDIR())
+				case 5:
+					//////////
+					// Get the current directory and populate
+					//////
+						memset(curdir, 0, sizeof(curdir));
+						GetCurrentDirectory(_MAX_PATH, curdir);
+						result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, curdir, 2, false);
+						goto clean_exit;
+
+
+				// SYS(10) -- Julian string from day number
 				case 10:
 					//////////
 					// Parameter 1 must be numeric
@@ -11933,7 +11951,21 @@ debug_break;
 						goto clean_exit;
 
 
-				// SYS(2015) -- Unique procedure name
+				// SYS(2003) -- Equivalent of SUBSTR(CURDIR(), 3, LEN(CURDIR()) - 3) (supresses the drive and backslash final)
+				case 2003:
+					//////////
+					// Get the current directory and populate
+					// Note:  GetCurrentDirectory() does not include the trailing backslash
+					//////
+						memset(curdir, 0, sizeof(curdir));
+						GetCurrentDirectory(_MAX_PATH, curdir);
+						result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, curdir + 2, strlen(curdir + 2), false);
+						goto clean_exit;
+
+
+				// SYS(3)		-- Legal filename
+				// SYS(2015)	-- Unique procedure name
+				case 3:
 				case 2015:
 					// Unique procedure names take on the form YYYYMMDDHHMMSSmmm converted to base-36, prefixed with an underscore
 					if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
@@ -12019,6 +12051,19 @@ debug_break;
 					// Right now, the variable looks something like:  _19B2L483
 					break;
 
+
+				// SYS(2023) -- Temporary path
+				case 2023:
+					//////////
+					// Get the temporary path
+					//////
+						memset(curdir, 0, sizeof(curdir));
+						GetTempPath(sizeof(curdir), curdir);
+						result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, curdir, strlen(curdir), false);
+						goto clean_exit;
+
+
+				// Unknown
 				default:
 					// Not currently supported
 					iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varIndex), false);
