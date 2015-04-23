@@ -266,6 +266,7 @@ struct SReturnsParams;
 	SVariable*			function_mod		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_month		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_ncset								(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_nvl		/* Hernan Cano */		(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_occurs								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_occursc							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_outside	/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -494,6 +495,7 @@ struct SReturnsParams;
 		{	_ICODE_MOD,				1,			(uptr)&function_mod,			2,				2,				&gsSourceLight_mod[0]			},	// MOD() by Stefano D'Amico, VJr 0.56, Mar.08.2015
 		{	_ICODE_MONTH,			1,			(uptr)&function_month,			0,				1,				&gsSourceLight_month[0]			},	// MONTH() by Stefano D'Amico, VJr 0.57, Apr.04.2015
 		{	_ICODE_NCSET,			1,			(uptr)&function_ncset,			1,				7,				&gsSourceLight_ncset[0]			},
+		{	_ICODE_NVL,				1,			(uptr)&function_nvl,			1,				2,				&gsSourceLight_nvl[0]			},	// NVL() by Hernan Can, VJr 0.57, Apr.22.2015
 		{	_ICODE_OCCURS,			1,			(uptr)&function_occurs,			2,				2,				&gsSourceLight_occurs[0]		},
 		{	_ICODE_OCCURSC,			1,			(uptr)&function_occursc,		2,				2,				&gsSourceLight_occursc[0]		},
 		{	_ICODE_OUTSIDE,			1,			(uptr)&function_outside,		3,				3,				&gsSourceLight_outside[0]		},	// OUTSIDE() by Stefano D'Amico, VJr 0.57, Mar.23.2015

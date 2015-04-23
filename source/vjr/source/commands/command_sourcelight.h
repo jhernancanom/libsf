@@ -650,6 +650,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_nvl[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_occurs[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}

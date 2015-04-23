@@ -9093,6 +9093,82 @@ debug_break;
 			}
 			return(result);
 	}
+;
+
+
+
+
+//////////
+//
+// Function: NVL()
+// Returns a non-null value from two expressions.
+//
+//////
+// Version 0.57????????????????????????????????
+// Last update:
+//     2015.04.09
+//////
+// Change log:
+//     2015.04.09 - Initial creation by Hernan Cano M
+//////
+// Parameters:
+//     p1	-- Specifies the expression that NVL() evaluates.
+//     p2	-- Specifies the expression to return if p1 is null.
+//
+//////
+// Returns:
+//    NVL() returns p1 if it does not evaluate to an null value; otherwise, it returns p2.
+//////
+// Examples:
+//    ? NVL("FirstNoNull", .null.)	&& Display "FirstNoNull"
+//    FirstIsNull = .null.
+//    M.dSecondNoNull=date()
+//    ? NVL(FirstIsNull, M.dSecondNoNull)	&& Display value of M.dSecondNoNull
+//////
+	SVariable* function_nvl(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable*	varExpr1 = returnsParams->params[0];
+		SVariable*	varExpr2 = returnsParams->params[1];
+
+		bool		llIsNull;
+		SVariable*	result;
+
+
+		//////////
+		// Verify p1 is correct
+		//////
+			if (!iVariable_isValidType(varExpr1))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varExpr1), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Verify p2 is correct
+		//////
+			if (!iVariable_isValid(varExpr2))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varExpr2), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Create our result
+		//////
+			llIsNull	= ifunction_isnull_common(thisCode, varExpr1);
+			result		= iVariable_copy(thisCode, ((llIsNull) ? varExpr2 : varExpr1), false);
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, ((llIsNull) ? varExpr2 : varExpr1)), false);
+
+
+		//////////
+		// Signify our result
+		//////
+			return(result);
+	}
+
 
 
 
