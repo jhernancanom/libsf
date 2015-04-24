@@ -84,7 +84,7 @@
 
 struct SDateTime
 {
-	u32		julian;							// Julian day number
+	s32		julian;							// Julian day number
 	f32		seconds;						// Seconds elapsed since midnight
 };
 

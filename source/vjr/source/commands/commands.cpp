@@ -3321,30 +3321,39 @@ debug_break;
 		// Validate the date is valid
 		//////
 			result = iVariable_create(thisCode, ((tlIncludeTime) ? _VAR_TYPE_DATETIME : _VAR_TYPE_DATE), NULL, false);
-			if (!llTimeValid || lnYYYY < 1600 || lnYYYY > 9999 || lnMM < 1 || lnMM > 12 || !iDateMath_isDayValidForDate(lnYYYY, lnMM, lnDD))
+			if (result)
 			{
-				// Invalid
-				// Nothing to do here, just leave the date blank
-// TODO:  Need to come up with an encoding for a datetime that is blank
-
-			} else {
-				// It's valid, populate it
-				if (tlIncludeTime)
+				if (!llTimeValid || lnYYYY < 1600 || lnYYYY > 9999 || lnMM < 1 || lnMM > 12 || !iDateMath_isDayValidForDate(lnYYYY, lnMM, lnDD))
 				{
-					// Datetime
-					result->value.data_dt->julian	= iiDateMath_extract_Julian_from_YyyyMmDd(NULL, lnYYYY, lnMM, lnDD);
-					result->value.data_dt->seconds	= iiDateMath_extract_seconds_from_HhMmSsMss(lnHh, lnMm, lnSs, lnMss);
+					// Invalid, so make it blank
+					result->value.data_dt->julian	= _DATETIME_BLANK_DATETIME_JULIAN;
+					result->value.data_dt->seconds	= _DATETIME_BLANK_DATETIME_SECONDS;
 
 				} else {
-					// Just a date
-					iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd(result->value.data, lnYYYY, lnMM, lnDD);
+					// It's valid, populate it
+					if (tlIncludeTime)
+					{
+						// Datetime
+						result->value.data_dt->julian	= iiDateMath_extract_Julian_from_YyyyMmDd(NULL, lnYYYY, lnMM, lnDD);
+						result->value.data_dt->seconds	= iiDateMath_extract_seconds_from_HhMmSsMss(lnHh, lnMm, lnSs, lnMss);
+
+					} else {
+						// Just a date
+						iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd(result->value.data, lnYYYY, lnMM, lnDD);
+					}
 				}
+
+			} else {
+				// Should never happen
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varCtoxString), false);
 			}
 
 
 		//////////
-		// Construct the new date or datetime variable
+		// Signify our result
 		//////
+			return(result);
+
 	}
 
 
@@ -6693,12 +6702,12 @@ debug_break;
 //     Apr.06.2015 - Initial creation by Stefano D'Amico
 //////
 // Parameters:
-//     p1			-- Date or DateTime
+//     p1			-- Date, Datetimex, or DateTime
 //     p2			-- Specifies the number of months from the date or datetime
 //
 //////
 // Returns:
-//    Date or Datetime data type.
+//    Date, Datetimex, or Datetime data type.
 //
 //////
 	static cs8 cgGoMonthData[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
@@ -6709,7 +6718,7 @@ debug_break;
 		SVariable* varMonth = returnsParams->params[1];
 
 		s32			lnNumOfMonths, lnYear, lnMonth;
-		u32			lnDay, lnLastDay;
+		u32			lnDay, lnLastDay, lnZero;
 		f32			lfJulian;
 		SVariable*	result;
 		s8			buffer[16];
@@ -6720,8 +6729,7 @@ debug_break;
 		//////////
 		// Parameter 1 must be date or datetime
 		//////
-// TODO:  Must also support DATETIMEX at some point
-			if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
+			if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetimeX(varParam) || iVariable_isTypeDatetime(varParam)))
 			{
 				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
 				return(NULL);
@@ -6731,8 +6739,9 @@ debug_break;
 		//////////
 		// Grab year, month, day from datetime or date
 		//////
-			if (iVariable_isTypeDatetime(varParam))			iiDateMath_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	(u32*)&lnYear, (u32*)&lnMonth, &lnDay);
-			else /* date */									iiDateMath_extract_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			(u32*)&lnYear, (u32*)&lnMonth, &lnDay);
+			     if (iVariable_isTypeDatetime(varParam))		iiDateMath_extract_YyyyMmDd_from_Julian								(varParam->value.data_dt->julian,					(u32*)&lnYear, (u32*)&lnMonth, &lnDay);
+			else if (iVariable_isTypeDatetimeX(varParam))		iiDateMath_extract_Julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX	(varParam->value.data_dtx->jseconds, NULL, NULL,	(u32*)&lnYear, (u32*)&lnMonth, &lnDay, NULL, NULL, NULL, NULL, NULL);
+			else /* date */										iiDateMath_extract_YyyyMmDd_from_YYYYMMDD							(varParam->value.data_u8,							(u32*)&lnYear, (u32*)&lnMonth, &lnDay);
 
 
 
@@ -6828,6 +6837,16 @@ debug_break;
 							// Date is stored as julian day number
 							result->value.data_dt->julian	= iiDateMath_extract_Julian_from_YyyyMmDd(&lfJulian, lnYear, (u32)lnMonth, lnDay);
 							result->value.data_dt->seconds = varParam->value.data_dt->seconds;
+						}
+
+					} else if (iVariable_isTypeDatetimeX(varParam)) {
+						// DatetimeX
+						result = iVariable_create(thisCode, _VAR_TYPE_DATETIMEX, NULL, true);
+						if (result)
+						{
+							// Date is stored as julian day number
+							lnZero = 0;
+							iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&result->value.data_dtx->jseconds, NULL, (u32)lnYear, (u32)lnMonth, lnDay, lnZero, lnZero, lnZero, lnZero, lnZero);
 						}
 
 					} else {
@@ -8432,8 +8451,8 @@ debug_break;
 					break;
 
 				case _VAR_TYPE_DATETIME:
-					dtLeft	= (SDateTime*)varLeft->value.data;
-					dtRight	= (SDateTime*)varRight->value.data;
+					dtLeft	= varLeft->value.data_dt;
+					dtRight	= varRight->value.data_dt;
 					if (dtLeft->julian < dtRight->julian)
 					{
 						// Left is less
@@ -8480,7 +8499,7 @@ debug_break;
 							// Right is less
 						}
 
-					} else if (iVariable_isTypeNumeric(varLeft) || iVariable_isTypeNumeric(varRight)) {
+					} else if (iVariable_isTypeNumeric(varLeft) || iVariable_isTypeNumeric(varRight) || iVariable_isTypeDatetimeX(varLeft) || iVariable_isTypeDatetimeX(varRight)) {
 						// Comparing numerics
 						if (iVariable_isNumeric64Bit(varLeft) || iVariable_isNumeric64Bit(varRight))
 						{
@@ -8530,28 +8549,16 @@ debug_break;
 			if (llLeft)
 			{
 				// Left is less, so duplicate right
-				result = iVariable_create(thisCode, varRight->varType, NULL, true);
-				if (!result)
-				{
-					iError_report(thisCode, cgcInternalError, false);
-					return(NULL);
-				}
-
-				// Populate
-				iDatum_duplicate(&result->value, &varRight->value);
+				result = iVariable_copy(thisCode, varRight, false);
 
 			} else {
 				// Right is less, so duplicate left
-				result = iVariable_create(thisCode, varLeft->varType, NULL, true);
-				if (!result)
-				{
-					iError_report(thisCode, cgcInternalError, false);
-					return(NULL);
-				}
-
-				// Populate
-				iDatum_duplicate(&result->value, &varLeft->value);
+				result = iVariable_copy(thisCode, varLeft, false);
 			}
+
+			// Are we good?
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varLeft), false);
 
 			// Indicate our result
 			return(result);
@@ -8743,7 +8750,7 @@ debug_break;
 
 					} else if (iVariable_isTypeNumeric(varLeft)) {
 						// Comparing numerics
-						if (iVariable_isNumeric64Bit(varLeft) || iVariable_isNumeric64Bit(varRight))
+						if (iVariable_isNumeric64Bit(varLeft) || iVariable_isNumeric64Bit(varRight) || iVariable_isTypeDatetimeX(varLeft) || iVariable_isTypeDatetimeX(varRight))
 						{
 							// It requires a 64-bit signed compare
 							lnLeft64	= iiVariable_getAs_s64(thisCode, varLeft, false, &error, &errorNum);
@@ -8791,28 +8798,16 @@ debug_break;
 			if (llLeft)
 			{
 				// Left is less, so copy left
-				result = iVariable_create(thisCode, varLeft->varType, NULL, true);
-				if (!result)
-				{
-					iError_report(thisCode, cgcInternalError, false);
-					return(NULL);
-				}
-
-				// Populate
-				iDatum_duplicate(&result->value, &varLeft->value);
+				result = iVariable_copy(thisCode, varLeft, false);
 
 			} else {
 				// Right is less, so copy right
-				result = iVariable_create(thisCode, varRight->varType, NULL, true);
-				if (!result)
-				{
-					iError_report(thisCode, cgcInternalError, false);
-					return(NULL);
-				}
-
-				// Populate
-				iDatum_duplicate(&result->value, &varRight->value);
+				result = iVariable_copy(thisCode, varRight, false);
 			}
+
+			// Are we good?
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varLeft), false);
 
 			// Indicate our result
 			return(result);
@@ -13575,6 +13570,7 @@ debug_break;
 					break;
 
 				case _VAR_TYPE_DATETIME:
+				case _VAR_TYPE_DATETIMEX:
 					// YYYYMMDDHHMMSSMss as s64
 					result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
 					if (result)

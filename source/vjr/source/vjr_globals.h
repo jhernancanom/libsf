@@ -279,6 +279,7 @@
 	SVariable*			varDefault_f64						= NULL;									// +0.0
 	SVariable*			varDefault_date						= NULL;									// "  /  /    "
 	SVariable*			varDefault_datetime					= NULL;									// "  /  /       :  :     "
+	SVariable*			varDefault_datetimex				= NULL;									// "  /  /       :  :  .         "
 	SVariable*			varDefault_currency					= NULL;									// 0.0000
 	SVariable*			varDefault_s16						= NULL;									// 0
 	SVariable*			varDefault_u16						= NULL;									// 0

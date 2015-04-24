@@ -5363,13 +5363,13 @@ debug_break;
 
 				case _VAR_TYPE_DATE:
 				case _VAR_TYPE_DATETIME:
+				case _VAR_TYPE_DATETIMEX:
 				case _VAR_TYPE_LOGICAL:
 				case _VAR_TYPE_BITMAP:
 					// These are already fundamental types
 					return(var->varType);
 
 // TODO:  Not yet implemented:
-// 				case _VAR_TYPE_DATETIMEX
 // 				case _VAR_TYPE_ARRAY
 // 				case _VAR_TYPE_GUID8
 // 				case _VAR_TYPE_GUID16
@@ -5401,6 +5401,7 @@ debug_break;
 		varDefault_f64			= iVariable_create(thisCode, _VAR_TYPE_F64,			NULL, true);
 		varDefault_date			= iVariable_create(thisCode, _VAR_TYPE_DATE,		NULL, true);
 		varDefault_datetime		= iVariable_create(thisCode, _VAR_TYPE_DATETIME,	NULL, true);
+		varDefault_datetimex	= iVariable_create(thisCode, _VAR_TYPE_DATETIMEX,	NULL, true);
 		varDefault_currency		= iVariable_create(thisCode, _VAR_TYPE_CURRENCY,	NULL, true);
 		varDefault_s16			= iVariable_create(thisCode, _VAR_TYPE_S16,			NULL, true);
 		varDefault_u16			= iVariable_create(thisCode, _VAR_TYPE_U16,			NULL, true);
@@ -5563,6 +5564,10 @@ if (!gsProps_master[lnI].varInit)
 
 			case _VAR_TYPE_DATETIME:
 				*varDefaultValue = varDefault_datetime;
+				break;
+
+			case _VAR_TYPE_DATETIMEX:
+				*varDefaultValue = varDefault_datetimex;
 				break;
 
 			case _VAR_TYPE_CURRENCY:
@@ -7621,9 +7626,12 @@ debug_break;
 					break;
 
 				case _VAR_TYPE_DATETIME:
+					var->value.data_dt->julian	= 0;
+					var->value.data_dt->seconds	= 0.0f;
+					break;
+
 				case _VAR_TYPE_DATETIMEX:
-// Not yet supported
-debug_break;
+					var->value.data_dtx->jseconds = 0;
 					break;
 
 				case _VAR_TYPE_BI:
@@ -7654,12 +7662,13 @@ debug_break;
 	SVariable* iVariable_convertForDisplay(SThisCode* thisCode, SVariable* var)
 	{
 		s32			lnI, lnYearOffset, lnSetLogical;
-		u32			lnYear, lnMonth, lnDay, lnHour, lnHourAdjusted, lnMinute, lnSecond, lnMillisecond;
+		u32			lnYear, lnMonth, lnDay, lnHour, lnHourAdjusted, lnMinute, lnSecond, lnMillisecond, lnNanosecond;
 		f64			lfValue64;
 		bool		llHour24;
 		cs8*		lcAmPmText;
 		SVariable*	varDisp;
 		SDateTime*	dt;
+		SDateTimeX*	dtx;
 		u8			buffer[64];
 		s8			formatter[16];
 
@@ -7910,40 +7919,84 @@ debug_break;
 
 					case _VAR_TYPE_DATETIME:
 						// Translate from encoded form to components, then assemble as MM/DD/YYYY HH:MM:SS AM/PM
-						dt = (SDateTime*)var->value.data;
-						iiDateMath_extract_YyyyMmDd_from_Julian(dt->julian, &lnYear, &lnMonth, &lnDay);
-						iiDateMath_extract_HhMmSsMss_from_seconds(dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
-
-						// Adjust for our 24-hour settings
-						llHour24		= propGet_settings_Hours24(_settings);
-						lnHourAdjusted	= iTime_adjustHour_toAMPM(lnHour, !llHour24);
-						lcAmPmText		= (cs8*)((llHour24) ? "" : (cs8*)iTime_amOrPm(lnHour, cgc_space_am_uppercase, cgc_space_pm_lowercase));
-
-// TODO:  We need to honor the SET DATE settings.  For now we use MM/DD/YYYY HH:MM:SS.Mss AM
-						// Format for century settings
-						if (propGet_settings_Century(_settings))
+						dt = var->value.data_dt;
+						if (dt->julian == _DATETIME_BLANK_DATETIME_JULIAN && dt->seconds == _DATETIME_BLANK_DATETIME_SECONDS)
 						{
-							// SET CENTURY ON
+							// It's a blank date and time
 							if (propGet_settings_ncset_datetimeMilliseconds(_settings))
 							{
 								// Include milliseconds
-								sprintf((s8*)buffer, "%02u/%02u/%04u %02u:%02u:%02u.%03u%s\0", lnMonth, lnDay, lnYear, lnHourAdjusted, lnMinute, lnSecond, lnMillisecond, lcAmPmText);
+								sprintf((s8*)buffer, "  /  /       :  :  .   \0");
 
 							} else {
 								// No milliseconds
-								sprintf((s8*)buffer, "%02u/%02u/%04u %02u:%02u:%02u%s\0", lnMonth, lnDay, lnYear, lnHourAdjusted, lnMinute, lnSecond, lcAmPmText);
+								sprintf((s8*)buffer, "  /  /       :  :  \0");
 							}
 
 						} else {
-							// SET CENTURY OFF
-							if (propGet_settings_ncset_datetimeMilliseconds(_settings))
+							iiDateMath_extract_YyyyMmDd_from_Julian(dt->julian, &lnYear, &lnMonth, &lnDay);
+							iiDateMath_extract_HhMmSsMss_from_seconds(dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+
+							// Adjust for our 24-hour settings
+							llHour24		= propGet_settings_Hours24(_settings);
+							lnHourAdjusted	= iTime_adjustHour_toAMPM(lnHour, !llHour24);
+							lcAmPmText		= (cs8*)((llHour24) ? "" : (cs8*)iTime_amOrPm(lnHour, cgc_space_am_uppercase, cgc_space_pm_lowercase));
+
+	// TODO:  We need to honor the SET DATE settings.  For now we use MM/DD/YYYY HH:MM:SS.Mss AM
+							// Format for century settings
+							if (propGet_settings_Century(_settings))
 							{
-								// Include milliseconds
-								sprintf((s8*)buffer, "%02u/%02u/%02u %02u:%02u:%02u.%03u%s\0", lnMonth, lnDay, lnYear % 100, lnHourAdjusted, lnMinute, lnSecond, lnMillisecond, lcAmPmText);
+								// SET CENTURY ON
+								if (propGet_settings_ncset_datetimeMilliseconds(_settings))
+								{
+									// Include milliseconds
+									sprintf((s8*)buffer, "%02u/%02u/%04u %02u:%02u:%02u.%03u%s\0", lnMonth, lnDay, lnYear, lnHourAdjusted, lnMinute, lnSecond, lnMillisecond, lcAmPmText);
+
+								} else {
+									// No milliseconds
+									sprintf((s8*)buffer, "%02u/%02u/%04u %02u:%02u:%02u%s\0", lnMonth, lnDay, lnYear, lnHourAdjusted, lnMinute, lnSecond, lcAmPmText);
+								}
 
 							} else {
-								// No milliseconds
-								sprintf((s8*)buffer, "%02u/%02u/%02u %02u:%02u:%02u%s\0", lnMonth, lnDay, lnYear % 100, lnHourAdjusted, lnMinute, lnSecond, lcAmPmText);
+								// SET CENTURY OFF
+								if (propGet_settings_ncset_datetimeMilliseconds(_settings))
+								{
+									// Include milliseconds
+									sprintf((s8*)buffer, "%02u/%02u/%02u %02u:%02u:%02u.%03u%s\0", lnMonth, lnDay, lnYear % 100, lnHourAdjusted, lnMinute, lnSecond, lnMillisecond, lcAmPmText);
+
+								} else {
+									// No milliseconds
+									sprintf((s8*)buffer, "%02u/%02u/%02u %02u:%02u:%02u%s\0", lnMonth, lnDay, lnYear % 100, lnHourAdjusted, lnMinute, lnSecond, lcAmPmText);
+								}
+							}
+						}
+
+						varDisp->isValueAllocated = true;
+						iDatum_duplicate(&varDisp->value, buffer, -1);
+						break;
+
+					case _VAR_TYPE_DATETIMEX:
+						// Translate from encoded form to components, then assemble as MM/DD/YYYY HH:MM:SS.Nssssssss
+						dtx = var->value.data_dtx;
+						if (dtx->jseconds < 0)
+						{
+							// It's a blank date and time
+							sprintf((s8*)buffer, "  /  /       :  :  .         \0");
+
+						} else {
+							// Grab the components
+							iiDateMath_extract_Julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX(dtx->jseconds, NULL, NULL, &lnYear, &lnMonth, &lnDay, &lnHour, &lnMinute, &lnSecond, &lnMillisecond, &lnNanosecond);
+
+							// Format for century settings
+							if (propGet_settings_Century(_settings))
+							{
+								// SET CENTURY ON
+								sprintf((s8*)buffer, "%02u/%02u/%04u %02u:%02u:%02u.%09u%s\0", lnMonth, lnDay, lnYear, lnHour, lnMinute, lnSecond, lnNanosecond);
+
+							} else {
+								// SET CENTURY OFF
+								// Include milliseconds
+								sprintf((s8*)buffer, "%02u/%02u/%02u %02u:%02u:%02u.%03u%s\0", lnMonth, lnDay, lnYear % 100, lnHour, lnMinute, lnSecond, lnNanosecond);
 							}
 						}
 
@@ -8162,7 +8215,7 @@ debug_break;
 //////
 	SVariable* iiVariable_getAs_datetime(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
-		u32			year, month, day;
+		u32			year, month, day, hour, minute, second, millisecond, nanosecond;
 		SVariable*	result;
 
 
@@ -8199,6 +8252,25 @@ debug_break;
 						*tnErrorNum	= _ERROR_INTERNAL_ERROR;
 						return(NULL);
 					}
+
+					// Indicate success
+					*tlError	= false;
+					*tnErrorNum	= _ERROR_OKAY;
+					return(result);
+
+				case _VAR_TYPE_DATETIMEX:
+					result = iVariable_create(thisCode, _VAR_TYPE_DATETIME, NULL, true);
+					if (!result)
+					{
+						*tlError	= true;
+						*tnErrorNum	= _ERROR_INTERNAL_ERROR;
+						return(NULL);
+					}
+
+					// Convert the date to a julian day number
+					iiDateMath_extract_Julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX(var->value.data_dtx->jseconds, NULL, NULL, &year, &month, &day, &hour, &minute, &second, &millisecond, &nanosecond);
+					result->value.data_dt->julian	= iiDateMath_extract_Julian_from_YyyyMmDd(NULL, year, month, day);
+					result->value.data_dt->seconds	= iiDateMath_extract_seconds_from_HhMmSsMss(hour, minute, second, millisecond);
 
 					// Indicate success
 					*tlError	= false;
@@ -8263,6 +8335,7 @@ debug_break;
 			case _VAR_TYPE_U64:			return(!(*(u64*)var->value.data		== 0));
 			case _VAR_TYPE_CURRENCY:	// Currency is an s64 * 10000, but we are still testing for 0 or not-zero, falls through to s64
 			case _VAR_TYPE_S64:			return(!(*(s64*)var->value.data		== 0));
+			case _VAR_TYPE_DATETIMEX:	return(!(*(s64*)var->value.data		== 0));
 			case _VAR_TYPE_S16:			return(!(*(s16*)var->value.data		== 0));
 			case _VAR_TYPE_S8:			return(!(*(s8*)var->value.data		== 0));
 			case _VAR_TYPE_U16:			return(!(*(u16*)var->value.data		== 0));
@@ -8420,6 +8493,7 @@ debug_break;
 
 
 			case _VAR_TYPE_S64:
+			case _VAR_TYPE_DATETIMEX:
 				//////////
 				// We can return the value after verifying it is not out of range for a 32-bit signed integer
 				//////
@@ -8724,6 +8798,7 @@ debug_break;
 
 
 			case _VAR_TYPE_S64:
+			case _VAR_TYPE_DATETIMEX:
 				//////////
 				// We can return the value after verifying it is not out of range for a 32-bit signed integer
 				//////
@@ -9018,6 +9093,7 @@ debug_break;
 
 
 			case _VAR_TYPE_S64:
+			case _VAR_TYPE_DATETIMEX:
 				//////////
 				// We can return the value after verifying it is not out of range for a 32-bit signed integer
 				//////
@@ -9292,6 +9368,7 @@ debug_break;
 
 
 			case _VAR_TYPE_S64:
+			case _VAR_TYPE_DATETIMEX:
 				//////////
 				// We can return the value after verifying it is not out of range for a 32-bit signed integer
 				//////
@@ -9556,6 +9633,7 @@ debug_break;
 
 
 			case _VAR_TYPE_S64:
+			case _VAR_TYPE_DATETIMEX:
 				//////////
 				// We can return the value after verifying it is not out of range for a 32-bit signed integer
 				//////
@@ -9781,14 +9859,15 @@ debug_break;
 		switch (var->varType)
 		{
 			case _VAR_TYPE_NUMERIC:			return(_atoi64(var->value.data));
-			case _VAR_TYPE_S32:				return((s64)*(u32*)var->value.data);
-			case _VAR_TYPE_U32:				return((s64)*(u32*)var->value.data);
-			case _VAR_TYPE_S64:				return(*(s64*)var->value.data);
-			case _VAR_TYPE_S16:				return((s64)*(s16*)var->value.data);
-			case _VAR_TYPE_S8:				return((s64)*(s8*)var->value.data);
-			case _VAR_TYPE_U16:				return((s64)*(u16*)var->value.data);
-			case _VAR_TYPE_U8:				return((s64)*(u8*)var->value.data);
-			case _VAR_TYPE_CURRENCY:		return((*(s64*)var->value.data / 10000));
+			case _VAR_TYPE_S32:				return((s64)*var->value.data_u32);
+			case _VAR_TYPE_U32:				return((s64)*var->value.data_u32);
+			case _VAR_TYPE_S64:				return(*var->value.data_s64);
+			case _VAR_TYPE_DATETIMEX:		return(*var->value.data_s64);
+			case _VAR_TYPE_S16:				return((s64)*var->value.data_s16);
+			case _VAR_TYPE_S8:				return((s64)*var->value.data_s8);
+			case _VAR_TYPE_U16:				return((s64)*var->value.data_u16);
+			case _VAR_TYPE_U8:				return((s64)*var->value.data_u8);
+			case _VAR_TYPE_CURRENCY:		return(((*var->value.data_s64 + 5000) / 10000));
 
 			case _VAR_TYPE_U64:
 				//////////
@@ -9958,6 +10037,7 @@ debug_break;
 			case _VAR_TYPE_S32:				return((u64)var->value.data_s32[0]);
 			case _VAR_TYPE_U32:				return((u64)var->value.data_u32[0]);
 			case _VAR_TYPE_S64:				return((u64)var->value.data_s64[0]);
+			case _VAR_TYPE_DATETIMEX:		return((u64)var->value.data_s64[0]);
 			case _VAR_TYPE_S16:				return((u64)var->value.data_s16[0]);
 			case _VAR_TYPE_S8:				return((u64)var->value.data_s8[0]);
 			case _VAR_TYPE_U16:				return((u64)var->value.data_u16[0]);
@@ -10137,6 +10217,7 @@ debug_break;
 			case _VAR_TYPE_U32:				return((f32)*var->value.data_u32);
 			case _VAR_TYPE_U64:				return((f32)*var->value.data_s64);
 			case _VAR_TYPE_S64:				return((f32)*var->value.data_s64);
+			case _VAR_TYPE_DATETIMEX:		return((f32)*var->value.data_s64);
 			case _VAR_TYPE_S16:				return((f32)*var->value.data_s16);
 			case _VAR_TYPE_S8:				return((f32)*var->value.data_s8);
 			case _VAR_TYPE_U16:				return((f32)*var->value.data_u16);
@@ -10282,6 +10363,7 @@ debug_break;
 			case _VAR_TYPE_S32:				return((f64)*var->value.data_s32);
 			case _VAR_TYPE_U32:				return((f64)*var->value.data_u32);
 			case _VAR_TYPE_S64:				return((f64)*var->value.data_s64);
+			case _VAR_TYPE_DATETIMEX:		return((f64)*var->value.data_s64);
 			case _VAR_TYPE_S16:				return((f64)*var->value.data_s16);
 			case _VAR_TYPE_S8:				return((f64)*var->value.data_s8);
 			case _VAR_TYPE_U16:				return((f64)*var->value.data_u16);
@@ -10397,7 +10479,8 @@ debug_break;
 	s32 iVariable_compare(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
 		u32		lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, lnDate;
-		u64		lnDatetime;
+		u32		lnYear2, lnMonth2, lnDay2, lnHour2, lnMinute2, lnSecond2;
+		s64		lnDatetime, lnDatetime2;
 		bool	llLeftFp, llRightFp, llLeftInt, llRightInt, llLeftSigned, llRightSigned, llLeftNum, llRightNum;
 		s8		buffer[64];
 
@@ -10472,6 +10555,14 @@ debug_break;
 							// Indicate our result
 							return(memcmp(varLeft->value.data_s8, buffer, varRight->value.length));
 
+						case _VAR_TYPE_DATETIMEX:
+							// Grab related information from the datetimex
+							iiDateMath_extract_Julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX(varLeft->value.data_dtx->jseconds, NULL, NULL, &lnYear, &lnMonth, &lnDay, NULL, NULL, NULL, NULL, NULL);
+							iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
+
+							// Indicate our result
+							return(memcmp(varLeft->value.data_s8, buffer, varRight->value.length));
+
 						case _VAR_TYPE_CHARACTER:
 							return(memcmp(varLeft->value.data_s8, varRight->value.data_s8, min(varLeft->value.length, varRight->value.length)));
 					}
@@ -10525,48 +10616,79 @@ debug_break;
 					iiDateMath_extract_YyyyMmDd_from_Julian(varLeft->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
 					iiDateMath_extract_HhMmSsMss_from_seconds(varLeft->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
-					// Create the string for the numeric portion
-					sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
-
-					// How are we comparing?
-					switch (varRight->varType)
+					if (varRight->varType == _VAR_TYPE_DATETIMEX)
 					{
-						case _VAR_TYPE_DATE:
-							return(memcmp(buffer, varRight->value.data_s8, varRight->value.length));
+						// Datetimes can be compared to datetimex down to the seconds
+						iiDateMath_extract_Julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX(varRight->value.data_dtx->jseconds, NULL, NULL, &lnYear2, &lnMonth2, &lnDay2, &lnHour2, &lnMinute2, &lnSecond2, NULL, NULL);
+						iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDatetime,  NULL, lnYear,  lnMonth,  lnDay,  lnHour,  lnMinute,  lnSecond,  0, 0);
+						iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDatetime2, NULL, lnYear2, lnMonth2, lnDay2, lnHour2, lnMinute2, lnSecond2, 0, 0);
 
-						case _VAR_TYPE_CHARACTER:
-							return(memcmp(buffer, varRight->value.data_s8, min(varRight->value.length, strlen(buffer))));
+						     if ((s64)lnDatetime == (s64)lnDatetime2)		return(0);			// Equal
+						else if ((s64)lnDatetime <  (s64)lnDatetime2)		return(-1);			// Less than
+						else												return(1);			// Greater than
+
+					} else {
+						// Create the string for the numeric portion
+						sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
+
+						// How are we comparing?
+						switch (varRight->varType)
+						{
+							case _VAR_TYPE_DATE:
+								return(memcmp(buffer, varRight->value.data_s8, varRight->value.length));
+
+							case _VAR_TYPE_CHARACTER:
+								return(memcmp(buffer, varRight->value.data_s8, min(varRight->value.length, strlen(buffer))));
+						}
+
+						// Grab the value
+						lnDatetime = _strtoui64(buffer, NULL, 10);
+						switch (varRight->varType)
+						{
+							case _VAR_TYPE_S64:
+									 if ((s64)lnDatetime == varRight->value.data_s64[0])		return(0);			// Equal
+								else if ((s64)lnDatetime <  varRight->value.data_s64[0])		return(-1);			// Less than
+								else															return(1);			// Greater than
+
+							case _VAR_TYPE_U64:
+									 if ((u64)lnDatetime == varRight->value.data_u64[0])		return(0);			// Equal
+								else if ((u64)lnDatetime <  varRight->value.data_u64[0])		return(-1);			// Less than
+								else															return(1);			// Greater than
+
+							case _VAR_TYPE_F32:
+									 if ((f32)lnDatetime == varRight->value.data_f32[0])		return(0);			// Equal
+								else if ((f32)lnDatetime <  varRight->value.data_f32[0])		return(-1);			// Less than
+								else															return(1);			// Greater than
+
+							case _VAR_TYPE_F64:
+									 if ((f64)lnDatetime == varRight->value.data_f64[0])		return(0);			// Equal
+								else if ((f64)lnDatetime <  varRight->value.data_f64[0])		return(-1);			// Less than
+								else															return(1);			// Greater than
+
+// 							case _VAR_TYPE_BI:
+// 								break;
+// 							case _VAR_TYPE_BFP:
+// 								break;
+						}
 					}
 
-					// Grab the value
-					lnDatetime = _strtoui64(buffer, NULL, 10);
-					switch (varRight->varType)
-					{
-						case _VAR_TYPE_S64:
-								 if ((s64)lnDatetime == varRight->value.data_s64[0])		return(0);			// Equal
-							else if ((s64)lnDatetime <  varRight->value.data_s64[0])		return(-1);			// Less than
-							else															return(1);			// Greater than
-
-						case _VAR_TYPE_U64:
-								 if ((u64)lnDatetime == varRight->value.data_u64[0])		return(0);			// Equal
-							else if ((u64)lnDatetime <  varRight->value.data_u64[0])		return(-1);			// Less than
-							else															return(1);			// Greater than
-
-						case _VAR_TYPE_F32:
-								 if ((f32)lnDatetime == varRight->value.data_f32[0])		return(0);			// Equal
-							else if ((f32)lnDatetime <  varRight->value.data_f32[0])		return(-1);			// Less than
-							else															return(1);			// Greater than
-
-						case _VAR_TYPE_F64:
-								 if ((f64)lnDatetime == varRight->value.data_f64[0])		return(0);			// Equal
-							else if ((f64)lnDatetime <  varRight->value.data_f64[0])		return(-1);			// Less than
-							else															return(1);			// Greater than
-
-// 						case _VAR_TYPE_BI:
-// 							break;
-// 						case _VAR_TYPE_BFP:
-// 							break;
-					}
+// TODO:  Working here, purposefully broken
+				} else if (var Left->varType == _VAR_TYPE_DATETIMEX) {
+// 					// Datetimes can be compared to 64-bit numeric values
+// 					iiDateMath_extract_YyyyMmDd_from_Julian(varLeft->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+// 					iiDateMath_extract_HhMmSsMss_from_seconds(varLeft->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+// 
+// 					if (varRight->varType == _VAR_TYPE_DATETIMEX)
+// 					{
+// 						// Datetimes can be compared to datetimex down to the seconds
+// 						iiDateMath_extract_Julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX(varRight->value.data_dtx->jseconds, NULL, NULL, &lnYear2, &lnMonth2, &lnDay2, &lnHour2, &lnMinute2, &lnSecond2, NULL, NULL);
+// 						iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDatetime,  NULL, lnYear,  lnMonth,  lnDay,  lnHour,  lnMinute,  lnSecond,  0, 0);
+// 						iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDatetime2, NULL, lnYear2, lnMonth2, lnDay2, lnHour2, lnMinute2, lnSecond2, 0, 0);
+// 
+// 						     if ((s64)lnDatetime == (s64)lnDatetime2)		return(0);			// Equal
+// 						else if ((s64)lnDatetime <  (s64)lnDatetime2)		return(-1);			// Less than
+// 						else												return(1);			// Greater than
+// 					}
 
 				} else {
 					// They are different enough we can't compare them

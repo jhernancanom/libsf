@@ -2269,6 +2269,13 @@
 
 
 //////////
+// Constants related to the varType values above
+//////
+	const s32		_DATETIME_BLANK_DATETIME_JULIAN					= -1;
+	const f32		_DATETIME_BLANK_DATETIME_SECONDS				= -1.0f;
+
+
+//////////
 // Translate between variable types, and their corresponding unique variable type codes
 //////
 	SVarTypeXlat	gsVarTypeXlat[] =	 {	{	_VAR_TYPE_NULL,							cgc_null,			sizeof(cgc_null)		 - 1	},
