@@ -9839,6 +9839,7 @@ debug_break;
 			f32			lnValue_f32;
 			f64			lnValue_f64;
 		};
+		s64		lnDtx;
 		u32		lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond;
 		s8		buffer[64];
 		bool	error;
@@ -9955,7 +9956,7 @@ debug_break;
 
 
 			case _VAR_TYPE_LOGICAL:
-				// We can convert it to s32 if auto-convert is on, or if it has been force converted
+				// We can convert it if auto-convert is on, or if it has been force converted
 				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
@@ -9968,7 +9969,7 @@ debug_break;
 
 
 			case _VAR_TYPE_DATETIME:
-				// We can convert it to s32 if auto-convert is on, or if it has been force converted
+				// We can convert it if auto-convert is on, or if it has been force converted
 				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
@@ -9977,15 +9978,12 @@ debug_break;
 						iiDateMath_extract_YyyyMmDd_from_Julian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
 						iiDateMath_extract_HhMmSsMss_from_seconds(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
-						// Create the string for the numeric portion
-						sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
-#ifdef __GNUC__
-						return(strtoll(buffer, NULL, 10));
-#else
-						return(_strtoi64((s8*)buffer, NULL, 10));
-#endif
+						// Convert to a 64-bit numeric value
+						iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDtx, NULL, lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, 0);
+						return(lnDtx);
 				}
 				break;
+
 		}
 
 		// If we get here, we could not convert it
@@ -10015,6 +10013,7 @@ debug_break;
 			f32			lnValue_f32;
 			f64			lnValue_f64;
 		};
+		s64		lnDtx;
 		u32		lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond;
 		s8		buffer[64];
 		bool	error;
@@ -10151,13 +10150,9 @@ debug_break;
 						iiDateMath_extract_YyyyMmDd_from_Julian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
 						iiDateMath_extract_HhMmSsMss_from_seconds(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
-						// Create the string for the numeric portion
-						sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
-#ifdef __GNUC__
-						return(strtoull(buffer, NULL, 10));
-#else
-						return(_strtoui64((s8*)buffer, NULL, 10));
-#endif
+						// Convert to a 64-bit numeric value
+						iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDtx, NULL, lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, 0);
+						return(lnDtx);
 				}
 				break;
 		}
@@ -10193,6 +10188,7 @@ debug_break;
 			f64			lnValue_f64;
 			SDateTime	dt;
 		};
+		s64		lnDtx;
 		u32		lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond;
 		s8		buffer[64];
 		bool	llError;
@@ -10299,13 +10295,9 @@ debug_break;
 						iiDateMath_extract_YyyyMmDd_from_Julian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
 						iiDateMath_extract_HhMmSsMss_from_seconds(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
-						// Create the string for the numeric portion
-						sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
-#ifdef __GNUC__
-						return((f32)strtoull(buffer, NULL, 10));
-#else
-						return((f32)_strtoui64((s8*)buffer, NULL, 10));
-#endif
+						// Convert to a 64-bit numeric value
+						iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDtx, NULL, lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, 0);
+						return((f32)lnDtx);
 				}
 				break;
 		}
@@ -10341,6 +10333,8 @@ debug_break;
 			f64			lnValue_f64;
 			SDateTime	dt;
 		};
+		s64		lnDtx;
+		u32		lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond;
 		s8		buffer[64];
 		bool	llError;
 		u32		lnErrorNum;
@@ -10425,9 +10419,14 @@ debug_break;
 				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
-					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
+					// We can convert this from its text form into numeric
 					//////
-						return((f64)iiVariable_compute_DatetimeDifference_getAs_s64(thisCode, var, _datetime_Jan_01_2000));
+						iiDateMath_extract_YyyyMmDd_from_Julian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+						iiDateMath_extract_HhMmSsMss_from_seconds(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+
+						// Convert to a 64-bit numeric value
+						iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDtx, NULL, lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, 0);
+						return((f64)lnDtx);
 				}
 				break;
 		}
@@ -10478,10 +10477,10 @@ debug_break;
 //////
 	s32 iVariable_compare(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
-		u32		lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, lnDate;
-		u32		lnYear2, lnMonth2, lnDay2, lnHour2, lnMinute2, lnSecond2;
+		u32		lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, lnNanosecond, lnDate;
+		u32		lnYear2, lnMonth2, lnDay2, lnHour2, lnMinute2, lnSecond2, lnMillisecond2;
 		s64		lnDatetime, lnDatetime2;
-		bool	llLeftFp, llRightFp, llLeftInt, llRightInt, llLeftSigned, llRightSigned, llLeftNum, llRightNum;
+		bool	llLeftFp, llRightFp, llLeftInt, llRightInt, llLeftSigned, llRightSigned, llLeftNum, llRightNum, llProcess;
 		s8		buffer[64];
 
 
@@ -10618,7 +10617,7 @@ debug_break;
 
 					if (varRight->varType == _VAR_TYPE_DATETIMEX)
 					{
-						// Datetimes can be compared to datetimex down to the seconds
+						// Datetimes can be compared to datetimex down to the seconds (and possibly the milliseconds, but we cannot guarantee that because it's possible this data came from a table source which may not have had millisecond encoding)
 						iiDateMath_extract_Julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX(varRight->value.data_dtx->jseconds, NULL, NULL, &lnYear2, &lnMonth2, &lnDay2, &lnHour2, &lnMinute2, &lnSecond2, NULL, NULL);
 						iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDatetime,  NULL, lnYear,  lnMonth,  lnDay,  lnHour,  lnMinute,  lnSecond,  0, 0);
 						iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDatetime2, NULL, lnYear2, lnMonth2, lnDay2, lnHour2, lnMinute2, lnSecond2, 0, 0);
@@ -10646,8 +10645,8 @@ debug_break;
 						switch (varRight->varType)
 						{
 							case _VAR_TYPE_S64:
-									 if ((s64)lnDatetime == varRight->value.data_s64[0])		return(0);			// Equal
-								else if ((s64)lnDatetime <  varRight->value.data_s64[0])		return(-1);			// Less than
+									 if (lnDatetime == varRight->value.data_s64[0])				return(0);			// Equal
+								else if (lnDatetime <  varRight->value.data_s64[0])				return(-1);			// Less than
 								else															return(1);			// Greater than
 
 							case _VAR_TYPE_U64:
@@ -10665,30 +10664,84 @@ debug_break;
 								else if ((f64)lnDatetime <  varRight->value.data_f64[0])		return(-1);			// Less than
 								else															return(1);			// Greater than
 
-// 							case _VAR_TYPE_BI:
-// 								break;
-// 							case _VAR_TYPE_BFP:
-// 								break;
+							case _VAR_TYPE_BI:
+							case _VAR_TYPE_BFP:
+								debug_break;
+								break;
 						}
 					}
 
-// TODO:  Working here, purposefully broken
-				} else if (var Left->varType == _VAR_TYPE_DATETIMEX) {
-// 					// Datetimes can be compared to 64-bit numeric values
-// 					iiDateMath_extract_YyyyMmDd_from_Julian(varLeft->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-// 					iiDateMath_extract_HhMmSsMss_from_seconds(varLeft->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
-// 
-// 					if (varRight->varType == _VAR_TYPE_DATETIMEX)
-// 					{
-// 						// Datetimes can be compared to datetimex down to the seconds
-// 						iiDateMath_extract_Julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX(varRight->value.data_dtx->jseconds, NULL, NULL, &lnYear2, &lnMonth2, &lnDay2, &lnHour2, &lnMinute2, &lnSecond2, NULL, NULL);
-// 						iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDatetime,  NULL, lnYear,  lnMonth,  lnDay,  lnHour,  lnMinute,  lnSecond,  0, 0);
-// 						iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDatetime2, NULL, lnYear2, lnMonth2, lnDay2, lnHour2, lnMinute2, lnSecond2, 0, 0);
-// 
-// 						     if ((s64)lnDatetime == (s64)lnDatetime2)		return(0);			// Equal
-// 						else if ((s64)lnDatetime <  (s64)lnDatetime2)		return(-1);			// Less than
-// 						else												return(1);			// Greater than
-// 					}
+				} else if (varLeft->varType == _VAR_TYPE_DATETIMEX) {
+					// DatetimeX values can be compared to datetimeX values, or 64-bit numeric values
+					iiDateMath_extract_Julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX(varLeft->value.data_dtx->jseconds, NULL, NULL, &lnYear, &lnMonth, &lnDay, &lnHour, &lnMinute, &lnSecond, &lnMillisecond, &lnNanosecond);
+					iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDatetime,  NULL, lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, lnNanosecond);
+
+
+					//////////
+					// How should we compare?
+					//////
+						llProcess = true;
+						switch (varRight->varType)
+						{
+							case _VAR_TYPE_DATETIMEX:
+								// Extract the right-side
+								lnDatetime	= varLeft->value.data_dtx->jseconds;
+								lnDatetime2	= varRight->value.data_dtx->jseconds;
+								break;
+
+							case _VAR_TYPE_DATETIME:
+								// Comparing to a datetime (down to seconds only)
+								iiDateMath_extract_YyyyMmDd_from_Julian(varRight->value.data_dt->julian, &lnYear2, &lnMonth2, &lnDay2);
+								iiDateMath_extract_HhMmSsMss_from_seconds(varRight->value.data_dt->seconds, &lnHour2, &lnMinute2, &lnSecond2, &lnMillisecond2);
+								iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDatetime,  NULL, lnYear,  lnMonth,  lnDay,  lnHour,  lnMinute,  lnSecond,  0, 0);
+								iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDatetime2, NULL, lnYear2, lnMonth2, lnDay2, lnHour2, lnMinute2, lnSecond2, 0, 0);
+								break;
+
+							case _VAR_TYPE_DATE:
+								// Comparing to a date (down to day only)
+								iiDateMath_extract_YyyyMmDd_from_YYYYMMDD(varRight->value.data_u8, &lnYear2, &lnMonth2, &lnDay2);
+								iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDatetime,  NULL, lnYear,  lnMonth,  lnDay,  0, 0, 0, 0, 0);
+								iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDatetime2, NULL, lnYear2, lnMonth2, lnDay2, 0, 0, 0, 0, 0);
+								break;
+
+							case _VAR_TYPE_S64:
+								lnDatetime	= varLeft->value.data_dtx->jseconds;
+								lnDatetime2	= varRight->value.data_s64[0];
+								break;
+
+							case _VAR_TYPE_U64:
+								lnDatetime	= varLeft->value.data_dtx->jseconds;
+								lnDatetime2	= varRight->value.data_u64[0];
+								break;
+
+							case _VAR_TYPE_F32:
+									 if ((f32)varLeft->value.data_dtx->jseconds == varRight->value.data_f32[0])		return(0);			// Equal
+								else if ((f32)varLeft->value.data_dtx->jseconds <  varRight->value.data_f32[0])		return(-1);			// Less than
+								else																				return(1);			// Greater than
+
+							case _VAR_TYPE_F64:
+									 if ((f64)varLeft->value.data_dtx->jseconds == varRight->value.data_f64[0])		return(0);			// Equal
+								else if ((f64)varLeft->value.data_dtx->jseconds <  varRight->value.data_f64[0])		return(-1);			// Less than
+								else																				return(1);			// Greater than
+
+							case _VAR_TYPE_BI:
+							case _VAR_TYPE_BFP:
+								debug_break;
+								break;
+						}
+
+
+					//////////
+					// Should we process?
+					//////
+						if (llProcess)
+						{
+							// Comparing the 64-bit values to each other, derived from datetimex, datetime, or date values above
+							     if ((s64)lnDatetime == (s64)lnDatetime2)		return(0);			// Equal
+							else if ((s64)lnDatetime <  (s64)lnDatetime2)		return(-1);			// Less than
+							else												return(1);			// Greater than
+						}
+
 
 				} else {
 					// They are different enough we can't compare them
