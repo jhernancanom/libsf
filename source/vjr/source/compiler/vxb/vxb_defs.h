@@ -295,16 +295,16 @@ struct SThisCode;
 
 	// Support functions
 	SVariable*				iiDateMath_get_dateTemplate										(s32 tnDateFormat);
-	void					iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_DatetimeX				(s64  tnDtx, f64* tfDtx,              u32* year, u32* month, u32* day, u32* hour, u32* minute, u32* second, s32* millisecond, s32* nanosecond);
-	void					iiDateMath_get_julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX	(s64  tnDtx, f64* tfDtx, u32* julian, u32* year, u32* month, u32* day, u32* hour, u32* minute, u32* second, s32* millisecond, s32* nanosecond);
-	s64						iiDateMath_get_jseconds_from_YyyyMmDdHhMmSsMssNss				(f64* tfDtx,                          u32  year, u32  month, u32  day, u32  hour, u32  minute, u32  second, s32  millisecond, s32  nanosecond);
-	s64						iiDateMath_get_jseconds_from_julian_and_HhMmSsMssNss			(f64* tfDtx,             u32  julian,                                  u32  hour, u32  minute, u32  second, s32  millisecond, s32  nanosecond);
+	void					iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_DatetimeX				(u64  tnDtx, f64* tfDtx,              u32* year, u32* month, u32* day, u32* hour, u32* minute, u32* second, s32* millisecond, s32* microsecond);
+	void					iiDateMath_get_julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX	(u64  tnDtx, f64* tfDtx, u32* julian, u32* year, u32* month, u32* day, u32* hour, u32* minute, u32* second, s32* millisecond, s32* microsecond);
+	u64						iiDateMath_get_jseconds_from_YyyyMmDdHhMmSsMssMics				(f64* tfDtx,                          u32  year, u32  month, u32  day, u32  hour, u32  minute, u32  second, s32  millisecond, s32  microsecond);
+	u64						iiDateMath_get_jseconds_from_julian_and_HhMmSsMssMics			(f64* tfDtx,             u32  julian,                                  u32  hour, u32  minute, u32  second, s32  millisecond, s32  microsecond);
 	s32						iiDateMath_get_julian_from_YyyyMmDd								(f32* tnJulianDayNumber, u32  year, u32  month, u32  day);
 	void					iiDateMath_get_YyyyMmDd_from_Julian								(u32  tnJulianDayNumber, u32* year, u32* month, u32* day);
 	void					iiDateMath_get_YyyyMmDd_from_YYYYMMDD							(u8* YYYYMMDD,           u32* year, u32* month, u32* day);
 	void					iiDateMath_get_HhMmSsMss_from_seconds							(f32 tfSeconds, u32* hour, u32* minute, u32* second, s32* millisecond);
 	f32						iiDateMath_get_seconds_from_HhMmSsMss							(               u32  hour, u32  minute, u32  second, s32  millisecond);
-	s32						iiDateMath_get_currentNanosecond								(void);
+	s32						iiDateMath_get_currentMicrosecond								(void);
 	void					iiDateMath_get_YYYYMMDD_from_YyyyMmDd							(u8* YYYYMMDD, u32  year, u32  month, u32  day);
 	void					iiDateMath_get_YYYYMMDD_from_YyyyMmDd							(s8* YYYYMMDD, u32  year, u32  month, u32  day);
 	void					iiDateMath_get_SYSTEMTIME_from_SECONDS							(SYSTEMTIME* st, f32 tfSeconds);

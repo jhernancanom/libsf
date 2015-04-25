@@ -245,7 +245,7 @@
 						{
 							// Date is stored as julian day number
 							iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_DatetimeX(varParam->value.data_dtx->jseconds, NULL, NULL, NULL, NULL, &lnHour, &lnMinute, &lnSecond, &lnMillisecond, &lnNanosecond);
-							varParam->value.data_dtx->jseconds = iiDateMath_get_jseconds_from_YyyyMmDdHhMmSsMssNss(NULL, (u32)lnYear, (u32)lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, lnNanosecond);
+							varParam->value.data_dtx->jseconds = iiDateMath_get_jseconds_from_YyyyMmDdHhMmSsMssMics(NULL, (u32)lnYear, (u32)lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, lnNanosecond);
 						}
 
 					} else {

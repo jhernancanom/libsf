@@ -299,7 +299,7 @@
 		SVariable*	varMillisecond	= returnsParams->params[6];
 		SVariable*	varNanosecond	= returnsParams->params[7];		// Only if tlIsDatetimeX
 
-		s32				lnNanosecond;
+		s32				lnMicrosecond;
 		SVariable*		result;
 		f32				lfJulian;
 		u32				errorNum;
@@ -313,6 +313,12 @@
 			// Nope, we are creating the current system time
 			if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
 			else				GetLocalTime(&lst);
+
+			if (tlIsDatetimeX)
+			{
+				lst.wMilliseconds	= 0;
+				lnMicrosecond		= iiDateMath_get_currentMicrosecond();
+			}
 
 		} else {
 			// They have provided us datetime/x parameters.
@@ -480,8 +486,8 @@
 							iError_report(thisCode, (cu8*)"Nanoseconds must be numeric", false);
 							return(NULL);
 						}
-						lnNanosecond = iiVariable_getAs_s32(thisCode, varNanosecond, false, &error, &errorNum);
-						if (!error && (lnNanosecond < 0 || lnNanosecond > 999999999))
+						lnMicrosecond = iiVariable_getAs_s32(thisCode, varNanosecond, false, &error, &errorNum);
+						if (!error && (lnMicrosecond < 0 || lnMicrosecond > 999999999))
 						{
 							iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varNanosecond), false);
 							return(NULL);
@@ -489,7 +495,7 @@
 
 					} else {
 						// Get the current tick count
-						lnNanosecond = iiDateMath_get_currentNanosecond();
+						lnMicrosecond = iiDateMath_get_currentMicrosecond();
 					}
 
 				} else {
@@ -516,7 +522,7 @@
 			if (tlIsDatetimeX)
 			{
 				// DatetimeX
-				result->value.data_dtx->jseconds = iiDateMath_get_jseconds_from_YyyyMmDdHhMmSsMssNss(NULL, lst.wYear, lst.wMonth, lst.wDay, lst.wHour, lst.wMinute, lst.wSecond, lst.wMilliseconds, lnNanosecond);
+				result->value.data_dtx->jseconds = iiDateMath_get_jseconds_from_YyyyMmDdHhMmSsMssMics(NULL, lst.wYear, lst.wMonth, lst.wDay, lst.wHour, lst.wMinute, lst.wSecond, lst.wMilliseconds, lnMicrosecond);
 
 			} else {
 				// Datetime

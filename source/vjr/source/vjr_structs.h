@@ -90,7 +90,7 @@ struct SDateTime
 
 struct SDateTimeX
 {
-	s64		jseconds;						// Julian-seconds, formula is the sum of:	  millisecond / 1000    or    nanosecond  / 1000000
+	u64		jseconds;						// Julian-seconds, formula is the sum of:	  millisecond / 1000    or    nanosecond  / 1000000
 											//											+ second
 											//											+ minute      * 60
 											//											+ hour        * 60 * 60
