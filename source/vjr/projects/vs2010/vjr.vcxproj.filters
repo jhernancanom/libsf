@@ -64,6 +64,9 @@
     <Filter Include="debugger\jdebic">
       <UniqueIdentifier>{7a3a50a4-3dc8-4b46-976d-84a3500048ba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="commands\functions">
+      <UniqueIdentifier>{18cca64d-61b0-46f1-9850-3d1745737c93}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="small.ico">
@@ -174,6 +177,84 @@
     </ClCompile>
     <ClCompile Include="..\..\source\debugger\jdebic\jdebic.cpp">
       <Filter>debugger\jdebic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\z.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\a.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\b.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\c.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\d.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\e.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\f.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\g.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\h.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\i.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\j.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\k.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\l.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\m.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\n.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\o.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\p.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\q.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\r.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\s.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\t.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\u.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\v.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\w.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\x.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\y.cpp">
+      <Filter>commands\functions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
