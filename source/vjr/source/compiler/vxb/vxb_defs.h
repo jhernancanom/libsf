@@ -308,6 +308,7 @@ struct SThisCode;
 	void					iiDateMath_get_YYYYMMDD_from_YyyyMmDd							(u8* YYYYMMDD, u32  year, u32  month, u32  day);
 	void					iiDateMath_get_YYYYMMDD_from_YyyyMmDd							(s8* YYYYMMDD, u32  year, u32  month, u32  day);
 	void					iiDateMath_get_SYSTEMTIME_from_SECONDS							(SYSTEMTIME* st, f32 tfSeconds);
+	void					iiDateMath_get_SYSTEMTIME_from_SECONDSX							(SYSTEMTIME* st, f64 tfSecondsx, s32* tnMicroseconds);
 	bool					iDateMath_isDayValidForDate										(u32 year, u32 month, u32 day);
 	bool					iDateMath_isLeapYear											(u32 year);
 	u32						iDateMath_getDayNumberIntoYear									(u32 tnYear, u32 tnMonth, u32 tnDay);

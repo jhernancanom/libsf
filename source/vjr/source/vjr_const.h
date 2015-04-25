@@ -877,6 +877,9 @@ typedef SEM**		SEMpp;
 	const u32			_HMS_COMMON_HOUR					= 0;
 	const u32			_HMS_COMMON_MINUTE					= 1;
 	const u32			_HMS_COMMON_SECOND					= 2;
+	const u32			_HMS_COMMON_MILLISECOND				= 3;
+	const u32			_HMS_COMMON_MICROSECOND				= 4;
+
 
 
 //////////

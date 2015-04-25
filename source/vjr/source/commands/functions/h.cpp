@@ -114,52 +114,61 @@
 		return(ifunction_hhmmss_common(thisCode, varParam, _HMS_COMMON_HOUR));
 	}
 
-	SVariable* ifunction_hhmmss_common (SThisCode* thisCode, SVariable* varParam, u32 tnFunctionType)
+	SVariable* ifunction_hhmmss_common(SThisCode* thisCode, SVariable* varParam, u32 tnFunctionType)
 	{
 
-		s32			lnMillisecond;
+		s32			lnMillisecond, lnMicrosecond;
 		u32			lnResult, lnHour, lnMinute, lnSecond;
 		SYSTEMTIME	lst;
 		SVariable*	result;
 
 
 		//////////
-		// If Parameter 1 is provided, it must be datetime
+		// If Parameter 1 is provided, it must be datetime or datetimex
 		//////
-// TODO:  Must also support DATETIMEX at some point
 			if (varParam)
 			{
-				if (!iVariable_isValid(varParam) || !iVariable_isTypeDatetime(varParam))
+				if (!iVariable_isValid(varParam))
 				{
+					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
+					return(NULL);
+
+				} else if (!iVariable_isTypeDatetime(varParam)) {
+					// Grab hour, minute, second, millisecond from datetime
+					iiDateMath_get_HhMmSsMss_from_seconds(varParam->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+					lnMicrosecond = lnMillisecond * 1000;
+
+				} else if (!iVariable_isTypeDatetimeX(varParam)) {
+					// Grab hour, minute, second, millisecond from datetime
+					iiDateMath_get_julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX(varParam->value.data_dtx->jseconds, NULL, NULL, NULL, NULL, NULL, &lnHour, &lnMinute, &lnSecond, &lnMillisecond, &lnMicrosecond);
+
+				} else {
 					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
 					return(NULL);
 				}
 
-
-				//////////
-				// Grab hour, minute, second, millisecond from datetime
-				//////
-					iiDateMath_get_HhMmSsMss_from_seconds(varParam->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
-
 			} else {
-				// Use the current datetime
+				// Use the current datetimex
 				if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
 				else				GetLocalTime(&lst);
 				lnHour			= lst.wHour;
 				lnMinute		= lst.wMinute;
 				lnSecond		= lst.wSecond;
 				lnMillisecond	= lst.wMilliseconds;
-
+				lnMicrosecond	= iiDateMath_get_currentMicrosecond();
 			}
+
 
 		//////////
 		// Create output variable
 		//////
 			switch (tnFunctionType)
 			{
-				case _HMS_COMMON_HOUR:		lnResult = lnHour;		break;
-				case _HMS_COMMON_MINUTE:	lnResult = lnMinute;	break;
-				case _HMS_COMMON_SECOND:	lnResult = lnSecond;	break;
+				case _HMS_COMMON_HOUR:			lnResult = lnHour;			break;
+				case _HMS_COMMON_MINUTE:		lnResult = lnMinute;		break;
+				case _HMS_COMMON_SECOND:		lnResult = lnSecond;		break;
+				case _HMS_COMMON_MILLISECOND:	lnResult = lnMillisecond;	break;
+				case _HMS_COMMON_MICROSECOND:	lnResult = lnMicrosecond;	break;
 
 				// Should never happen
 				default:

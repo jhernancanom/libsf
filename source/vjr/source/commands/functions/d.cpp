@@ -758,6 +758,7 @@
 
 	
 
+
 //////////
 //
 // Function: DOW()
@@ -765,7 +766,7 @@
 // ToDo: receive a second parameter for the first day of the week (from 0 to 7); currently assumes 1 for Sunday.
 //
 //////
-// Version 0.57????????????????????????????????
+// Version 0.57
 // Last update:
 //     Apr.20.2015
 //////

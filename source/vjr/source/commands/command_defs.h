@@ -321,6 +321,8 @@ struct SReturnsParams;
 	SVariable*			function__test								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_textmerge							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_time		/* Hernan Cano */		(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			ifunction_timex_common						(SThisCode* thisCode, SReturnsParams* returnsParams, bool tlIsTimeX);
+	SVariable*			function_timex								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_transform							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_ttoc		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_ttod		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -545,6 +547,7 @@ struct SReturnsParams;
 		{	_ICODE__TEST,			1,			(uptr)&function__test,			1,				1,				NULL							},
 		{	_ICODE_TEXTMERGE,		1,			(uptr)&function_textmerge,		1,				4,				&gsSourceLight_textmerge[0]		},
 		{	_ICODE_TIME,			1,			(uptr)&function_time,			0,				2,				&gsSourceLight_time[0]			},	// TIME() by Hernan Cano, VJr 0.57, Apr.20.2015
+		{	_ICODE_TIMEX,			1,			(uptr)&function_timex,			0,				2,				&gsSourceLight_timex[0]			},	// TIME() by Hernan Cano, VJr 0.57, Apr.20.2015
 		{	_ICODE_TRANSFORM,		1,			(uptr)&function_transform,		1,				2,				&gsSourceLight_transform[0]		},
 		{	_ICODE_TTOC,			1,			(uptr)&function_ttoc,			1,				2,				&gsSourceLight_ttoc[0]			},	// TTOC() by Stefano D'Amico, VJr 0.57, Apr.07.2015
 		{	_ICODE_TTOD,			1,			(uptr)&function_ttod,			1,				1,				&gsSourceLight_ttod[0]			},	// TTOD() by Stefano D'Amico, VJr 0.57, Apr.07.2015

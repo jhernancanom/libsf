@@ -323,7 +323,7 @@
 // Returns the time in Hh:Mm:Ss or Hh:Mm:Ss:Mss format
 //
 //////
-// Version 0.57????????????????????????????????
+// Version 0.57
 // Last update:
 //     Apr.20.2015
 //////
@@ -343,16 +343,25 @@
 //////
 	SVariable* function_time(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		return(ifunction_timex_common(thisCode, returnsParams, false));
+	}
+
+	SVariable* ifunction_timex_common(SThisCode* thisCode, SReturnsParams* returnsParams, bool tlIsTimeX)
+	{
 		SVariable*	varP1	= returnsParams->params[0];
 		SVariable*	varP2	= returnsParams->params[1];
 
+		s32			lnMillisecond, lnMicrosecond;
+		u32			lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond;
 		f32			lfSeconds;
-		bool		llMilliseconds, llExtractDatetime, llExtractSeconds;
+		f64			lfSecondsx;
+		bool		llMilliseconds, llExtractDatetime, llExtractDatetimeX, llExtractSeconds;
 		SVariable*	varDatetime;
+		SVariable*	varDatetimeX;
 		SVariable*	varSeconds;
 		SVariable*	result;
 		SYSTEMTIME	lst;
-		s8			buffer[16];
+		s8			buffer[32];
 		bool		error;
 		u32			errorNum;
 
@@ -361,11 +370,16 @@
 		llMilliseconds		= false;
 		llExtractSeconds	= false;
 		llExtractDatetime	= false;
+		llExtractDatetimeX	= false;
 		switch (returnsParams->pcount)
 		{
 			case 0:
 				// Grab the current time
 				iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
+
+				// And microsecond if need be
+				if (tlIsTimeX)
+					lnMicrosecond = iiDateMath_get_currentMicrosecond();
 				break;
 
 			case 1:
@@ -378,7 +392,7 @@
 
 				if (iVariable_isTypeFloatingPoint(varP1))
 				{
-					// It's numeric, meaning they want us to convert the SECONDS() value
+					// It's numeric, meaning they want us to convert the SECONDS() or SECONDSX() value
 					varSeconds			= varP1;
 					llExtractSeconds	= true;
 
@@ -387,7 +401,12 @@
 					varDatetime			= varP1;
 					llExtractDatetime	= true;
 
-				} else if (iVariable_isFundamentalTypeLogical(varP1)) {
+				} else if (iVariable_isTypeDatetimeX(varP1)) {
+					// It's datetimex, meaning they want the seconds or secondsx from this value
+					varDatetimeX		= varP1;
+					llExtractDatetimeX	= true;
+
+				} else if (!tlIsTimeX && iVariable_isFundamentalTypeLogical(varP1)) {
 					// It's logical, which means they're indicating if they want the milliseconds
 					llMilliseconds = iiVariable_getAs_bool(thisCode, varP1, false, &error, &errorNum);
 					if (error)
@@ -408,6 +427,16 @@
 
 
 			case 2:
+				//////////
+				// Only valid for non-datetimex
+				//////
+					if (tlIsTimeX)
+					{
+						iError_reportByNumber(thisCode, _ERROR_TOO_MANY_PARAMETERS, iVariable_getRelatedComp(thisCode, varP2), false);
+						return(NULL);
+					}
+
+
 				//////////
 				// P1 must be datetime/floating point
 				//////
@@ -455,16 +484,31 @@
 		//////
 			if (llExtractSeconds)
 			{
-				// Grab the seconds
-				lfSeconds = iiVariable_getAs_f32(thisCode, varSeconds, false, &error, &errorNum);
-				if (error)
+				if (tlIsTimeX)
 				{
-					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varSeconds), false);
-					return(NULL);
-				}
+					// Grab the secondsx
+					lfSecondsx = iiVariable_getAs_f64(thisCode, varSeconds, false, &error, &errorNum);
+					if (error)
+					{
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varSeconds), false);
+						return(NULL);
+					}
 
-				// Convert the seconds value to a time
-				iiDateMath_get_SYSTEMTIME_from_SECONDS(&lst, lfSeconds);
+					// Convert the secondsx value to a time
+					iiDateMath_get_SYSTEMTIME_from_SECONDSX(&lst, lfSecondsx, &lnMicrosecond);
+
+				} else {
+					// Grab the seconds
+					lfSeconds = iiVariable_getAs_f32(thisCode, varSeconds, false, &error, &errorNum);
+					if (error)
+					{
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varSeconds), false);
+						return(NULL);
+					}
+
+					// Convert the seconds value to a time
+					iiDateMath_get_SYSTEMTIME_from_SECONDS(&lst, lfSeconds);
+				}
 			}
 
 
@@ -472,15 +516,33 @@
 		// Extract the datetime if need be
 		//////
 			if (llExtractDatetime)
+			{
 				iiDateMath_get_SYSTEMTIME_from_SECONDS(&lst, varP1->value.data_dt->seconds);
+
+				if (tlIsTimeX)
+					lnMicrosecond = (s32)lst.wMilliseconds * 1000;
+			}
+
+
+		//////////
+		// Extract the datetimex if need be
+		//////
+			if (llExtractDatetimeX)
+			{
+				iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_DatetimeX(varP1->value.data_dtx->jseconds, NULL, &lnYear, &lnMonth, &lnDay, &lnHour, &lnMinute, &lnSecond, &lnMillisecond, &lnMicrosecond);
+				lst.wHour	= lnHour;
+				lst.wMinute	= lnMinute;
+				lst.wSecond	= lnSecond;
+			}
 
 			
 		//////////
 		// Convert lst.* into a VJr date variable
 		//////
 			// Time is stored as HH:MM:SS.mmm
-			if (llMilliseconds)		sprintf(buffer, "%02u:%02u:%02u.%03u\0", lst.wHour, lst.wMinute, lst.wSecond, lst.wMilliseconds);
-			else					sprintf(buffer, "%02u:%02u:%02u\0"     , lst.wHour, lst.wMinute, lst.wSecond);
+			     if (tlIsTimeX)				sprintf(buffer, "%02u:%02u:%02u.%06u\0", lst.wHour, lst.wMinute, lst.wSecond, lnMicrosecond);
+			else if (llMilliseconds)		sprintf(buffer, "%02u:%02u:%02u.%03u\0", lst.wHour, lst.wMinute, lst.wSecond, lst.wMilliseconds);
+			else							sprintf(buffer, "%02u:%02u:%02u\0"     , lst.wHour, lst.wMinute, lst.wSecond);
 
 
 		//////////
@@ -496,6 +558,36 @@
 		//////
 			return(result);
 
+	}
+
+
+
+
+//////////
+//
+// Function: TIMEX()
+// Returns the timex in Hh:Mm:Ss:Micsss format
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.25.2015
+//////
+// Change log:
+//     Apr.25.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     pDatetimex	-- (optional) Datetimex, any value, if they want the time from that datetimex
+//     pSecondsx	-- (optional) Floating point, any value 0..86400, if they want the time from a SECONDSX() value
+//
+//////
+// Returns:
+//    Character		-- Current time() as HH:MM:SS.Micsss
+//
+//////
+	SVariable* function_timex(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_timex_common(thisCode, returnsParams, true));
 	}
 
 

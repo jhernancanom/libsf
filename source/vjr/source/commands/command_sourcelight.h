@@ -869,6 +869,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_timex[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_transform[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}

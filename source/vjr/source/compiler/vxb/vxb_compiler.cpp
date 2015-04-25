@@ -11523,6 +11523,46 @@ debug_break;
 
 //////////
 //
+// Called to convert a SECONDSX() into time values, including microseconds, and store them in a SYSTEMTIME variable
+//
+//////
+	void iiDateMath_get_SYSTEMTIME_from_SECONDSX(SYSTEMTIME* st, f64 tfSecondsx, s32* tnMicroseconds)
+	{
+		if (tfSecondsx >= 0.0f && tfSecondsx <= 86400.0f)
+		{
+			// Hour
+			st->wHour			= (u16)(tfSecondsx / (60.0f * 60.0f));
+			tfSecondsx			-= (f32)(st->wHour * 60 * 60);
+
+			// Minutes
+			st->wMinute			= (u16)(tfSecondsx / 60.0f);
+			tfSecondsx			-= (f32)(st->wMinute * 60);
+
+			// Seconds
+			st->wSecond			= (u16)tfSecondsx;
+			tfSecondsx			-= (f32)st->wSecond;
+
+			// Milliseconds
+			st->wMilliseconds	= (u16)(tfSecondsx * 1000.0f);
+
+			// Microseconds
+			*tnMicroseconds		= (s32)(tfSecondsx * 1000000.0f);
+
+		} else {
+			// Invalid, default to midnight
+			st->wHour			= 0;
+			st->wMinute			= 0;
+			st->wSecond			= 0;
+			st->wMilliseconds	= 0;
+			*tnMicroseconds		= 0;
+		}
+	}
+
+
+
+
+//////////
+//
 // Called to calculate if the indicated day number is appropriate for the month.
 //
 //////

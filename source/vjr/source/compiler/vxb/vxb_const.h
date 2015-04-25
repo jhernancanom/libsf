@@ -784,6 +784,7 @@
 	const s32		_ICODE_TARGET                                   = 1390;
 	const s32		_ICODE_TEXTMERGE                                = 1391;
 	const s32		_ICODE_TIME                                     = 1392;
+	const s32		_ICODE_TIMEX									= 1485;
 	const s32		_ICODE_TRANSFORM                                = 1393;
 	const s32		_ICODE_TRIM                                     = 1394;
 	const s32		_ICODE_TTOC                                     = 1395;
@@ -860,6 +861,7 @@
 	// startswithc		= 1479				outside			= 1480
 	// typedetail		= 1481				dtransform		= 1482
 	// datetimex		= 1483				secondsx		= 1484
+	// timex			= 1485
 
 // Temporarily added until the processing engine is coded
 	const s32		_ICODE_CONCATENATE								= 1900;
@@ -1721,6 +1723,7 @@
 	const s8		cgc_target[]									= "target";
 	const s8		cgc_textmerge[]									= "textmerge";
 	const s8		cgc_time[]										= "time";
+	const s8		cgc_timex[]										= "timex";
 	const s8		cgc_transform[]									= "transform";
 	const s8		cgc_trim[]										= "trim";
 	const s8		cgc_ttoc[]										= "ttoc";
