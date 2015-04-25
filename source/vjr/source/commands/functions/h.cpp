@@ -117,7 +117,8 @@
 	SVariable* ifunction_hhmmss_common (SThisCode* thisCode, SVariable* varParam, u32 tnFunctionType)
 	{
 
-		u32			lnResult, lnHour, lnMinute, lnSecond, lnMillisecond; 
+		s32			lnMillisecond;
+		u32			lnResult, lnHour, lnMinute, lnSecond;
 		SYSTEMTIME	lst;
 		SVariable*	result;
 
@@ -138,7 +139,7 @@
 				//////////
 				// Grab hour, minute, second, millisecond from datetime
 				//////
-					iiDateMath_extract_HhMmSsMss_from_seconds(varParam->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+					iiDateMath_get_HhMmSsMss_from_seconds(varParam->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 			} else {
 				// Use the current datetime

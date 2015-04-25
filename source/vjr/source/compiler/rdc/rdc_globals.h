@@ -189,6 +189,7 @@
 		{ "datum",					5,			false,		_ICODE_DATUM,							false,				_ICAT_TYPE,			&colorSynHi_type,			false,						null0,		null0 },
 		{ "date",					4,			false,		_ICODE_DATE,							false,				_ICAT_TYPE,			&colorSynHi_type,			false,						null0,		null0 },
 		{ "datetime",				8,			false,		_ICODE_DATETIME,						false,				_ICAT_TYPE,			&colorSynHi_type,			false,						null0,		null0 },
+		{ "datetimex",				9,			false,		_ICODE_DATETIMEX,						false,				_ICAT_TYPE,			&colorSynHi_type,			false,						null0,		null0 },
 		{ "thread",					6,			false,		_ICODE_THREAD,							false,				_ICAT_TYPE,			&colorSynHi_type,			false,						null0,		null0 },
 		{ "process",				7,			false,		_ICODE_PROCESS,							false,				_ICAT_TYPE,			&colorSynHi_type,			false,						null0,		null0 },
 

@@ -1155,7 +1155,7 @@
 					//////////
 					// Convert to julian
 					//////
-						iiDateMath_extract_Julian_from_YyyyMmDd(&lfJulian, lst.wYear, lst.wMonth, lst.wDay);
+						iiDateMath_get_julian_from_YyyyMmDd(&lfJulian, lst.wYear, lst.wMonth, lst.wDay);
 						sprintf(buffer, "%d\0", (s32)lfJulian);
 
 
@@ -1250,14 +1250,14 @@
 					//////////
 					// Translate into standard year, month, day
 					//////
-						iiDateMath_extract_YyyyMmDd_from_Julian((u32)lfJulian, &lnYear, &lnMonth, &lnDay);
+						iiDateMath_get_YyyyMmDd_from_Julian((u32)lfJulian, &lnYear, &lnMonth, &lnDay);
 
 
 					//////////
 					// Convert julian date into a VJr date variable
 					//////
 						// Date is stored as YYYYMMDD
-						iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
+						iiDateMath_get_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
 						varTemp = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
 						if (!varTemp)
 						{

@@ -294,21 +294,23 @@ struct SThisCode;
 	f64						iiVariable_compute_DatetimeDifference_getAs_f64(SThisCode* thisCode, SVariable* dtVar1, SVariable* dtVar2);
 
 	// Support functions
-	SVariable*				iiDateMath_get_dateTemplate											(s32 tnDateFormat);
-	void					iiDateMath_extract_Julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX	(s64  tnDtx, f64* tfDtx, u32* julian, u32* year, u32* month, u32* day, u32* hour, u32* minute, u32* second, u32* millisecond, u32* nanosecond);
-	void					iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss				(s64* tnDtx, f64* tfDtx,              u32  year, u32  month, u32  day, u32  hour, u32  minute, u32  second, u32  millisecond, u32  nanosecond);
-	void					iiDateMath_extract_DatetimeX_from_Julian_and_HhMmSsMssNss			(s64* tnDtx, f64* tfDtx, u32  julian,                                  u32  hour, u32  minute, u32  second, u32  millisecond, u32  nanosecond);
-	s32						iiDateMath_extract_Julian_from_YyyyMmDd								(f32* tnJulianDayNumber, u32  year, u32  month, u32  day);
-	void					iiDateMath_extract_YyyyMmDd_from_Julian								(u32  tnJulianDayNumber, u32* year, u32* month, u32* day);
-	void					iiDateMath_extract_YyyyMmDd_from_YYYYMMDD							(u8* YYYYMMDD, u32* year, u32* month, u32* day);
-	void					iiDateMath_extract_HhMmSsMss_from_seconds							(f32 tfSeconds, u32* hour, u32* minute, u32* second, u32* millisecond);
-	f32						iiDateMath_extract_seconds_from_HhMmSsMss							(u32 hour, u32  minute, u32  second, u32  millisecond);
-	void					iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd							(u8* YYYYMMDD, u32  year, u32  month, u32  day);
-	void					iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd							(s8* YYYYMMDD, u32  year, u32  month, u32  day);
-	void					iiDateMath_convertTo_SYSTEMTIME_from_SECONDS						(SYSTEMTIME* st, f32 tfSeconds);
-	bool					iDateMath_isDayValidForDate											(u32 year, u32 month, u32 day);
-	bool					iDateMath_isLeapYear												(u32 year);
-	u32						iDateMath_getDayNumberIntoYear										(u32 tnYear, u32 tnMonth, u32 tnDay);
+	SVariable*				iiDateMath_get_dateTemplate										(s32 tnDateFormat);
+	void					iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_DatetimeX				(s64  tnDtx, f64* tfDtx,              u32* year, u32* month, u32* day, u32* hour, u32* minute, u32* second, s32* millisecond, s32* nanosecond);
+	void					iiDateMath_get_julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX	(s64  tnDtx, f64* tfDtx, u32* julian, u32* year, u32* month, u32* day, u32* hour, u32* minute, u32* second, s32* millisecond, s32* nanosecond);
+	s64						iiDateMath_get_jseconds_from_YyyyMmDdHhMmSsMssNss				(f64* tfDtx,                          u32  year, u32  month, u32  day, u32  hour, u32  minute, u32  second, s32  millisecond, s32  nanosecond);
+	s64						iiDateMath_get_jseconds_from_julian_and_HhMmSsMssNss			(f64* tfDtx,             u32  julian,                                  u32  hour, u32  minute, u32  second, s32  millisecond, s32  nanosecond);
+	s32						iiDateMath_get_julian_from_YyyyMmDd								(f32* tnJulianDayNumber, u32  year, u32  month, u32  day);
+	void					iiDateMath_get_YyyyMmDd_from_Julian								(u32  tnJulianDayNumber, u32* year, u32* month, u32* day);
+	void					iiDateMath_get_YyyyMmDd_from_YYYYMMDD							(u8* YYYYMMDD,           u32* year, u32* month, u32* day);
+	void					iiDateMath_get_HhMmSsMss_from_seconds							(f32 tfSeconds, u32* hour, u32* minute, u32* second, s32* millisecond);
+	f32						iiDateMath_get_seconds_from_HhMmSsMss							(               u32  hour, u32  minute, u32  second, s32  millisecond);
+	s32						iiDateMath_get_currentNanosecond								(void);
+	void					iiDateMath_get_YYYYMMDD_from_YyyyMmDd							(u8* YYYYMMDD, u32  year, u32  month, u32  day);
+	void					iiDateMath_get_YYYYMMDD_from_YyyyMmDd							(s8* YYYYMMDD, u32  year, u32  month, u32  day);
+	void					iiDateMath_get_SYSTEMTIME_from_SECONDS							(SYSTEMTIME* st, f32 tfSeconds);
+	bool					iDateMath_isDayValidForDate										(u32 year, u32 month, u32 day);
+	bool					iDateMath_isLeapYear											(u32 year);
+	u32						iDateMath_getDayNumberIntoYear									(u32 tnYear, u32 tnMonth, u32 tnDay);
 
 	// Op functions
 	bool					iOp_setNull									(SOp* op);

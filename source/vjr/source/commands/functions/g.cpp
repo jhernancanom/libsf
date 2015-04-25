@@ -116,7 +116,8 @@
 		SVariable* varMonth = returnsParams->params[1];
 
 		s32			lnNumOfMonths, lnYear, lnMonth;
-		u32			lnDay, lnLastDay, lnHour, lnMinute, lnSecond, lnMillisecond, lnNanosecond;
+		u32			lnDay, lnLastDay, lnHour, lnMinute, lnSecond;
+		s32			lnMillisecond, lnNanosecond;
 		f32			lfJulian;
 		SVariable*	result;
 		s8			buffer[16];
@@ -137,9 +138,9 @@
 		//////////
 		// Grab year, month, day from datetime or date
 		//////
-			     if (iVariable_isTypeDatetime(varParam))		iiDateMath_extract_YyyyMmDd_from_Julian								(varParam->value.data_dt->julian,					(u32*)&lnYear, (u32*)&lnMonth, &lnDay);
-			else if (iVariable_isTypeDatetimeX(varParam))		iiDateMath_extract_Julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX	(varParam->value.data_dtx->jseconds, NULL, NULL,	(u32*)&lnYear, (u32*)&lnMonth, &lnDay, NULL, NULL, NULL, NULL, NULL);
-			else /* date */										iiDateMath_extract_YyyyMmDd_from_YYYYMMDD							(varParam->value.data_u8,							(u32*)&lnYear, (u32*)&lnMonth, &lnDay);
+			     if (iVariable_isTypeDatetime(varParam))		iiDateMath_get_YyyyMmDd_from_Julian					(varParam->value.data_dt->julian,			(u32*)&lnYear, (u32*)&lnMonth, &lnDay);
+			else if (iVariable_isTypeDatetimeX(varParam))		iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_DatetimeX	(varParam->value.data_dtx->jseconds, NULL,	(u32*)&lnYear, (u32*)&lnMonth, &lnDay, NULL, NULL, NULL, NULL, NULL);
+			else /* date */										iiDateMath_get_YyyyMmDd_from_YYYYMMDD				(varParam->value.data_u8,					(u32*)&lnYear, (u32*)&lnMonth, &lnDay);
 
 
 
@@ -233,7 +234,7 @@
 						if (result)
 						{
 							// Date is stored as julian day number
-							result->value.data_dt->julian	= iiDateMath_extract_Julian_from_YyyyMmDd(&lfJulian, lnYear, (u32)lnMonth, lnDay);
+							result->value.data_dt->julian	= iiDateMath_get_julian_from_YyyyMmDd(&lfJulian, lnYear, (u32)lnMonth, lnDay);
 							result->value.data_dt->seconds = varParam->value.data_dt->seconds;
 						}
 
@@ -243,13 +244,13 @@
 						if (result)
 						{
 							// Date is stored as julian day number
-							iiDateMath_extract_Julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX(varParam->value.data_dtx->jseconds, NULL, NULL, NULL, NULL, NULL, &lnHour, &lnMinute, &lnSecond, &lnMillisecond, &lnNanosecond);
-							iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&result->value.data_dtx->jseconds, NULL, (u32)lnYear, (u32)lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, lnNanosecond);
+							iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_DatetimeX(varParam->value.data_dtx->jseconds, NULL, NULL, NULL, NULL, &lnHour, &lnMinute, &lnSecond, &lnMillisecond, &lnNanosecond);
+							varParam->value.data_dtx->jseconds = iiDateMath_get_jseconds_from_YyyyMmDdHhMmSsMssNss(NULL, (u32)lnYear, (u32)lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, lnNanosecond);
 						}
 
 					} else {
 						// Date is stored as YYYYMMDD
-						iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, (u32)lnMonth, lnDay);
+						iiDateMath_get_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, (u32)lnMonth, lnDay);
 						result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
 					}
 

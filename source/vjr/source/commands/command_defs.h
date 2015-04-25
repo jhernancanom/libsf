@@ -211,6 +211,8 @@ struct SReturnsParams;
 	SVariable*			function_curdir								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_date		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_datetime							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_datetimex							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			ifunction_datetimex_common					(SThisCode* thisCode, SReturnsParams* returnsParams, bool tlIsDatetimeX);
 	SVariable*			function_day		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			ifunction_day_month_year_common				(SThisCode* thisCode, SVariable* varParam, u32 tnFunctionType);
 	SVariable*			function_dmy		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -449,6 +451,7 @@ struct SReturnsParams;
 		{	_ICODE_CURDIR,			1,			(uptr)&function_curdir,			0,				0,				&gsSourceLight_curdir[0]		},
 		{	_ICODE_DATE,			1,			(uptr)&function_date,			0,				3,				&gsSourceLight_date[0]			},	// DATE() by Stefano D'Amico, VJr 0.57, Apr.04.2015
 		{	_ICODE_DATETIME,		1,			(uptr)&function_datetime,		0,				7,				&gsSourceLight_datetime[0]		},
+		{	_ICODE_DATETIMEX,		1,			(uptr)&function_datetimex,		0,				8,				&gsSourceLight_datetimex[0]		},
 		{	_ICODE_DAY,				1,			(uptr)&function_day,			0,				1,				&gsSourceLight_day[0]			},	// DAY() by Stefano D'Amico, VJr 0.57, Apr.04.2015
 		{	_ICODE_DMY,				1,			(uptr)&function_dmy,			0,				1,				&gsSourceLight_dmy[0]			},	// DMY() by Stefano D'Amico, VJr 0.57, Apr.07.2015
 		{	_ICODE_DOW,				1,			(uptr)&function_dow,			0,				2,				&gsSourceLight_dow[0]			},	// DOW() by Hernan Cano, VJr 0.75, Apr.20.2015

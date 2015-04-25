@@ -136,8 +136,8 @@
 				//////////
 				// Grab year, month, day from datetime or date
 				//////
-					if (iVariable_isTypeDatetime(varParam))			iiDateMath_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-					else /* date */									iiDateMath_extract_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+					if (iVariable_isTypeDatetime(varParam))			iiDateMath_get_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+					else /* date */									iiDateMath_get_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
 
 
 			} else {

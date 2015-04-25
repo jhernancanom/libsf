@@ -136,8 +136,8 @@
 			//////////
 			// Grab year, month, day from datetime or date
 			//////
-				if (iVariable_isTypeDatetime(varParam))			iiDateMath_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-				else /* date */									iiDateMath_extract_YyyyMmDd_from_YYYYMMDD	(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+				if (iVariable_isTypeDatetime(varParam))			iiDateMath_get_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+				else /* date */									iiDateMath_get_YyyyMmDd_from_YYYYMMDD	(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
 
 			} else {
 				// Use the current date
@@ -556,8 +556,8 @@
 				//////////
 				// Grab year, month, day from datetime or date
 				//////
-					if (iVariable_isTypeDatetime(varParam))			iiDateMath_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-					else /* date */									iiDateMath_extract_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+					if (iVariable_isTypeDatetime(varParam))			iiDateMath_get_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+					else /* date */									iiDateMath_get_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
 
 
 			} else {
@@ -1166,12 +1166,12 @@ debug_break;
 					if (tlIncludeTime)
 					{
 						// Datetime
-						result->value.data_dt->julian	= iiDateMath_extract_Julian_from_YyyyMmDd(NULL, lnYYYY, lnMM, lnDD);
-						result->value.data_dt->seconds	= iiDateMath_extract_seconds_from_HhMmSsMss(lnHh, lnMm, lnSs, lnMss);
+						result->value.data_dt->julian	= iiDateMath_get_julian_from_YyyyMmDd(NULL, lnYYYY, lnMM, lnDD);
+						result->value.data_dt->seconds	= iiDateMath_get_seconds_from_HhMmSsMss(lnHh, lnMm, lnSs, lnMss);
 
 					} else {
 						// Just a date
-						iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd(result->value.data, lnYYYY, lnMM, lnDD);
+						iiDateMath_get_YYYYMMDD_from_YyyyMmDd(result->value.data, lnYYYY, lnMM, lnDD);
 					}
 				}
 

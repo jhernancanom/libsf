@@ -202,7 +202,7 @@
 		// Convert lst.* into a VJr date variable
 		//////
 			// Date is stored as YYYYMMDD
-			iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lst.wYear, lst.wMonth, lst.wDay);
+			iiDateMath_get_YYYYMMDD_from_YyyyMmDd(buffer, lst.wYear, lst.wMonth, lst.wDay);
 			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
 			if (!result)
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
@@ -247,6 +247,49 @@
 //////
 	SVariable* function_datetime(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		// Return the datetime
+		return(ifunction_datetimex_common(thisCode, returnsParams, false));
+	}
+
+
+
+
+//////////
+//
+// Function: DATETIMEX()
+// Returns the current local time, or uses the input variables to create the indicated datetimex.
+//
+//////
+// Version 0.56
+// Last update:
+//     Apr.25.2015
+//////
+// Change log:
+//     Apr.25.2015 - Initial creation
+//////
+// Parameters:
+//     pYear		-- (optional) Numeric, in the range 1600..2400
+//     pMonth		-- (optional) Numeric, in the range 1..12
+//     pDay			-- (optional) Numeric, in the range 1..(varies based on month+year, not more than 31)
+//     pHour		-- (optional) Numeric, in the range 0..23
+//     pMinute		-- (optional) Numeric, in the range 0..59
+//     pSecond		-- (optional) Numeric, in the range 0..59
+//     pMillisecond	-- (optional) Numeric, in the range 0..999
+//     pNanosecond	-- (optional) Numeric, in the range 0..999999999
+//
+//////
+// Returns:
+//    Datetimex		-- Current datetimex(), or input converted to datetimex
+//
+//////
+	SVariable* function_datetimex(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		// Return the datetimex
+		return(ifunction_datetimex_common(thisCode, returnsParams, true));
+	}
+
+	SVariable* ifunction_datetimex_common(SThisCode* thisCode, SReturnsParams* returnsParams, bool tlIsDatetimeX)
+	{
 		SVariable*	varYear			= returnsParams->params[0];
 		SVariable*	varMonth		= returnsParams->params[1];
 		SVariable*	varDay			= returnsParams->params[2];
@@ -254,12 +297,14 @@
 		SVariable*	varMinute		= returnsParams->params[4];
 		SVariable*	varSecond		= returnsParams->params[5];
 		SVariable*	varMillisecond	= returnsParams->params[6];
-		SVariable*	result;
-		SDateTime*	dt;
-		f32			lfJulian;
-		u32			errorNum;
-		bool		error;
-		SYSTEMTIME	lst;
+		SVariable*	varNanosecond	= returnsParams->params[7];		// Only if tlIsDatetimeX
+
+		s32				lnNanosecond;
+		SVariable*		result;
+		f32				lfJulian;
+		u32				errorNum;
+		bool			error;
+		SYSTEMTIME		lst;
 
 
 		// Have they provided us with data?
@@ -270,7 +315,7 @@
 			else				GetLocalTime(&lst);
 
 		} else {
-			// They have provided us datetime parameters.
+			// They have provided us datetime/x parameters.
 			// Default to 01/01/1600 00:00:00.000 for any
 			lst.wYear			= 1600;
 			lst.wMonth			= 1;
@@ -419,26 +464,65 @@
 						return(NULL);
 					}
 				}
+
+
+			//////////
+			// pNanosecond must be numeric, and in the range of 0..999999999
+			//////
+				if (tlIsDatetimeX)
+				{
+					// DatetimeX nanosecond is allowed
+					if (iVariable_isValid(varNanosecond))
+					{
+						// They gave us a pNanosecond
+						if (!iVariable_isTypeNumeric(varNanosecond))
+						{
+							iError_report(thisCode, (cu8*)"Nanoseconds must be numeric", false);
+							return(NULL);
+						}
+						lnNanosecond = iiVariable_getAs_s32(thisCode, varNanosecond, false, &error, &errorNum);
+						if (!error && (lnNanosecond < 0 || lnNanosecond > 999999999))
+						{
+							iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varNanosecond), false);
+							return(NULL);
+						}
+
+					} else {
+						// Get the current tick count
+						lnNanosecond = iiDateMath_get_currentNanosecond();
+					}
+
+				} else {
+					// DatetimeX nanosecond is NOT allowed
+					if (iVariable_isValid(varNanosecond))
+					{
+						iError_reportByNumber(thisCode, _ERROR_TOO_MANY_PARAMETERS, iVariable_getRelatedComp(thisCode, varNanosecond), false);
+						return(NULL);
+					}
+				}
 		}
 
 
 		//////////
 		// Convert lst.* into a VJr datetime variable
 		//////
-			result = iVariable_create(thisCode, _VAR_TYPE_DATETIME, NULL, true);
+			result = iVariable_create(thisCode, ((tlIsDatetimeX) ? _VAR_TYPE_DATETIMEX : _VAR_TYPE_DATETIME), NULL, true);
 			if (!result)
 			{
-				iError_report(thisCode, cgcInternalError, false);
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varYear), false);
 				return(NULL);
 			}
 
-			dt = (SDateTime*)result->value.data;
+			if (tlIsDatetimeX)
+			{
+				// DatetimeX
+				result->value.data_dtx->jseconds = iiDateMath_get_jseconds_from_YyyyMmDdHhMmSsMssNss(NULL, lst.wYear, lst.wMonth, lst.wDay, lst.wHour, lst.wMinute, lst.wSecond, lst.wMilliseconds, lnNanosecond);
 
-			// Date is stored as julian day number
-			dt->julian	= iiDateMath_extract_Julian_from_YyyyMmDd(&lfJulian, lst.wYear, lst.wMonth, lst.wDay);
-
-			// Time is stored as seconds since midnight
-			dt->seconds = (f32)(lst.wHour * 60 * 60) + (f32)(lst.wMinute * 60) + (f32)lst.wSecond + ((f32)lst.wMilliseconds / 1000.0f);
+			} else {
+				// Datetime
+				result->value.data_dt->julian	= iiDateMath_get_julian_from_YyyyMmDd(&lfJulian, lst.wYear, lst.wMonth, lst.wDay);
+				result->value.data_dt->seconds	= iiDateMath_get_seconds_from_HhMmSsMss(lst.wHour, lst.wMinute, lst.wSecond, lst.wMilliseconds);
+			}
 
 
 		//////////
@@ -447,8 +531,9 @@
 	        return(result);
 	}
 
-	
-	
+
+
+
 //////////
 //
 // Function: DAY()
@@ -506,8 +591,8 @@
 				//////////
 				// Grab year, month, day from datetime or date
 				//////
-					if (iVariable_isTypeDatetime(varParam))			iiDateMath_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-					else /* date */									iiDateMath_extract_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+					if (iVariable_isTypeDatetime(varParam))			iiDateMath_get_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+					else /* date */									iiDateMath_get_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
 
 
 			} else {
@@ -606,8 +691,8 @@
 				//////////
 				// Grab year, month, day from datetime or date
 				//////
-					if (iVariable_isTypeDatetime(varParam))			iiDateMath_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-					else /* date */									iiDateMath_extract_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+					if (iVariable_isTypeDatetime(varParam))			iiDateMath_get_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+					else /* date */									iiDateMath_get_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
 
 
 			} else {
@@ -641,7 +726,7 @@
 
 				case _DMY_COMMON_DTOS:
 					// Date is stored as YYYYMMDD
-					iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
+					iiDateMath_get_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
 					break;
 
 				// Should never happen
@@ -723,8 +808,8 @@
 			//////////
 			// Grab year, month, day from datetime or date
 			//////
-				if iVariable_isTypeDatetime(varDateOrDatetime)		iiDateMath_extract_YyyyMmDd_from_Julian  (varDateOrDatetime->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-				else /* date */										iiDateMath_extract_YyyyMmDd_from_YYYYMMDD(varDateOrDatetime->value.data_u8,         &lnYear, &lnMonth, &lnDay);
+				if iVariable_isTypeDatetime(varDateOrDatetime)		iiDateMath_get_YyyyMmDd_from_Julian  (varDateOrDatetime->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+				else /* date */										iiDateMath_get_YyyyMmDd_from_YYYYMMDD(varDateOrDatetime->value.data_u8,         &lnYear, &lnMonth, &lnDay);
 
 			} else {
 				// Use the current date
@@ -909,7 +994,7 @@
 				//////////
 				// Grab year, month, day from datetime
 				//////
-					iiDateMath_extract_YyyyMmDd_from_Julian (varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+					iiDateMath_get_YyyyMmDd_from_Julian (varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
 
 
 			} else {
@@ -926,7 +1011,7 @@
 		// Convert datetime or lst.* into a VJr date variable
 		//////
 			// Date is stored as YYYYMMDD
-			iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
+			iiDateMath_get_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
 			varTempDate = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
 			if (!varTempDate)
 			{
@@ -1111,7 +1196,7 @@
 		//////////
 		// Grab year, month, day from date
 		//////
-			iiDateMath_extract_YyyyMmDd_from_YYYYMMDD(varParam->value.data_u8, &lnYear, &lnMonth, &lnDay);
+			iiDateMath_get_YyyyMmDd_from_YYYYMMDD(varParam->value.data_u8, &lnYear, &lnMonth, &lnDay);
 
 
 		//////////
@@ -1124,7 +1209,7 @@
 				iError_report(thisCode, cgcInternalError, false);
 
 			} else {
-				result->value.data_dt->julian	= iiDateMath_extract_Julian_from_YyyyMmDd(&lfJulian, lnYear, lnMonth, lnDay);
+				result->value.data_dt->julian	= iiDateMath_get_julian_from_YyyyMmDd(&lfJulian, lnYear, lnMonth, lnDay);
 				result->value.data_dt->seconds	= lfSeconds;
 			}
 
@@ -1313,8 +1398,8 @@
 	u32 ifunction_dtransform_textmerge_common(SThisCode* thisCode, s8** tcResult, cs8* tcFormatStr, s32 tnFormatStrLength, SDatum* leftTextmergeDelim, SDatum* rightTextmergeDelim, SVariable* varDatesOrDatetimes[9], bool tlDateCodes, bool tlTextMerge)
 	{
 		s8				c, cMark;
-		s32				lnI, lnJ, lnPass, lnAllocationLength, lnOffset;
-		u32				lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, lnNanosecond, lnJulian;
+		s32				lnI, lnJ, lnPass, lnAllocationLength, lnOffset, lnMillisecond, lnNanosecond;
+		u32				lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnJulian;
 		f32				lfJulian;
 		bool			llLocalTime, llManufactured, llProcessed;
 		s8*				lcPtr;
@@ -1349,19 +1434,19 @@
 
 						} else if (iVariable_isTypeDatetime(var)) {
 							// Datetime
-							iiDateMath_extract_YyyyMmDd_from_Julian	(var->value.data_dt->julian,	&lnYear, &lnMonth,  &lnDay);
-							iiDateMath_extract_HhMmSsMss_from_seconds(var->value.data_dt->seconds,  &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+							iiDateMath_get_YyyyMmDd_from_Julian	(var->value.data_dt->julian,	&lnYear, &lnMonth,  &lnDay);
+							iiDateMath_get_HhMmSsMss_from_seconds(var->value.data_dt->seconds,  &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 						} else if (iVariable_isTypeDatetimeX(var)) {
 							// Date
-							iiDateMath_extract_Julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX(var->value.data_dtx->jseconds, NULL, NULL, &lnYear, &lnMonth, &lnDay, &lnHour, &lnMinute, &lnSecond, &lnMillisecond, &lnNanosecond);
+							iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_DatetimeX(var->value.data_dtx->jseconds, NULL, &lnYear, &lnMonth, &lnDay, &lnHour, &lnMinute, &lnSecond, &lnMillisecond, &lnNanosecond);
 
 							// 00:00:00.000
 							lnHour = lnMinute = lnSecond = lnMillisecond = 0;
 
 						} else if (iVariable_isTypeDate(var)) {
 							// Date
-							iiDateMath_extract_YyyyMmDd_from_YYYYMMDD (var->value.data_u8, &lnYear, &lnMonth, &lnDay);
+							iiDateMath_get_YyyyMmDd_from_YYYYMMDD (var->value.data_u8, &lnYear, &lnMonth, &lnDay);
 
 							// 00:00:00.000
 							lnHour = lnMinute = lnSecond = lnMillisecond = 0;
@@ -1728,7 +1813,7 @@
 
 											case 'J':
 												// Julian day number
-												lnJulian = (u32)iiDateMath_extract_Julian_from_YyyyMmDd(&lfJulian, dt->wYear, dt->wMonth, dt->wDay);
+												lnJulian = (u32)iiDateMath_get_julian_from_YyyyMmDd(&lfJulian, dt->wYear, dt->wMonth, dt->wDay);
 												sprintf(buffer, "%u", lnJulian);
 												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
 												else					lnOffset			+= iifunction_append_text(lcResult + lnOffset, buffer, -1);

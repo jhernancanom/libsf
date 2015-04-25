@@ -7661,8 +7661,8 @@ debug_break;
 //////
 	SVariable* iVariable_convertForDisplay(SThisCode* thisCode, SVariable* var)
 	{
-		s32			lnI, lnYearOffset, lnSetLogical;
-		u32			lnYear, lnMonth, lnDay, lnHour, lnHourAdjusted, lnMinute, lnSecond, lnMillisecond, lnNanosecond;
+		s32			lnI, lnYearOffset, lnSetLogical, lnMillisecond, lnNanosecond;
+		u32			lnYear, lnMonth, lnDay, lnHour, lnHourAdjusted, lnMinute, lnSecond;
 		f64			lfValue64;
 		bool		llHour24;
 		cs8*		lcAmPmText;
@@ -7934,8 +7934,8 @@ debug_break;
 							}
 
 						} else {
-							iiDateMath_extract_YyyyMmDd_from_Julian(dt->julian, &lnYear, &lnMonth, &lnDay);
-							iiDateMath_extract_HhMmSsMss_from_seconds(dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+							iiDateMath_get_YyyyMmDd_from_Julian(dt->julian, &lnYear, &lnMonth, &lnDay);
+							iiDateMath_get_HhMmSsMss_from_seconds(dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 							// Adjust for our 24-hour settings
 							llHour24		= propGet_settings_Hours24(_settings);
@@ -7985,7 +7985,7 @@ debug_break;
 
 						} else {
 							// Grab the components
-							iiDateMath_extract_Julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX(dtx->jseconds, NULL, NULL, &lnYear, &lnMonth, &lnDay, &lnHour, &lnMinute, &lnSecond, &lnMillisecond, &lnNanosecond);
+							iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_DatetimeX(dtx->jseconds, NULL, &lnYear, &lnMonth, &lnDay, &lnHour, &lnMinute, &lnSecond, &lnMillisecond, &lnNanosecond);
 
 							// Format for century settings
 							if (propGet_settings_Century(_settings))
@@ -8215,7 +8215,8 @@ debug_break;
 //////
 	SVariable* iiVariable_getAs_datetime(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
-		u32			year, month, day, hour, minute, second, millisecond, nanosecond;
+		s32			millisecond, nanosecond;
+		u32			year, month, day, hour, minute, second;
 		SVariable*	result;
 
 
@@ -8235,8 +8236,8 @@ debug_break;
 					}
 
 					// Convert the date to a julian day number
-					iiDateMath_extract_YyyyMmDd_from_YYYYMMDD(var->value.data_u8, &year, &month, &day);
-					result->value.data_dt->julian = iiDateMath_extract_Julian_from_YyyyMmDd(NULL, year, month, day);
+					iiDateMath_get_YyyyMmDd_from_YYYYMMDD(var->value.data_u8, &year, &month, &day);
+					result->value.data_dt->julian = iiDateMath_get_julian_from_YyyyMmDd(NULL, year, month, day);
 
 					// Indicate success
 					*tlError	= false;
@@ -8268,9 +8269,9 @@ debug_break;
 					}
 
 					// Convert the date to a julian day number
-					iiDateMath_extract_Julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX(var->value.data_dtx->jseconds, NULL, NULL, &year, &month, &day, &hour, &minute, &second, &millisecond, &nanosecond);
-					result->value.data_dt->julian	= iiDateMath_extract_Julian_from_YyyyMmDd(NULL, year, month, day);
-					result->value.data_dt->seconds	= iiDateMath_extract_seconds_from_HhMmSsMss(hour, minute, second, millisecond);
+					iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_DatetimeX(var->value.data_dtx->jseconds, NULL, &year, &month, &day, &hour, &minute, &second, &millisecond, &nanosecond);
+					result->value.data_dt->julian	= iiDateMath_get_julian_from_YyyyMmDd(NULL, year, month, day);
+					result->value.data_dt->seconds	= iiDateMath_get_seconds_from_HhMmSsMss(hour, minute, second, millisecond);
 
 					// Indicate success
 					*tlError	= false;
@@ -9840,7 +9841,8 @@ debug_break;
 			f64			lnValue_f64;
 		};
 		s64		lnDtx;
-		u32		lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond;
+		s32		lnMillisecond;
+		u32		lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond;
 		s8		buffer[64];
 		bool	error;
 		u32		errorNum;
@@ -9975,11 +9977,11 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric
 					//////
-						iiDateMath_extract_YyyyMmDd_from_Julian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-						iiDateMath_extract_HhMmSsMss_from_seconds(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+						iiDateMath_get_YyyyMmDd_from_Julian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+						iiDateMath_get_HhMmSsMss_from_seconds(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 						// Convert to a 64-bit numeric value
-						iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDtx, NULL, lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, 0);
+						lnDtx = iiDateMath_get_jseconds_from_YyyyMmDdHhMmSsMssNss(NULL, lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, 0);
 						return(lnDtx);
 				}
 				break;
@@ -10014,7 +10016,8 @@ debug_break;
 			f64			lnValue_f64;
 		};
 		s64		lnDtx;
-		u32		lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond;
+		s32		lnMillisecond;
+		u32		lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond;
 		s8		buffer[64];
 		bool	error;
 		u32		errorNum;
@@ -10147,11 +10150,11 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric
 					//////
-						iiDateMath_extract_YyyyMmDd_from_Julian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-						iiDateMath_extract_HhMmSsMss_from_seconds(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+						iiDateMath_get_YyyyMmDd_from_Julian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+						iiDateMath_get_HhMmSsMss_from_seconds(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 						// Convert to a 64-bit numeric value
-						iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDtx, NULL, lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, 0);
+						lnDtx = iiDateMath_get_jseconds_from_YyyyMmDdHhMmSsMssNss(NULL, lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, 0);
 						return(lnDtx);
 				}
 				break;
@@ -10189,7 +10192,8 @@ debug_break;
 			SDateTime	dt;
 		};
 		s64		lnDtx;
-		u32		lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond;
+		s32		lnMillisecond;
+		u32		lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond;
 		s8		buffer[64];
 		bool	llError;
 		u32		lnErrorNum;
@@ -10292,11 +10296,11 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric
 					//////
-						iiDateMath_extract_YyyyMmDd_from_Julian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-						iiDateMath_extract_HhMmSsMss_from_seconds(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+						iiDateMath_get_YyyyMmDd_from_Julian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+						iiDateMath_get_HhMmSsMss_from_seconds(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 						// Convert to a 64-bit numeric value
-						iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDtx, NULL, lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, 0);
+						lnDtx = iiDateMath_get_jseconds_from_YyyyMmDdHhMmSsMssNss(NULL, lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, 0);
 						return((f32)lnDtx);
 				}
 				break;
@@ -10334,7 +10338,8 @@ debug_break;
 			SDateTime	dt;
 		};
 		s64		lnDtx;
-		u32		lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond;
+		s32		lnMillisecond;
+		u32		lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond;
 		s8		buffer[64];
 		bool	llError;
 		u32		lnErrorNum;
@@ -10421,11 +10426,11 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric
 					//////
-						iiDateMath_extract_YyyyMmDd_from_Julian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-						iiDateMath_extract_HhMmSsMss_from_seconds(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+						iiDateMath_get_YyyyMmDd_from_Julian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+						iiDateMath_get_HhMmSsMss_from_seconds(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 						// Convert to a 64-bit numeric value
-						iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDtx, NULL, lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, 0);
+						lnDtx = iiDateMath_get_jseconds_from_YyyyMmDdHhMmSsMssNss(NULL, lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, 0);
 						return((f64)lnDtx);
 				}
 				break;
@@ -10477,8 +10482,9 @@ debug_break;
 //////
 	s32 iVariable_compare(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
-		u32		lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, lnNanosecond, lnDate;
-		u32		lnYear2, lnMonth2, lnDay2, lnHour2, lnMinute2, lnSecond2, lnMillisecond2;
+		s32		lnMillisecond, lnMillisecond2, lnNanosecond;
+		u32		lnYear,  lnMonth,  lnDay,  lnHour,  lnMinute,  lnSecond,  lnDate;
+		u32		lnYear2, lnMonth2, lnDay2, lnHour2, lnMinute2, lnSecond2;
 		s64		lnDatetime, lnDatetime2;
 		bool	llLeftFp, llRightFp, llLeftInt, llRightInt, llLeftSigned, llRightSigned, llLeftNum, llRightNum, llProcess;
 		s8		buffer[64];
@@ -10548,16 +10554,16 @@ debug_break;
 					{
 						case _VAR_TYPE_DATETIME:
 							// Grab related information from the datetime
-							iiDateMath_extract_YyyyMmDd_from_Julian(varLeft->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-							iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
+							iiDateMath_get_YyyyMmDd_from_Julian(varLeft->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+							iiDateMath_get_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
 
 							// Indicate our result
 							return(memcmp(varLeft->value.data_s8, buffer, varRight->value.length));
 
 						case _VAR_TYPE_DATETIMEX:
 							// Grab related information from the datetimex
-							iiDateMath_extract_Julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX(varLeft->value.data_dtx->jseconds, NULL, NULL, &lnYear, &lnMonth, &lnDay, NULL, NULL, NULL, NULL, NULL);
-							iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
+							iiDateMath_get_julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX(varLeft->value.data_dtx->jseconds, NULL, NULL, &lnYear, &lnMonth, &lnDay, NULL, NULL, NULL, NULL, NULL);
+							iiDateMath_get_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
 
 							// Indicate our result
 							return(memcmp(varLeft->value.data_s8, buffer, varRight->value.length));
@@ -10612,15 +10618,15 @@ debug_break;
 
 				} else if (varLeft->varType == _VAR_TYPE_DATETIME) {
 					// Datetimes can be compared to 64-bit numeric values
-					iiDateMath_extract_YyyyMmDd_from_Julian(varLeft->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-					iiDateMath_extract_HhMmSsMss_from_seconds(varLeft->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+					iiDateMath_get_YyyyMmDd_from_Julian(varLeft->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+					iiDateMath_get_HhMmSsMss_from_seconds(varLeft->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 					if (varRight->varType == _VAR_TYPE_DATETIMEX)
 					{
 						// Datetimes can be compared to datetimex down to the seconds (and possibly the milliseconds, but we cannot guarantee that because it's possible this data came from a table source which may not have had millisecond encoding)
-						iiDateMath_extract_Julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX(varRight->value.data_dtx->jseconds, NULL, NULL, &lnYear2, &lnMonth2, &lnDay2, &lnHour2, &lnMinute2, &lnSecond2, NULL, NULL);
-						iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDatetime,  NULL, lnYear,  lnMonth,  lnDay,  lnHour,  lnMinute,  lnSecond,  0, 0);
-						iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDatetime2, NULL, lnYear2, lnMonth2, lnDay2, lnHour2, lnMinute2, lnSecond2, 0, 0);
+						iiDateMath_get_julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX(varRight->value.data_dtx->jseconds, NULL, NULL, &lnYear2, &lnMonth2, &lnDay2, &lnHour2, &lnMinute2, &lnSecond2, NULL, NULL);
+						lnDatetime	= iiDateMath_get_jseconds_from_YyyyMmDdHhMmSsMssNss(NULL, lnYear,  lnMonth,  lnDay,  lnHour,  lnMinute,  lnSecond,  0, 0);
+						lnDatetime2	= iiDateMath_get_jseconds_from_YyyyMmDdHhMmSsMssNss(NULL, lnYear2, lnMonth2, lnDay2, lnHour2, lnMinute2, lnSecond2, 0, 0);
 
 						     if ((s64)lnDatetime == (s64)lnDatetime2)		return(0);			// Equal
 						else if ((s64)lnDatetime <  (s64)lnDatetime2)		return(-1);			// Less than
@@ -10673,8 +10679,8 @@ debug_break;
 
 				} else if (varLeft->varType == _VAR_TYPE_DATETIMEX) {
 					// DatetimeX values can be compared to datetimeX values, or 64-bit numeric values
-					iiDateMath_extract_Julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX(varLeft->value.data_dtx->jseconds, NULL, NULL, &lnYear, &lnMonth, &lnDay, &lnHour, &lnMinute, &lnSecond, &lnMillisecond, &lnNanosecond);
-					iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDatetime,  NULL, lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, lnNanosecond);
+					iiDateMath_get_julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX(varLeft->value.data_dtx->jseconds, NULL, NULL, &lnYear, &lnMonth, &lnDay, &lnHour, &lnMinute, &lnSecond, &lnMillisecond, &lnNanosecond);
+					lnDatetime = iiDateMath_get_jseconds_from_YyyyMmDdHhMmSsMssNss(NULL, lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, lnNanosecond);
 
 
 					//////////
@@ -10691,17 +10697,17 @@ debug_break;
 
 							case _VAR_TYPE_DATETIME:
 								// Comparing to a datetime (down to seconds only)
-								iiDateMath_extract_YyyyMmDd_from_Julian(varRight->value.data_dt->julian, &lnYear2, &lnMonth2, &lnDay2);
-								iiDateMath_extract_HhMmSsMss_from_seconds(varRight->value.data_dt->seconds, &lnHour2, &lnMinute2, &lnSecond2, &lnMillisecond2);
-								iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDatetime,  NULL, lnYear,  lnMonth,  lnDay,  lnHour,  lnMinute,  lnSecond,  0, 0);
-								iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDatetime2, NULL, lnYear2, lnMonth2, lnDay2, lnHour2, lnMinute2, lnSecond2, 0, 0);
+								iiDateMath_get_YyyyMmDd_from_Julian(varRight->value.data_dt->julian, &lnYear2, &lnMonth2, &lnDay2);
+								iiDateMath_get_HhMmSsMss_from_seconds(varRight->value.data_dt->seconds, &lnHour2, &lnMinute2, &lnSecond2, &lnMillisecond2);
+								lnDatetime	= iiDateMath_get_jseconds_from_YyyyMmDdHhMmSsMssNss(NULL, lnYear,  lnMonth,  lnDay,  lnHour,  lnMinute,  lnSecond,  0, 0);
+								lnDatetime2	= iiDateMath_get_jseconds_from_YyyyMmDdHhMmSsMssNss(NULL, lnYear2, lnMonth2, lnDay2, lnHour2, lnMinute2, lnSecond2, 0, 0);
 								break;
 
 							case _VAR_TYPE_DATE:
 								// Comparing to a date (down to day only)
-								iiDateMath_extract_YyyyMmDd_from_YYYYMMDD(varRight->value.data_u8, &lnYear2, &lnMonth2, &lnDay2);
-								iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDatetime,  NULL, lnYear,  lnMonth,  lnDay,  0, 0, 0, 0, 0);
-								iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(&lnDatetime2, NULL, lnYear2, lnMonth2, lnDay2, 0, 0, 0, 0, 0);
+								iiDateMath_get_YyyyMmDd_from_YYYYMMDD(varRight->value.data_u8, &lnYear2, &lnMonth2, &lnDay2);
+								lnDatetime	= iiDateMath_get_jseconds_from_YyyyMmDdHhMmSsMssNss(NULL, lnYear,  lnMonth,  lnDay,  0, 0, 0, 0, 0);
+								lnDatetime2	= iiDateMath_get_jseconds_from_YyyyMmDdHhMmSsMssNss(NULL, lnYear2, lnMonth2, lnDay2, 0, 0, 0, 0, 0);
 								break;
 
 							case _VAR_TYPE_S64:
@@ -11085,20 +11091,62 @@ debug_break;
 
 //////////
 //
-// Extracts the full year, month, day, hour, minute, second, millisecond from a datetimex variable
+// Extracts the full year, month, day, hour, minute, second, millisecond, and nanosecond from a datetimex variable
 //
 //////
-	void iiDateMath_extract_Julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX(s64 tnDtx, f64* tfDtx, u32* julian, u32* year, u32* month, u32* day, u32* hour, u32* minute, u32* second, u32* millisecond, u32* nanosecond)
+	void iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_DatetimeX(s64 tnDtx, f64* tfDtx, u32* year, u32* month, u32* day, u32* hour, u32* minute, u32* second, s32* millisecond, s32* nanosecond)
 	{
-//////////
-// TODO:  Code this.  DatetimeX is the sum of:		*nanosecond  / 1000000
-//													*millisecond / 1000
-//													second
-//													minute      * 60
-//													hour        * 60 * 60
-//													julian      * 60 * 60 * 24
-//////
-		debug_break;
+		return(iiDateMath_get_julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX(tnDtx, tfDtx, NULL, year, month, day, hour, minute, second, millisecond, nanosecond));
+	}
+
+	void iiDateMath_get_julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX(s64 tnDtx, f64* tfDtx, u32* julian, u32* year, u32* month, u32* day, u32* hour, u32* minute, u32* second, s32* millisecond, s32* nanosecond)
+	{
+		s64		lnDtx;
+		u32		lnJulian, lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond;
+		s32		lnMillisecond, lnNanosecond;
+
+
+		//////////
+		// Extract out the fundamental components
+		//////
+			lnDtx			= tnDtx;
+			lnNanosecond	= (s32)(lnDtx % 1000000000);
+			lnDtx			/= 1000000000;
+
+			lnMillisecond	= lnNanosecond / 1000000;
+
+			lnSecond		= (u32)(lnDtx % 60);
+			lnDtx			= lnDtx / 60;
+
+			lnMinute		= (u32)(lnDtx % 60);
+			lnDtx			= lnDtx / 60;
+
+			lnHour			= (u32)(lnDtx % 24);
+
+			lnJulian		= (u32)(lnDtx / 24);
+
+
+		//////////
+		// Convert julian into year, month, day
+		//////
+			if (year || month || day)
+				iiDateMath_get_YyyyMmDd_from_Julian(lnJulian, &lnYear, &lnMonth, &lnDay);
+
+
+		//////////
+		// Store the results
+		//////
+			if (tfDtx)			*tfDtx			= (f64)tnDtx;
+			if (julian)			*julian			= lnJulian;
+			if (year)			*year			= lnYear;
+			if (month)			*month			= lnMonth;
+			if (day)			*day			= lnDay;
+			if (hour)			*hour			= lnHour;
+			if (minute)			*minute			= lnMinute;
+			if (second)			*second			= lnSecond;
+			if (millisecond)	*millisecond	= lnMillisecond;
+			if (nanosecond)		*nanosecond		= lnNanosecond;
+
 	}
 
 
@@ -11106,20 +11154,17 @@ debug_break;
 
 //////////
 //
-// Extracts the datetimex value from the year, month, day, hour, minute, second, millisecond or nanosecond
+// Extracts the datetimex value from the year, month, day, hour, minute, second, (millisecond or nanosecond)
 //
 //////
-	void iiDateMath_extract_DatetimeX_from_YyyyMmDdHhMmSsMssNss(s64* tnDtx, f64* tfDtx, u32 year, u32 month, u32 day, u32 hour, u32 minute, u32 second, u32 millisecond, u32 nanosecond)
+	s64 iiDateMath_get_jseconds_from_YyyyMmDdHhMmSsMssNss(f64* tfDtx, u32 year, u32 month, u32 day, u32 hour, u32 minute, u32 second, s32 millisecond, s32 nanosecond)
 	{
-//////////
-// TODO:  Code this.  DatetimeX is the sum of:		*nanosecond  / 1000000
-//													*millisecond / 1000
-//													second
-//													minute      * 60
-//													hour        * 60 * 60
-//													julian      * 60 * 60 * 24
-//////
-		debug_break;
+		u32 julian;
+
+
+		// Grab the julian, and then call the sister function
+		julian = iiDateMath_get_julian_from_YyyyMmDd(NULL, year, month, day);
+		return(iiDateMath_get_jseconds_from_julian_and_HhMmSsMssNss(tfDtx, julian, hour, minute, second, millisecond, nanosecond));
 	}
 
 
@@ -11127,20 +11172,45 @@ debug_break;
 
 //////////
 //
-// Extracts the datetimex value from the julian, hour, minute, second, millisecond or nanosecond
+// Extracts the datetimex value from the julian, hour, minute, second, (millisecond or nanosecond)
 //
 //////
-	void iiDateMath_extract_DatetimeX_from_Julian_and_HhMmSsMssNss(s64* tnDtx, f64* tfDtx, u32 julian, u32 hour, u32 minute, u32 second, u32 millisecond, u32 nanosecond)
+	s64 iiDateMath_get_jseconds_from_julian_and_HhMmSsMssNss(f64* tfDtx, u32 julian, u32 hour, u32 minute, u32 second, s32 millisecond, s32 nanosecond)
 	{
-//////////
-// TODO:  Code this.  DatetimeX is the sum of:		*nanosecond  / 1000000
-//													*millisecond / 1000
-//													second
-//													minute      * 60
-//													hour        * 60 * 60
-//													julian      * 60 * 60 * 24
-//////
-		debug_break;
+		s64 result;
+
+
+		//////////
+		// Build the value based on its nanosecond resolution
+		//////
+			// Populate into seconds
+			result =		((s64)julian	* 60 * 60 * 24)
+						+	((s64)hour		* 60 * 60)
+						+	((s64)minute	* 60)
+						+	((s64)second);
+
+			// Convert to nanoseconds
+			result *= 1000000000;
+
+
+		//////////
+		// Add in the nanosecond or millisecond if appropriate
+		//////
+			if (nanosecond > 0)
+			{
+				// Include nanoseconds
+				result += nanosecond;
+
+			} else if (millisecond > 0) {
+				// Include milliseconds
+				result += (millisecond * 1000000);
+			}
+
+
+		//////////
+		// Indicate the 
+		//////
+			return(result);
 	}
 
 
@@ -11173,7 +11243,7 @@ debug_break;
 //		julian		-- The julian day number
 //
 //////
-	s32 iiDateMath_extract_Julian_from_YyyyMmDd(f32* tfJulianDayNumber, u32 year, u32 month, u32 day)
+	s32 iiDateMath_get_julian_from_YyyyMmDd(f32* tfJulianDayNumber, u32 year, u32 month, u32 day)
 	{
 		s32		monthAdjust1, monthAdjust2;
 		f64		a, y, m;
@@ -11237,7 +11307,7 @@ debug_break;
 //		day			-- The day
 //
 //////
-	void iiDateMath_extract_YyyyMmDd_from_Julian(u32 tnJulianDayNumber, u32* year, u32* month, u32* day)
+	void iiDateMath_get_YyyyMmDd_from_Julian(u32 tnJulianDayNumber, u32* year, u32* month, u32* day)
 	{
 		u32 a, b, c, d, e, m;
 
@@ -11265,7 +11335,7 @@ debug_break;
 //		day			-- The day
 //
 //////
-	void iiDateMath_extract_YyyyMmDd_from_YYYYMMDD(u8* YYYYMMDD, u32* year, u32* month, u32* day)
+	void iiDateMath_get_YyyyMmDd_from_YYYYMMDD(u8* YYYYMMDD, u32* year, u32* month, u32* day)
 	{
 		s8 buffer[16];
 
@@ -11293,7 +11363,7 @@ debug_break;
 // Takes the number of seconds elapsed since midnight and computes the time.
 //
 //////
-	void iiDateMath_extract_HhMmSsMss_from_seconds(f32 tfSeconds, u32* hour, u32* minute, u32* second, u32* millisecond)
+	void iiDateMath_get_HhMmSsMss_from_seconds(f32 tfSeconds, u32* hour, u32* minute, u32* second, s32* millisecond)
 	{
 		// Compute hour
 		*hour			= (u32)tfSeconds / (60 * 60);
@@ -11308,7 +11378,7 @@ debug_break;
 		tfSeconds		= tfSeconds - (f32)*second;
 
 		// Compute milliseconds
-		*millisecond	= (u32)(tfSeconds * 999.0);
+		*millisecond	= (s32)(tfSeconds * 999.0);
 	}
 
 
@@ -11319,7 +11389,7 @@ debug_break;
 // Takes the hour, minute, second, and millisecond, and creates a seconds
 //
 //////
-	f32 iiDateMath_extract_seconds_from_HhMmSsMss(u32 hour, u32 minute, u32 second, u32 millisecond)
+	f32 iiDateMath_get_seconds_from_HhMmSsMss(u32 hour, u32 minute, u32 second, s32 millisecond)
 	{
 		f32 lfSeconds;
 
@@ -11344,6 +11414,35 @@ debug_break;
 
 //////////
 //
+// Retrieves the current second's tick count as a nanosecond resolutions
+//
+//////
+	s32 iiDateMath_get_currentNanosecond(void)
+	{
+		LARGE_INTEGER lnTick, lnFreq;
+		s32 lnResult;
+		f64 lfResult;
+
+
+		// Get the current tick, and the frequency
+		QueryPerformanceCounter(&lnTick);
+		QueryPerformanceFrequency(&lnFreq);
+
+		// Modulo to get the tick this second
+		lfResult = (f64)(lnTick.QuadPart % lnFreq.QuadPart);
+
+		// Determine what this would be for in nanoseconds
+		lnResult = (s32)(lfResult * 1000000000.0 / (f64)lnFreq.QuadPart);
+
+		// Return the result
+		return(lnResult);
+	}
+
+
+
+
+//////////
+//
 // Computes the YYYYMMDD text from the day, month, and year.
 // Note:  No check is done on month and day to make sure they're actually valid.
 //
@@ -11351,12 +11450,12 @@ debug_break;
 //		YYYYMMDD[0..7] populated with the 8-character string
 //
 //////
-	void iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd(u8* YYYYMMDD, u32 year, u32 month, u32 day)
+	void iiDateMath_get_YYYYMMDD_from_YyyyMmDd(u8* YYYYMMDD, u32 year, u32 month, u32 day)
 	{
-		return(iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd((s8*)YYYYMMDD, year, month, day));
+		return(iiDateMath_get_YYYYMMDD_from_YyyyMmDd((s8*)YYYYMMDD, year, month, day));
 	}
 
-	void iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd(s8* YYYYMMDD, u32 year, u32 month, u32 day)
+	void iiDateMath_get_YYYYMMDD_from_YyyyMmDd(s8* YYYYMMDD, u32 year, u32 month, u32 day)
 	{
 		// Make sure they're in range for target
 		year	= max(min(year, 9999), 1600);
@@ -11375,7 +11474,7 @@ debug_break;
 // Called to convert a SECONDS() into time values, and store them in the SYSTEMTIME variable
 //
 //////
-	void iiDateMath_convertTo_SYSTEMTIME_from_SECONDS(SYSTEMTIME* st, f32 tfSeconds)
+	void iiDateMath_get_SYSTEMTIME_from_SECONDS(SYSTEMTIME* st, f32 tfSeconds)
 	{
 		if (tfSeconds >= 0.0f && tfSeconds <= 86400.0f)
 		{

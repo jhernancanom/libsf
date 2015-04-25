@@ -468,6 +468,7 @@
 	const s32		_ICODE_CURSORTOXML                              = 1103;
 	const s32		_ICODE_CURVAL                                   = 1104;
 	const s32		_ICODE_DATETIME                                 = 1105;
+	const s32		_ICODE_DATETIMEX								= 1483;
 	const s32		_ICODE_DATE                                     = 1106;
 	const s32		_ICODE_DAY                                      = 1107;
 	const s32		_ICODE_DBC                                      = 1108;
@@ -857,6 +858,7 @@
 	// startswith		= 1477				endswithc		= 1478
 	// startswithc		= 1479				outside			= 1480
 	// typedetail		= 1481				dtransform		= 1482
+	// datetimex		= 1483
 
 // Temporarily added until the processing engine is coded
 	const s32		_ICODE_CONCATENATE								= 1900;
@@ -1400,6 +1402,7 @@
 	const s8		cgc_cursortoxml[]								= "cursortoxml";
 	const s8		cgc_curval[]									= "curval";
 	const s8		cgc_datetime[]									= "datetime";
+	const s8		cgc_datetimex[]									= "datetimex";
 	const s8		cgc_date[]										= "date";
 	const s8		cgc_day[]										= "day";
 	const s8		cgc_dbc[]										= "dbc";
@@ -2196,7 +2199,6 @@
 	const s8		cgc_endadhoc[]									= "endadhoc";
 	const s8		cgc_numeric[]									= "numeric";
 	const s8		cgc_unicode[]									= "unicode";
-	const s8		cgc_datetimex[]									= "datetimex";
 	const s8		cgc_guid8[]										= "guid8";
 	const s8		cgc_guid16[]									= "guid16";
 	const s8		cgc_bitmap[]									= "bitmap";

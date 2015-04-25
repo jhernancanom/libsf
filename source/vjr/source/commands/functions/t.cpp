@@ -464,7 +464,7 @@
 				}
 
 				// Convert the seconds value to a time
-				iiDateMath_convertTo_SYSTEMTIME_from_SECONDS(&lst, lfSeconds);
+				iiDateMath_get_SYSTEMTIME_from_SECONDS(&lst, lfSeconds);
 			}
 
 
@@ -472,7 +472,7 @@
 		// Extract the datetime if need be
 		//////
 			if (llExtractDatetime)
-				iiDateMath_convertTo_SYSTEMTIME_from_SECONDS(&lst, varP1->value.data_dt->seconds);
+				iiDateMath_get_SYSTEMTIME_from_SECONDS(&lst, varP1->value.data_dt->seconds);
 
 			
 		//////////
@@ -624,8 +624,9 @@
 		SVariable* varParam = returnsParams->params[0];
 		SVariable* varFlag	= returnsParams->params[1];
 
+		s32			lnMillisecond;
 		u32			lnYear, lnMonth, lnDay, lnFlag;
-		u32			lnHour, lnHourAdjusted, lnMinute, lnSecond, lnMillisecond;
+		u32			lnHour, lnHourAdjusted, lnMinute, lnSecond;
 		bool		llHour24;
 		cs8*		lcAmPmText;
 		s8			buffer[64];
@@ -676,8 +677,8 @@
 				//////////
 				// Grab the value
 				//////
-					iiDateMath_extract_YyyyMmDd_from_Julian(varParam->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-					iiDateMath_extract_HhMmSsMss_from_seconds(varParam->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+					iiDateMath_get_YyyyMmDd_from_Julian(varParam->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+					iiDateMath_get_HhMmSsMss_from_seconds(varParam->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 
 				//////////
@@ -811,14 +812,14 @@
 		//////////
 		// Grab year, month, day from datetime
 		//////
-			iiDateMath_extract_YyyyMmDd_from_Julian(varParam->value.data_dt->julian, (u32*)&lnYear, (u32*)&lnMonth, &lnDay);
+			iiDateMath_get_YyyyMmDd_from_Julian(varParam->value.data_dt->julian, (u32*)&lnYear, (u32*)&lnMonth, &lnDay);
 
 
 		//////////
 		// Convert datetime into a VJr date variable
 		//////
 			// Date is stored as YYYYMMDD
-			iiDateMath_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
+			iiDateMath_get_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
 			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
 
 

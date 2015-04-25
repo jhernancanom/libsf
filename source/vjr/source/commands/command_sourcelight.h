@@ -419,6 +419,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_datetimex[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_day[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
