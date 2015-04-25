@@ -140,7 +140,13 @@
 //////
 	SVariable* function_seconds(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		return(ifunction_seconds_common(thisCode, returnsParams, false));
+	}
+
+	SVariable* ifunction_seconds_common(SThisCode* thisCode, SReturnsParams* returnsParams, bool tlIsSecondsX)
+	{
 		f64			lfResult;
+		s32			lnMicrosecond;
 		SYSTEMTIME	lst;
 		SVariable*	result;
 
@@ -150,10 +156,24 @@
 		//////
 			if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
 			else				GetLocalTime(&lst);
-			lfResult =		((f64)lst.wHour			* 3600.0	)
-						+	((f64)lst.wMinute		* 60.0		)
-						+	((f64)lst.wSecond					)
-						+	((f64)lst.wMilliseconds	* 0.001		);
+
+			if (tlIsSecondsX)
+			{
+				// SECONDSX()
+				lnMicrosecond = iiDateMath_get_currentMicrosecond();
+
+				lfResult =		((f64)lst.wHour			* 3600.0	)
+							+	((f64)lst.wMinute		* 60.0		)
+							+	((f64)lst.wSecond					)
+							+	((f64)lnMicrosecond		* 0.000001	);		// Microsecond
+
+			} else {
+				// SECONDS()
+				lfResult =		((f64)lst.wHour			* 3600.0	)
+							+	((f64)lst.wMinute		* 60.0		)
+							+	((f64)lst.wSecond					)
+							+	((f64)lst.wMilliseconds	* 0.001		);		// Millisecond
+			}
 
 
 		//////////
@@ -172,6 +192,34 @@
         // return(result)
 		//////
 	        return(result);
+	}
+
+
+
+
+//////////
+//
+// Function: SECONDSX()
+// Returns the number of seconds that have elapsed since midnight in extended precision.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.25.2015
+//////
+// Change log:
+//     Apr.25.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     none
+//
+//////
+// Returns:
+//    Numeric. SECONDSX( ) returns a numeric value in decimal format with a resolution of 1 microsecond.
+//////
+	SVariable* function_secondsx(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_seconds_common(thisCode, returnsParams, true));
 	}
 
 

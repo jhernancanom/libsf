@@ -729,6 +729,7 @@
 	const s32		_ICODE_SCHEME                                   = 1342;
 	const s32		_ICODE_SCOLS                                    = 1343;
 	const s32		_ICODE_SECONDS                                  = 1344;
+	const s32		_ICODE_SECONDSX									= 1484;
 	const s32		_ICODE_SEC                                      = 1345;
 	const s32		_ICODE_SEEK                                     = 1346;
 	const s32		_ICODE_SELECT                                   = 1347;
@@ -858,7 +859,7 @@
 	// startswith		= 1477				endswithc		= 1478
 	// startswithc		= 1479				outside			= 1480
 	// typedetail		= 1481				dtransform		= 1482
-	// datetimex		= 1483
+	// datetimex		= 1483				secondsx		= 1484
 
 // Temporarily added until the processing engine is coded
 	const s32		_ICODE_CONCATENATE								= 1900;
@@ -1664,6 +1665,7 @@
 	const s8		cgc_scheme[]									= "scheme";
 	const s8		cgc_scols[]										= "scols";
 	const s8		cgc_seconds[]									= "seconds";
+	const s8		cgc_secondsx[]									= "secondsx";
 	const s8		cgc_sec[]										= "sec";
 	const s8		cgc_seek[]										= "seek";
 	const s8		cgc_select[]									= "select";

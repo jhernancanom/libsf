@@ -10658,8 +10658,12 @@ debug_break;
 						switch (varRight->varType)
 						{
 							case _VAR_TYPE_S64:
-									 if (lnDatetime == varRight->value.data_s64[0])				return(0);			// Equal
-								else if (lnDatetime <  varRight->value.data_s64[0])				return(-1);			// Less than
+								// Grab the value as an unsigned value
+								lnDatetime2 = (u64)varRight->value.data_s64[0];
+
+								     if (varRight->value.data_s64[0] < 0)						return(1);			// Greater than
+								else if (lnDatetime == lnDatetime2)								return(0);			// Equal
+								else if (lnDatetime <  lnDatetime2)								return(-1);			// Less than
 								else															return(1);			// Greater than
 
 							case _VAR_TYPE_U64:

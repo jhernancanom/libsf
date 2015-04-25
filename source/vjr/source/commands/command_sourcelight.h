@@ -785,6 +785,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_secondsx[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_set[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}

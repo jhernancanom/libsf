@@ -298,6 +298,8 @@ struct SReturnsParams;
 	SVariable*			function_rtrim								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_sec		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_seconds	/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			ifunction_seconds_common					(SThisCode* thisCode, SReturnsParams* returnsParams, bool tlIsSecondsX);
+	SVariable*			function_secondsx							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_set								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_sign		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_sign2								(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -525,6 +527,7 @@ struct SReturnsParams;
 		{	_ICODE_TRIM,			1,			(uptr)&function_rtrim,			1,				4,				&gsSourceLight_rtrim[0]			},
 		{	_ICODE_SEC,				1,			(uptr)&function_sec,			0,				1,				&gsSourceLight_sec[0]			},	// SEC() by Stefano D'Amico, VJr 0.57, Apr.07.2015
 		{	_ICODE_SECONDS,			1,			(uptr)&function_seconds,		0,				0,				&gsSourceLight_seconds[0]		},	// SECONDS() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_SECONDSX,		1,			(uptr)&function_secondsx,		0,				0,				&gsSourceLight_secondsx[0]		},	// SECONDS() by Stefano D'Amico, VJr 0.57, Apr.07.2015
 		{	_ICODE_SET,				1,			(uptr)&function_set,			1,				2,				&gsSourceLight_set[0]			},
 		{	_ICODE_SIGN,			1,			(uptr)&function_sign,			1,				1,				&gsSourceLight_sign[0]			},	// SIGN() by Stefano D'Amico, VJr 0.56, Mar.14.2015
 		{	_ICODE_SIN,				1,			(uptr)&function_sin,			1,				1,				&gsSourceLight_sin[0]			},	// SIN() by Stefano D'Amico, VJr 0.56, Mar.17.2015
