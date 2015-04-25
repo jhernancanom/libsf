@@ -11430,7 +11430,7 @@ debug_break;
 
 //////////
 //
-// Retrieves the current second's tick count as a nanosecond resolutions
+// Retrieves the current second's tick count as a microsecond resolutions
 //
 //////
 	s32 iiDateMath_get_currentMicrosecond(void)
@@ -11441,14 +11441,43 @@ debug_break;
 
 
 		// Get the current tick, and the frequency
-		QueryPerformanceCounter(&lnTick);
-		QueryPerformanceFrequency(&lnFreq);
+		QueryPerformanceCounter(&lnTick);			// Continuously incrementing tick count
+		QueryPerformanceFrequency(&lnFreq);			// Clock speed
 
-		// Modulo to get the tick this second
+		// Modulo to get the ticks so far this second
 		lfResult = (f64)(lnTick.QuadPart % lnFreq.QuadPart);
 
 		// Determine what this would be for in microseconds
 		lnResult = (s32)(lfResult * 1000000.0 / (f64)lnFreq.QuadPart);
+
+		// Return the result
+		return(lnResult);
+	}
+
+
+
+
+//////////
+//
+// Retrieves the current second's tick count as a nanosecond resolutions
+//
+//////
+	s32 iiDateMath_get_currentNanosecond(void)
+	{
+		LARGE_INTEGER lnTick, lnFreq;
+		s32 lnResult;
+		f64 lfResult;
+
+
+		// Get the current tick, and the frequency
+		QueryPerformanceCounter(&lnTick);			// Continuously incrementing tick count
+		QueryPerformanceFrequency(&lnFreq);			// Clock speed
+
+		// Modulo to get the ticks so far this second
+		lfResult = (f64)(lnTick.QuadPart % lnFreq.QuadPart);
+
+		// Determine what this would be for in nanoseconds
+		lnResult = (s32)(lfResult * 1000000000.0 / (f64)lnFreq.QuadPart);
 
 		// Return the result
 		return(lnResult);
@@ -11526,7 +11555,7 @@ debug_break;
 // Called to convert a SECONDSX() into time values, including microseconds, and store them in a SYSTEMTIME variable
 //
 //////
-	void iiDateMath_get_SYSTEMTIME_from_SECONDSX(SYSTEMTIME* st, f64 tfSecondsx, s32* tnMicroseconds)
+	void iiDateMath_get_SYSTEMTIME_from_SECONDSX(SYSTEMTIME* st, f64 tfSecondsx, s32* tnMicroseconds, s32* tnNanoseconds)
 	{
 		if (tfSecondsx >= 0.0f && tfSecondsx <= 86400.0f)
 		{
@@ -11545,8 +11574,9 @@ debug_break;
 			// Milliseconds
 			st->wMilliseconds	= (u16)(tfSecondsx * 1000.0f);
 
-			// Microseconds
-			*tnMicroseconds		= (s32)(tfSecondsx * 1000000.0f);
+			// Microseconds and nanoseconds are optional
+			if (tnMicroseconds)		*tnMicroseconds	= (s32)(tfSecondsx * 1000000.0f);
+			if (tnNanoseconds)		*tnNanoseconds	= (s32)(tfSecondsx * 1000000000.0f);
 
 		} else {
 			// Invalid, default to midnight
@@ -11554,7 +11584,9 @@ debug_break;
 			st->wMinute			= 0;
 			st->wSecond			= 0;
 			st->wMilliseconds	= 0;
-			*tnMicroseconds		= 0;
+
+			if (tnMicroseconds)		*tnMicroseconds	= 0;
+			if (tnNanoseconds)		*tnNanoseconds	= 0;
 		}
 	}
 

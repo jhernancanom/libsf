@@ -351,11 +351,11 @@
 		SVariable*	varP1	= returnsParams->params[0];
 		SVariable*	varP2	= returnsParams->params[1];
 
-		s32			lnMillisecond, lnMicrosecond;
+		s32			lnMillisecond, lnMicrosecond, lnNanosecond;
 		u32			lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond;
 		f32			lfSeconds;
 		f64			lfSecondsx;
-		bool		llMilliseconds, llExtractDatetime, llExtractDatetimeX, llExtractSeconds;
+		bool		llExtendedTime, llExtractDatetime, llExtractDatetimeX, llExtractSeconds;
 		SVariable*	varDatetime;
 		SVariable*	varDatetimeX;
 		SVariable*	varSeconds;
@@ -367,10 +367,12 @@
 
 
 		// How many parameters did they give us?
-		llMilliseconds		= false;
+		llExtendedTime		= false;
 		llExtractSeconds	= false;
 		llExtractDatetime	= false;
 		llExtractDatetimeX	= false;
+		lnMillisecond		= 0;
+		lnNanosecond		= 0;
 		switch (returnsParams->pcount)
 		{
 			case 0:
@@ -408,7 +410,7 @@
 
 				} else if (!tlIsTimeX && iVariable_isFundamentalTypeLogical(varP1)) {
 					// It's logical, which means they're indicating if they want the milliseconds
-					llMilliseconds = iiVariable_getAs_bool(thisCode, varP1, false, &error, &errorNum);
+					llExtendedTime = iiVariable_getAs_bool(thisCode, varP1, false, &error, &errorNum);
 					if (error)
 					{
 						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP1), false);
@@ -428,17 +430,7 @@
 
 			case 2:
 				//////////
-				// Only valid for non-datetimex
-				//////
-					if (tlIsTimeX)
-					{
-						iError_reportByNumber(thisCode, _ERROR_TOO_MANY_PARAMETERS, iVariable_getRelatedComp(thisCode, varP2), false);
-						return(NULL);
-					}
-
-
-				//////////
-				// P1 must be datetime/floating point
+				// P1 must be datetime/datetimex/floating point
 				//////
 					if (iVariable_isTypeNumeric(varP1))
 					{
@@ -450,6 +442,11 @@
 						// It's datetime, meaning they want the seconds from this value
 						varDatetime			= varP1;
 						llExtractDatetime	= true;
+
+					} else if (iVariable_isTypeDatetimeX(varP1)) {
+						// It's datetime, meaning they want the seconds from this value
+						varDatetimeX		= varP1;
+						llExtractDatetimeX	= true;
 
 					} else {
 						// Invalid
@@ -468,7 +465,7 @@
 					}
 
 					// Grab the milliseconds flag
-					llMilliseconds = iiVariable_getAs_bool(thisCode, varP2, false, &error, &errorNum);
+					llExtendedTime = iiVariable_getAs_bool(thisCode, varP2, false, &error, &errorNum);
 					if (error)
 					{
 						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP2), false);
@@ -495,7 +492,7 @@
 					}
 
 					// Convert the secondsx value to a time
-					iiDateMath_get_SYSTEMTIME_from_SECONDSX(&lst, lfSecondsx, &lnMicrosecond);
+					iiDateMath_get_SYSTEMTIME_from_SECONDSX(&lst, lfSecondsx, &lnMicrosecond, &lnNanosecond);
 
 				} else {
 					// Grab the seconds
@@ -540,9 +537,20 @@
 		// Convert lst.* into a VJr date variable
 		//////
 			// Time is stored as HH:MM:SS.mmm
-			     if (tlIsTimeX)				sprintf(buffer, "%02u:%02u:%02u.%06u\0", lst.wHour, lst.wMinute, lst.wSecond, lnMicrosecond);
-			else if (llMilliseconds)		sprintf(buffer, "%02u:%02u:%02u.%03u\0", lst.wHour, lst.wMinute, lst.wSecond, lst.wMilliseconds);
-			else							sprintf(buffer, "%02u:%02u:%02u\0"     , lst.wHour, lst.wMinute, lst.wSecond);
+			if (tlIsTimeX)
+			{
+				// TIMEX(, .t.) or TIMEX()
+				if (llExtendedTime)		sprintf(buffer, "%02u:%02u:%02u.%09u\0", lst.wHour, lst.wMinute, lst.wSecond, lnNanosecond);
+				else					sprintf(buffer, "%02u:%02u:%02u.%06u\0", lst.wHour, lst.wMinute, lst.wSecond, lnMicrosecond);
+
+			} else if (llExtendedTime) {
+				// TIME(, .t.)
+				sprintf(buffer, "%02u:%02u:%02u.%03u\0", lst.wHour, lst.wMinute, lst.wSecond, lst.wMilliseconds);
+
+			} else {
+				// TIME()
+				sprintf(buffer, "%02u:%02u:%02u\0"     , lst.wHour, lst.wMinute, lst.wSecond);
+			}
 
 
 		//////////
