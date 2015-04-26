@@ -347,6 +347,7 @@ struct SReturnsParams;
 
 	// Apr.25.2015 -- Functions Rick is currently working on, see rick_in_progress.cpp
 	SVariable*			function_timetoseconds						(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			ifunction_conversion_common					(SThisCode* thisCode, SReturnsParams* returnsParams, s32 tnIn, s32 tnOut);
 	SVariable*			function_timextoseconds						(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_timextosecondsx					(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_secondstotime						(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -510,6 +511,7 @@ struct SReturnsParams;
 		{	_ICODE_DTOR,			1,			(uptr)&function_dtor,			1,				1,				&gsSourceLight_dtor[0]			},	// DTOR() by Stefano D'Amico, VJr 0.56, Mar.16.2015
 		{	_ICODE_DTOS,			1,			(uptr)&function_dtos,			0,				1,				&gsSourceLight_dtos[0]			},	// DTOS() by Stefano D'Amico, VJr 0.57, Apr.07.2015
 		{	_ICODE_DTOT,			1,			(uptr)&function_dtot,			1,				2,				&gsSourceLight_dtot[0]			},	// DTOT() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_DTOX,			1,			(uptr)&function_dtox,			1,				1,				&gsSourceLight_dtox[0]			},
 		{	_ICODE_DTRANSFORM,		1,			(uptr)&function_dtransform,		1,				10,				&gsSourceLight_dtransform[0]	},	// DTRANSFORM() by Stefano D'Amico, VJr 0.57, Apr.16.2015
 		{	_ICODE_EMPTY,			1,			(uptr)&function_empty,			1,				1,				&gsSourceLight_empty[0]			},	// EMPTY() by Stefano D'Amico, VJr 0.56, Mar.19.2015
 		{	_ICODE_ENDSWITH,		1,			(uptr)&function_endswith,		2,				4,				&gsSourceLight_endswith[0]		},
@@ -579,7 +581,10 @@ struct SReturnsParams;
 		{	_ICODE_TRIM,			1,			(uptr)&function_rtrim,			1,				4,				&gsSourceLight_rtrim[0]			},
 		{	_ICODE_SEC,				1,			(uptr)&function_sec,			0,				1,				&gsSourceLight_sec[0]			},	// SEC() by Stefano D'Amico, VJr 0.57, Apr.07.2015
 		{	_ICODE_SECONDS,			1,			(uptr)&function_seconds,		0,				0,				&gsSourceLight_seconds[0]		},	// SECONDS() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_SECONDSTOTIME,	1,			(uptr)&function_secondstotime,	1,				1,				&gsSourceLight_secondstotime[0]	},
+		{	_ICODE_SECONDSTOTIMEX,	1,			(uptr)&function_secondstotimex,	1,				1,				&gsSourceLight_secondstotimex[0] },
 		{	_ICODE_SECONDSX,		1,			(uptr)&function_secondsx,		0,				0,				&gsSourceLight_secondsx[0]		},	// SECONDS() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_SECONDSXTOTIMEX,	1,			(uptr)&function_secondsxtotimex, 1,				1,				&gsSourceLight_secondsxtotimex[0] },
 		{	_ICODE_SET,				1,			(uptr)&function_set,			1,				2,				&gsSourceLight_set[0]			},
 		{	_ICODE_SIGN,			1,			(uptr)&function_sign,			1,				1,				&gsSourceLight_sign[0]			},	// SIGN() by Stefano D'Amico, VJr 0.56, Mar.14.2015
 		{	_ICODE_SIN,				1,			(uptr)&function_sin,			1,				1,				&gsSourceLight_sin[0]			},	// SIN() by Stefano D'Amico, VJr 0.56, Mar.17.2015
@@ -597,10 +602,18 @@ struct SReturnsParams;
 		{	_ICODE__TEST,			1,			(uptr)&function__test,			1,				1,				NULL							},
 		{	_ICODE_TEXTMERGE,		1,			(uptr)&function_textmerge,		1,				4,				&gsSourceLight_textmerge[0]		},
 		{	_ICODE_TIME,			1,			(uptr)&function_time,			0,				2,				&gsSourceLight_time[0]			},	// TIME() by Hernan Cano, VJr 0.57, Apr.20.2015
+		{	_ICODE_TIMETOSECONDS,	1,			(uptr)&function_timetoseconds,	1,				1,				&gsSourceLight_timetoseconds[0] },
 		{	_ICODE_TIMEX,			1,			(uptr)&function_timex,			0,				2,				&gsSourceLight_timex[0]			},	// TIME() by Hernan Cano, VJr 0.57, Apr.20.2015
+		{	_ICODE_TIMEXTOSECONDS,	1,			(uptr)&function_timextoseconds,	1,				1,				&gsSourceLight_timextoseconds[0] },
+		{	_ICODE_TIMEXTOSECONDSX,	1,			(uptr)&function_timextosecondsx, 1,				1,				&gsSourceLight_timextosecondsx[0] },
 		{	_ICODE_TRANSFORM,		1,			(uptr)&function_transform,		1,				2,				&gsSourceLight_transform[0]		},
 		{	_ICODE_TTOC,			1,			(uptr)&function_ttoc,			1,				2,				&gsSourceLight_ttoc[0]			},	// TTOC() by Stefano D'Amico, VJr 0.57, Apr.07.2015
 		{	_ICODE_TTOD,			1,			(uptr)&function_ttod,			1,				1,				&gsSourceLight_ttod[0]			},	// TTOD() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_TTOSECONDS,		1,			(uptr)&function_ttoseconds,		1,				1,				&gsSourceLight_ttoseconds[0]	},
+		{	_ICODE_TTOSECONDSX,		1,			(uptr)&function_ttosecondsx,	1,				1,				&gsSourceLight_ttosecondsx[0]	},
+		{	_ICODE_TTOTIME,			1,			(uptr)&function_ttotime,		1,				1,				&gsSourceLight_ttotime[0]		},
+		{	_ICODE_TTOTIMEX,		1,			(uptr)&function_ttotimex,		1,				1,				&gsSourceLight_ttotimex[0]		},
+		{	_ICODE_TTOX,			1,			(uptr)&function_ttox,			1,				1,				&gsSourceLight_ttod[0]			},
 		{	_ICODE_TYPE,			1,			(uptr)&function_type,			1,				2,				&gsSourceLight_type[0]	},
 		{	_ICODE_TYPEDETAIL,		1,			(uptr)&function_typedetail,		1,				1,				&gsSourceLight_typedetail[0]	},
 		{	_ICODE_UPPER,			1,			(uptr)&function_upper,			1,				1,				&gsSourceLight_upper[0]			},
@@ -614,6 +627,12 @@ struct SReturnsParams;
 		{	_ICODE_VECSTUFF,		1,			(uptr)&function_vecstuff,		3,				4,				&gsSourceLight_vecstuff[0]		},
 		{	_ICODE_VECSYMBOL,		1,			(uptr)&function_vecsymbol,		1,				3,				&gsSourceLight_vecsymbol[0]		},
 		{	_ICODE_VERSION,			1,			(uptr)&function_version,		0,				1,				&gsSourceLight_version[0]		},
+		{	_ICODE_XTOD,			1,			(uptr)&function_xtod,			1,				1,				&gsSourceLight_xtod[0]			},
+		{	_ICODE_XTOSECONDS,		1,			(uptr)&function_xtoseconds,		1,				1,				&gsSourceLight_xtoseconds[0]	},
+		{	_ICODE_XTOSECONDSX,		1,			(uptr)&function_xtosecondsx,	1,				1,				&gsSourceLight_xtosecondsx[0]	},
+		{	_ICODE_XTOT,			1,			(uptr)&function_xtot,			1,				1,				&gsSourceLight_xtot[0]			},
+		{	_ICODE_XTOTIME,			1,			(uptr)&function_xtotime,		1,				1,				&gsSourceLight_xtotime[0]		},
+		{	_ICODE_XTOTIMEX,		1,			(uptr)&function_xtotimex,		1,				1,				&gsSourceLight_xtotimex[0]		},
 		{	_ICODE_YEAR,			1,			(uptr)&function_year,			0,				1,				&gsSourceLight_year[0]			},	// YEAR() by Stefano D'Amico, VJr 0.57, Apr.04.2015
 // Added temporarily until the processing engine is coded
 		{	_ICODE_CONCATENATE,		1,			(uptr)&function_concatenate,	2,				2,				&gsSourceLight_concatenate[0]	},

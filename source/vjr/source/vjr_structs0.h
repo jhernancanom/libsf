@@ -319,6 +319,27 @@ struct STranslate
 // 	};
 // };
 
+struct SAllDatetime
+{
+	u32			nYear;
+	u32			nMonth;
+	u32			nDay;
+	u32			nHour;
+	u32			nMinute;
+	u32			nSecond;
+
+	bool		lMillisecondValid;
+	s32			nMillisecond;
+
+	bool		lMicrosecondValid;
+	s32			nMicrosecond;
+
+	bool		lNanosecondValid;
+	s32			nNanosecond;
+
+	f64			fVal;
+};
+
 struct SVariable
 {
 	SLL			ll;

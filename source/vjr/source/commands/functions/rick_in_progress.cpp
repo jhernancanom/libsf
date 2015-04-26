@@ -112,8 +112,228 @@
 //////
 	SVariable* function_timetoseconds(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIME, _CONVERSION_FUNCTION_SECONDS));
+	}
+
+	// Note: Functions that use this must guarantee that at least one parameter is provided
+	SVariable* ifunction_conversion_common(SThisCode* thisCode, SReturnsParams* returnsParams, s32 tnIn, s32 tnOut)
+	{
+		SVariable* varP1 = returnsParams->params[0];
+
+		SAllDatetime	adt;
+		f32				lfVal32;
+		f64				lfVal64;
+		SVariable*		result;
+		s8				buffer[64];
+		bool			error;
+		u32				errorNum;
+
+
+		//////////
+		// Populate input
+		//////
+			memset(&adt, 0, sizeof(adt));
+			switch (tnIn)
+			{
+				case _CONVERSION_FUNCTION_TIME:
+					// Hh:Mm:Ss[.Mss]
+					if (!iVariable_isTypeCharacter(varP1) || varP1->value.length < 8 || varP1->value.data[2] != ':' || varP1->value.data[5] != ':')
+					{
+						iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varP1), false);
+						return(NULL);
+					}
+					adt.nHour	= atoi(varP1->value.data_s8);
+					adt.nMinute	= atoi(varP1->value.data_s8 + 3);
+					adt.nSecond	= atoi(varP1->value.data_s8 + 6);
+					if (varP1->value.data[8] == '.')
+						adt.nMillisecond = atoi(varP1->value.data_s8 + 9);
+					break;
+
+				case _CONVERSION_FUNCTION_TIMEX:
+					// Hh:Mm:Ss[.Mss]
+					// Hh:Mm:Ss[.Micsss]
+					// Hh:Mm:Ss[.Nanosssss]
+					if (!iVariable_isTypeCharacter(varP1) || varP1->value.length < 12 || varP1->value.data[2] != ':' || varP1->value.data[5] != ':')
+					{
+						iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varP1), false);
+						return(NULL);
+					}
+					adt.nHour	= atoi(varP1->value.data_s8);
+					adt.nMinute	= atoi(varP1->value.data_s8 + 3);
+					adt.nSecond	= atoi(varP1->value.data_s8 + 6);
+					if (varP1->value.data[8] == '.')
+					{
+						if (varP1->value.length == 12)
+						{
+							// Hh:Mm:Ss.Mss
+							adt.nMillisecond = atoi(varP1->value.data_s8 + 9);
+
+						} else if (varP1->value.length == 15) {
+							// Hh:Mm:Ss.Micsss
+							adt.nMicrosecond = atoi(varP1->value.data_s8 + 9);
+							adt.nMillisecond	= adt.nMicrosecond / 1000;
+
+						} else if (varP1->value.length == 18) {
+							// Hh:Mm:Ss.Nanosssss
+							adt.nNanosecond		= atoi(varP1->value.data_s8 + 9);
+							adt.nMicrosecond	= adt.nNanosecond  / 1000;
+							adt.nMillisecond	= adt.nMicrosecond / 1000;
+						}
+					}
+					break;
+
+				case _CONVERSION_FUNCTION_SECONDS:
+					if (!iVariable_isTypeNumeric(varP1))
+					{
+						iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varP1), false);
+						return(NULL);
+					}
+					adt.fVal = iiVariable_getAs_f64(thisCode, varP1, false, &error, &errorNum);
+					if (error)
+					{
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP1), false);
+						return(NULL);
+					}
+					break;
+
+				case _CONVERSION_FUNCTION_SECONDSX:
+					if (!iVariable_isTypeNumeric(varP1))
+					{
+						iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varP1), false);
+						return(NULL);
+					}
+					adt.fVal = iiVariable_getAs_f64(thisCode, varP1, false, &error, &errorNum);
+					if (error)
+					{
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP1), false);
+						return(NULL);
+					}
+					break;
+
+				case _CONVERSION_FUNCTION_DATE:
+					if (!iVariable_isTypeDate(varP1))
+					{
+						iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varP1), false);
+						return(NULL);
+					}
+					iiDateMath_get_YyyyMmDd_from_YYYYMMDD(varP1->value.data_u8, &adt.nYear, &adt.nMonth, &adt.nDay);
+					break;
+
+				case _CONVERSION_FUNCTION_DATETIME:
+					if (!iVariable_isTypeDatetime(varP1))
+					{
+						iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varP1), false);
+						return(NULL);
+					}
+					iiDateMath_get_YyyyMmDd_from_julian(varP1->value.data_dt->julian, &adt.nYear, &adt.nMonth, &adt.nDay);
+					iiDateMath_get_HhMmSsMss_from_seconds(varP1->value.data_dt->seconds, &adt.nHour, &adt.nMinute, &adt.nSecond, &adt.nMillisecond);
+					adt.lMillisecondValid = true;
+					break;
+
+				case _CONVERSION_FUNCTION_DATETIMEX:
+					if (!iVariable_isTypeDatetimeX(varP1))
+					{
+						iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varP1), false);
+						return(NULL);
+					}
+					iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_jseconds(varP1->value.data_dtx->jseconds, NULL, &adt.nYear, &adt.nMonth, &adt.nDay, &adt.nHour, &adt.nMinute, &adt.nSecond, &adt.nMillisecond, &adt.nMicrosecond);
+					adt.lMillisecondValid = true;
+					adt.lMicrosecondValid = true;
+					break;
+
+				default:
+					// Should never happen
+					// Check the call stack to determine the function which sent the incorrect parameter
+					debug_nop;
+					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varP1), false);
+					return(NULL);
+			}
+
+
+		//////////
+		// Populate output
+		//////
+			switch (tnOut)
+			{
+				case _CONVERSION_FUNCTION_TIME:
+					// Hh:Mm:Ss.Mss
+					sprintf(buffer, "%02u:%02u:%02u.%03u\0", adt.nHour, adt.nMinute, adt.nSecond, adt.nMillisecond);
+					result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, (cs8*)buffer, -1, false);
+					break;
+
+				case _CONVERSION_FUNCTION_TIMEX:
+					// Hh:Mm:Ss.Mss
+					// Hh:Mm:Ss.Micsss
+					// Hh:Mm:Ss.Nanosssss
+					     if (adt.lNanosecondValid)		sprintf(buffer, "%02u:%02u:%02u.%09u\0", adt.nHour, adt.nMinute, adt.nSecond, adt.nNanosecond);
+					else if (adt.lMicrosecondValid)		sprintf(buffer, "%02u:%02u:%02u.%06u\0", adt.nHour, adt.nMinute, adt.nSecond, adt.nMicrosecond);
+					else if (adt.lMillisecondValid)		sprintf(buffer, "%02u:%02u:%02u.%03u\0", adt.nHour, adt.nMinute, adt.nSecond, adt.nMillisecond);
+					else								sprintf(buffer, "%02u:%02u:%02u\0", adt.nHour, adt.nMinute, adt.nSecond);
+
+					result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, (cs8*)buffer, -1, false);
+					break;
+
+				case _CONVERSION_FUNCTION_SECONDS:
+					// SECONDS()
+					lfVal32 = (f32)((adt.nHour * 60 * 60) + (adt.nMinute * 60) + (adt.nSecond));
+					if (adt.lMillisecondValid)
+						lfVal32 += (f32)adt.nMillisecond / 1000.0f;
+
+					result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_F32, (cs8*)&lfVal32, sizeof(lfVal32), false);
+					break;
+
+				case _CONVERSION_FUNCTION_SECONDSX:
+					// SECONDSX()
+					lfVal64 = (f64)((adt.nHour * 60 * 60) + (adt.nMinute * 60) + (adt.nSecond));
+					     if (adt.lNanosecondValid)		lfVal64 += (f64)adt.nNanosecond / 1000000000.0f;
+					else if (adt.lMicrosecondValid)		lfVal64 += (f64)adt.nMicrosecond / 1000000.0f;
+					else if (adt.lMillisecondValid)		lfVal64 += (f64)adt.nMillisecond / 1000.0f;
+
+					result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_F64, (cs8*)&lfVal64, sizeof(lfVal64), false);
+					break;
+
+				case _CONVERSION_FUNCTION_DATE:
+					result = iVariable_create(thisCode, _VAR_TYPE_DATE, NULL, true);
+					if (result)
+						iiDateMath_get_YYYYMMDD_from_YyyyMmDd(result->value.data_s8, adt.nYear, adt.nMonth, adt.nDay);
+					break;
+
+				case _CONVERSION_FUNCTION_DATETIME:
+					result = iVariable_create(thisCode, _VAR_TYPE_DATETIME, NULL, true);
+					if (result)
+					{
+						result->value.data_dt->julian	= iiDateMath_get_julian_from_YyyyMmDd(NULL, adt.nYear, adt.nMonth, adt.nDay);
+						result->value.data_dt->seconds	= iiDateMath_get_seconds_from_HhMmSsMss(adt.nHour, adt.nMinute, adt.nSecond, adt.nMillisecond);
+					}
+					break;
+
+				case _CONVERSION_FUNCTION_DATETIMEX:
+					result = iVariable_create(thisCode, _VAR_TYPE_DATETIME, NULL, true);
+					if (result)
+						result->value.data_dtx->jseconds = iiDateMath_get_jseconds_from_YyyyMmDdHhMmSsMssMics(NULL, adt.nYear, adt.nMonth, adt.nDay, adt.nHour, adt.nMinute, adt.nSecond, adt.nMillisecond, adt.nMicrosecond);
+					break;
+
+				default:
+					// Should never happen
+					// Check the call stack to determine the function which sent the incorrect parameter
+					debug_nop;
+					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
+					return(NULL);
+			}
+
+
+		//////////
+		// Are we good?
+		//////
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
+
+
+		//////////
+		// Signify our result
+		//////
+			return(result);
+
 	}
 
 
@@ -145,8 +365,7 @@
 //////
 	SVariable* function_timextoseconds(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIMEX, _CONVERSION_FUNCTION_SECONDS));
 	}
 
 
@@ -178,8 +397,7 @@
 //////
 	SVariable* function_timextosecondsx(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIMEX, _CONVERSION_FUNCTION_SECONDSX));
 	}
 
 
@@ -211,8 +429,7 @@
 //////
 	SVariable* function_secondstotime(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDS, _CONVERSION_FUNCTION_TIME));
 	}
 
 
@@ -244,8 +461,7 @@
 //////
 	SVariable* function_secondstotimex(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDS, _CONVERSION_FUNCTION_TIMEX));
 	}
 
 
@@ -273,12 +489,11 @@
 //////
 // Example:
 //    k = SECONDSX()
-//    ? SECONDSTOTIMEX(k)
+//    ? SECONDSXTOTIMEX(k)
 //////
 	SVariable* function_secondsxtotimex(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDSX, _CONVERSION_FUNCTION_TIMEX));
 	}
 
 
@@ -310,8 +525,7 @@
 //////
 	SVariable* function_ttoseconds(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_SECONDS));
 	}
 
 
@@ -343,8 +557,7 @@
 //////
 	SVariable* function_ttosecondsx(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_SECONDSX));
 	}
 
 
@@ -376,8 +589,7 @@
 //////
 	SVariable* function_ttotime(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_TIME));
 	}
 
 
@@ -409,8 +621,7 @@
 //////
 	SVariable* function_ttotimex(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_TIMEX));
 	}
 
 
@@ -442,8 +653,7 @@
 //////
 	SVariable* function_xtoseconds(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_SECONDS));
 	}
 
 
@@ -475,8 +685,7 @@
 //////
 	SVariable* function_xtosecondsx(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_SECONDSX));
 	}
 
 
@@ -508,8 +717,7 @@
 //////
 	SVariable* function_xtotime(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_TIME));
 	}
 
 
@@ -541,8 +749,7 @@
 //////
 	SVariable* function_xtotimex(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_TIMEX));
 	}
 
 
@@ -574,8 +781,7 @@
 //////
 	SVariable* function_dtox(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATE, _CONVERSION_FUNCTION_DATETIMEX));
 	}
 
 
@@ -607,8 +813,7 @@
 //////
 	SVariable* function_ttox(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_DATETIMEX));
 	}
 
 
@@ -640,8 +845,7 @@
 //////
 	SVariable* function_xtod(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_DATE));
 	}
 
 
@@ -673,8 +877,7 @@
 //////
 	SVariable* function_xtot(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_DATETIME));
 	}
 
 

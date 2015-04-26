@@ -892,6 +892,18 @@ typedef SEM**		SEMpp;
 
 
 //////////
+// Common conversion functions constants
+//////
+	const u32			_CONVERSION_FUNCTION_TIME			= 1;
+	const u32			_CONVERSION_FUNCTION_TIMEX			= 2;
+	const u32			_CONVERSION_FUNCTION_SECONDS		= 3;
+	const u32			_CONVERSION_FUNCTION_SECONDSX		= 4;
+	const u32			_CONVERSION_FUNCTION_DATE			= 5;
+	const u32			_CONVERSION_FUNCTION_DATETIME		= 6;
+	const u32			_CONVERSION_FUNCTION_DATETIMEX		= 7;
+
+
+//////////
 // Days of week, months of year
 //////
 	// These can be altered if/when languages are changed

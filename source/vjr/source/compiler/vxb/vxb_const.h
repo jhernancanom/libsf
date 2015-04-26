@@ -505,6 +505,7 @@
 	const s32		_ICODE_DTOR                                     = 1139;
 	const s32		_ICODE_DTOS                                     = 1140;
 	const s32		_ICODE_DTOT                                     = 1141;
+	const s32		_ICODE_DTOX										= 1489;
 	const s32		_ICODE_DTRANSFORM                               = 1482;
 	const s32		_ICODE_EDITSOURCE                               = 1142;
 	const s32		_ICODE_EMPTY                                    = 1143;
@@ -732,7 +733,10 @@
 	const s32		_ICODE_SCHEME                                   = 1342;
 	const s32		_ICODE_SCOLS                                    = 1343;
 	const s32		_ICODE_SECONDS                                  = 1344;
+	const s32		_ICODE_SECONDSTOTIME							= 1490;
+	const s32		_ICODE_SECONDSTOTIMEX							= 1491;
 	const s32		_ICODE_SECONDSX									= 1484;
+	const s32		_ICODE_SECONDSXTOTIMEX							= 1492;
 	const s32		_ICODE_SEC                                      = 1345;
 	const s32		_ICODE_SEEK                                     = 1346;
 	const s32		_ICODE_SELECT                                   = 1347;
@@ -787,11 +791,19 @@
 	const s32		_ICODE_TARGET                                   = 1390;
 	const s32		_ICODE_TEXTMERGE                                = 1391;
 	const s32		_ICODE_TIME                                     = 1392;
+	const s32		_ICODE_TIMETOSECONDS							= 1493;
 	const s32		_ICODE_TIMEX									= 1485;
+	const s32		_ICODE_TIMEXTOSECONDS							= 1494;
+	const s32		_ICODE_TIMEXTOSECONDSX							= 1495;
 	const s32		_ICODE_TRANSFORM                                = 1393;
 	const s32		_ICODE_TRIM                                     = 1394;
 	const s32		_ICODE_TTOC                                     = 1395;
 	const s32		_ICODE_TTOD                                     = 1396;
+	const s32		_ICODE_TTOSECONDS								= 1496;
+	const s32		_ICODE_TTOSECONDSX								= 1497;
+	const s32		_ICODE_TTOTIME									= 1498;
+	const s32		_ICODE_TTOTIMEX									= 1499;
+	const s32		_ICODE_TTOX										= 1500;
 	const s32		_ICODE_TXNLEVEL                                 = 1397;
 	const s32		_ICODE_TXTWIDTH                                 = 1398;
 	const s32		_ICODE_TYPE                                     = 1399;
@@ -834,6 +846,12 @@
 	const s32		_ICODE_WVISIBLE                                 = 1427;
 	const s32		_ICODE_XMLTOCURSOR                              = 1428;
 	const s32		_ICODE_XMLUPDATEGRAM                            = 1429;
+	const s32		_ICODE_XTOD										= 1501;
+	const s32		_ICODE_XTOSECONDS								= 1502;
+	const s32		_ICODE_XTOSECONDSX								= 1503;
+	const s32		_ICODE_XTOT										= 1504;
+	const s32		_ICODE_XTOTIME									= 1505;
+	const s32		_ICODE_XTOTIMEX									= 1506;
 	const s32		_ICODE_YEAR                                     = 1430;
 	// Temporary for Rick's testing:
 	const s32		_ICODE__TEST									= 999999999;
@@ -866,6 +884,15 @@
 	// datetimex		= 1483				secondsx		= 1484
 	// timex			= 1485				microsecond		= 1486
 	// nanosecond		= 1487				pow				= 1488
+	// dtox				= 1489				secondstotime	= 1490
+	// secondstotimex	= 1491				secondsxtotimex	= 1492
+	// timetoseconds	= 1493				timextoseconds	= 1494
+	// timextosecondsx	= 1495				ttoseconds		= 1496
+	// ttosecondsx		= 1497				ttotime			= 1498
+	// ttotimex			= 1499				ttox			= 1500
+	// xtod				= 1501				xtoseconds		= 1502
+	// xtosecondsx		= 1503				xtot			= 1504
+	// xtotime			= 1505				xtotimex		= 1506
 
 
 // Temporarily added until the processing engine is coded
@@ -1447,6 +1474,7 @@
 	const s8		cgc_dtor[]										= "dtor";
 	const s8		cgc_dtos[]										= "dtos";
 	const s8		cgc_dtot[]										= "dtot";
+	const s8		cgc_dtox[]										= "dtox";
 	const s8		cgc_dtransform[]								= "dtransform";
 	const s8		cgc_editsource[]								= "editsource";
 	const s8		cgc_empty[]										= "empty";
@@ -1675,7 +1703,10 @@
 	const s8		cgc_scheme[]									= "scheme";
 	const s8		cgc_scols[]										= "scols";
 	const s8		cgc_seconds[]									= "seconds";
+	const s8		cgc_secondstotime[]								= "secondstotime";
+	const s8		cgc_secondstotimex[]							= "secondstotimex";
 	const s8		cgc_secondsx[]									= "secondsx";
+	const s8		cgc_secondsxtotimex[]							= "secondsxtotimex";
 	const s8		cgc_sec[]										= "sec";
 	const s8		cgc_seek[]										= "seek";
 	const s8		cgc_select[]									= "select";
@@ -1731,11 +1762,19 @@
 	const s8		cgc_target[]									= "target";
 	const s8		cgc_textmerge[]									= "textmerge";
 	const s8		cgc_time[]										= "time";
+	const s8		cgc_timetoseconds[]								= "timetoseconds";
 	const s8		cgc_timex[]										= "timex";
+	const s8		cgc_timextoseconds[]							= "timextoseconds";
+	const s8		cgc_timextosecondsx[]							= "timextosecondsx";
 	const s8		cgc_transform[]									= "transform";
 	const s8		cgc_trim[]										= "trim";
 	const s8		cgc_ttoc[]										= "ttoc";
 	const s8		cgc_ttod[]										= "ttod";
+	const s8		cgc_ttoseconds[]								= "ttoseconds";
+	const s8		cgc_ttosecondsx[]								= "ttosecondsx";
+	const s8		cgc_ttotime[]									= "ttotime";
+	const s8		cgc_ttotimex[]									= "ttotimex";
+	const s8		cgc_ttox[]										= "ttox";
 	const s8		cgc_txnlevel[]									= "txnlevel";
 	const s8		cgc_txtwidth[]									= "txtwidth";
 	const s8		cgc_type[]										= "type";
@@ -1778,6 +1817,12 @@
 	const s8		cgc_wvisible[]									= "wvisible";
 	const s8		cgc_xmltocursor[]								= "xmltocursor";
 	const s8		cgc_xmlupdategram[]								= "xmlupdategram";
+	const s8		cgc_xtod[]										= "xtod";
+	const s8		cgc_xtoseconds[]								= "xtoseconds";
+	const s8		cgc_xtosecondsx[]								= "xtosecondsx";
+	const s8		cgc_xtot[]										= "xtot";
+	const s8		cgc_xtotime[]									= "xtotime";
+	const s8		cgc_xtotimex[]									= "xtotimex";
 	const s8		cgc_year[]										= "year";
 	const s8		cgc__test[]										= "_test";
 

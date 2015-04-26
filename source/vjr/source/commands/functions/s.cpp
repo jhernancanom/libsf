@@ -1319,7 +1319,7 @@
 					//////////
 					// Translate into standard year, month, day
 					//////
-						iiDateMath_get_YyyyMmDd_from_Julian((u32)lfJulian, &lnYear, &lnMonth, &lnDay);
+						iiDateMath_get_YyyyMmDd_from_julian((u32)lfJulian, &lnYear, &lnMonth, &lnDay);
 
 
 					//////////

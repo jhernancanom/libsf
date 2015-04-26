@@ -597,7 +597,7 @@
 				//////////
 				// Grab year, month, day from datetime or date
 				//////
-					if (iVariable_isTypeDatetime(varParam))			iiDateMath_get_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+					if (iVariable_isTypeDatetime(varParam))			iiDateMath_get_YyyyMmDd_from_julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
 					else /* date */									iiDateMath_get_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
 
 
@@ -697,7 +697,7 @@
 				//////////
 				// Grab year, month, day from datetime or date
 				//////
-					if (iVariable_isTypeDatetime(varParam))			iiDateMath_get_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+					if (iVariable_isTypeDatetime(varParam))			iiDateMath_get_YyyyMmDd_from_julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
 					else /* date */									iiDateMath_get_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
 
 
@@ -815,7 +815,7 @@
 			//////////
 			// Grab year, month, day from datetime or date
 			//////
-				if iVariable_isTypeDatetime(varDateOrDatetime)		iiDateMath_get_YyyyMmDd_from_Julian  (varDateOrDatetime->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+				if iVariable_isTypeDatetime(varDateOrDatetime)		iiDateMath_get_YyyyMmDd_from_julian  (varDateOrDatetime->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
 				else /* date */										iiDateMath_get_YyyyMmDd_from_YYYYMMDD(varDateOrDatetime->value.data_u8,         &lnYear, &lnMonth, &lnDay);
 
 			} else {
@@ -1001,7 +1001,7 @@
 				//////////
 				// Grab year, month, day from datetime
 				//////
-					iiDateMath_get_YyyyMmDd_from_Julian (varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+					iiDateMath_get_YyyyMmDd_from_julian (varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
 
 
 			} else {
@@ -1441,12 +1441,12 @@
 
 						} else if (iVariable_isTypeDatetime(var)) {
 							// Datetime
-							iiDateMath_get_YyyyMmDd_from_Julian	(var->value.data_dt->julian,	&lnYear, &lnMonth,  &lnDay);
+							iiDateMath_get_YyyyMmDd_from_julian	(var->value.data_dt->julian,	&lnYear, &lnMonth,  &lnDay);
 							iiDateMath_get_HhMmSsMss_from_seconds(var->value.data_dt->seconds,  &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 						} else if (iVariable_isTypeDatetimeX(var)) {
 							// Date
-							iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_DatetimeX(var->value.data_dtx->jseconds, NULL, &lnYear, &lnMonth, &lnDay, &lnHour, &lnMinute, &lnSecond, &lnMillisecond, &lnNanosecond);
+							iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_jseconds(var->value.data_dtx->jseconds, NULL, &lnYear, &lnMonth, &lnDay, &lnHour, &lnMinute, &lnSecond, &lnMillisecond, &lnNanosecond);
 
 							// 00:00:00.000
 							lnHour = lnMinute = lnSecond = lnMillisecond = 0;

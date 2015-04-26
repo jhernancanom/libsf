@@ -140,7 +140,7 @@
 
 				} else if (!iVariable_isTypeDatetimeX(varParam)) {
 					// Grab hour, minute, second, millisecond from datetime
-					iiDateMath_get_julian_and_YyyyMmDdHhMmSsMssNss_from_DatetimeX(varParam->value.data_dtx->jseconds, NULL, NULL, NULL, NULL, NULL, &lnHour, &lnMinute, &lnSecond, &lnMillisecond, &lnMicrosecond);
+					iiDateMath_get_julian_and_YyyyMmDdHhMmSsMssNss_from_jseconds(varParam->value.data_dtx->jseconds, NULL, NULL, NULL, NULL, NULL, &lnHour, &lnMinute, &lnSecond, &lnMillisecond, &lnMicrosecond);
 
 				} else {
 					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);

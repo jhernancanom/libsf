@@ -459,6 +459,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_dtox[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_dtransform[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
@@ -800,7 +805,22 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_secondstotime[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_secondstotimex[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_secondsx[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_secondsxtotimex[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
@@ -884,7 +904,22 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_timetoseconds[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_timex[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_timextoseconds[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_timextosecondsx[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
@@ -900,6 +935,26 @@
 	};
 
 	SSourceLightData gsSourceLight_ttod[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_ttoseconds[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_ttosecondsx[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_ttotime[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_ttotimex[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
@@ -970,6 +1025,36 @@
 	};
 
 	SSourceLightData gsSourceLight_version[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_xtod[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+	
+	SSourceLightData gsSourceLight_xtoseconds[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+	
+	SSourceLightData gsSourceLight_xtosecondsx[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+	
+	SSourceLightData gsSourceLight_xtot[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+	
+	SSourceLightData gsSourceLight_xtotime[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+	
+	SSourceLightData gsSourceLight_xtotimex[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};

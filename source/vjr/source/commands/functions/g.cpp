@@ -138,8 +138,8 @@
 		//////////
 		// Grab year, month, day from datetime or date
 		//////
-			     if (iVariable_isTypeDatetime(varParam))		iiDateMath_get_YyyyMmDd_from_Julian					(varParam->value.data_dt->julian,			(u32*)&lnYear, (u32*)&lnMonth, &lnDay);
-			else if (iVariable_isTypeDatetimeX(varParam))		iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_DatetimeX	(varParam->value.data_dtx->jseconds, NULL,	(u32*)&lnYear, (u32*)&lnMonth, &lnDay, NULL, NULL, NULL, NULL, NULL);
+			     if (iVariable_isTypeDatetime(varParam))		iiDateMath_get_YyyyMmDd_from_julian					(varParam->value.data_dt->julian,			(u32*)&lnYear, (u32*)&lnMonth, &lnDay);
+			else if (iVariable_isTypeDatetimeX(varParam))		iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_jseconds	(varParam->value.data_dtx->jseconds, NULL,	(u32*)&lnYear, (u32*)&lnMonth, &lnDay, NULL, NULL, NULL, NULL, NULL);
 			else /* date */										iiDateMath_get_YyyyMmDd_from_YYYYMMDD				(varParam->value.data_u8,					(u32*)&lnYear, (u32*)&lnMonth, &lnDay);
 
 
@@ -244,7 +244,7 @@
 						if (result)
 						{
 							// Date is stored as julian day number
-							iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_DatetimeX(varParam->value.data_dtx->jseconds, NULL, NULL, NULL, NULL, &lnHour, &lnMinute, &lnSecond, &lnMillisecond, &lnNanosecond);
+							iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_jseconds(varParam->value.data_dtx->jseconds, NULL, NULL, NULL, NULL, &lnHour, &lnMinute, &lnSecond, &lnMillisecond, &lnNanosecond);
 							varParam->value.data_dtx->jseconds = iiDateMath_get_jseconds_from_YyyyMmDdHhMmSsMssMics(NULL, (u32)lnYear, (u32)lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, lnNanosecond);
 						}
 

@@ -526,7 +526,7 @@
 		//////
 			if (llExtractDatetimeX)
 			{
-				iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_DatetimeX(varP1->value.data_dtx->jseconds, NULL, &lnYear, &lnMonth, &lnDay, &lnHour, &lnMinute, &lnSecond, &lnMillisecond, &lnMicrosecond);
+				iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_jseconds(varP1->value.data_dtx->jseconds, NULL, &lnYear, &lnMonth, &lnDay, &lnHour, &lnMinute, &lnSecond, &lnMillisecond, &lnMicrosecond);
 				lst.wHour	= lnHour;
 				lst.wMinute	= lnMinute;
 				lst.wSecond	= lnSecond;
@@ -777,7 +777,7 @@
 				//////////
 				// Grab the value
 				//////
-					iiDateMath_get_YyyyMmDd_from_Julian(varParam->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+					iiDateMath_get_YyyyMmDd_from_julian(varParam->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
 					iiDateMath_get_HhMmSsMss_from_seconds(varParam->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 
@@ -912,7 +912,7 @@
 		//////////
 		// Grab year, month, day from datetime
 		//////
-			iiDateMath_get_YyyyMmDd_from_Julian(varParam->value.data_dt->julian, (u32*)&lnYear, (u32*)&lnMonth, &lnDay);
+			iiDateMath_get_YyyyMmDd_from_julian(varParam->value.data_dt->julian, (u32*)&lnYear, (u32*)&lnMonth, &lnDay);
 
 
 		//////////

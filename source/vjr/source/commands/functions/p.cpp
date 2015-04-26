@@ -425,6 +425,7 @@
 			llIsP2Valid = (iVariable_isValid(varP2) && iVariable_isTypeNumeric(varP2));
 			if (llIsP1Valid && llIsP2Valid)
 			{
+				// If three parameters, we perform a power/mod
 				if (returnsParams->pcount == 3)
 				{
 					// POW(p1, p2, p3)
@@ -435,7 +436,7 @@
 					if (llIsP3Valid)
 						llIsP3Integer = iVariable_isTypeInteger(varP3);
 
-				} else if (returnsParams->pcount == 2) {
+				} else {
 					// POW(p1, p2)
 					llIsP1Integer	= false;	// Default to floating point algorithm
 					llIsP2Integer	= false;	// Default to floating point algorithm
