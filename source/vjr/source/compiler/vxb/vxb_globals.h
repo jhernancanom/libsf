@@ -552,6 +552,7 @@
 		{ cgc_pemstatus,			9,			false,		_ICODE_PEMSTATUS,						false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_pi,					2,			false,		_ICODE_PI,								false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_popup,				5,			false,		_ICODE_POPUP,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
+		{ cgc_pow,					3,			false,		_ICODE_POW,								false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_primary,				7,			false,		_ICODE_PRIMARY,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_printstatus,			11,			false,		_ICODE_PRINTSTATUS,						false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_prmbar,				6,			false,		_ICODE_PRMBAR,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },

@@ -280,6 +280,7 @@ struct SReturnsParams;
 	SVariable*			ifunction_pad_common						(SThisCode* thisCode, SVariable* varExpr, SVariable* varResultSize, SVariable* varPadCharacter, bool tlPadLeft, bool tlPadRight, SReturnsParams* returnsParams);
 	SVariable*			function_payment	/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_pi			/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_pow		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_proper								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_pv			/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_quarter	/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -559,6 +560,7 @@ struct SReturnsParams;
 		{	_ICODE_PADR,			1,			(uptr)&function_padr,			2,				3,				&gsSourceLight_padr[0]			},
 		{	_ICODE_PAYMENT,			1,			(uptr)&function_payment,		3,				3,				&gsSourceLight_payment[0]		},	// PAYMENT() by Stefano D'Amico, VJr 0.56, Mar.19.2015
 		{	_ICODE_PI,				1,			(uptr)&function_pi,				0,				0,				&gsSourceLight_pi[0]			},	// PI() by Stefano D'Amico, VJr 0.56, Mar.15.2015
+		{	_ICODE_POW,				1,			(uptr)&function_pow,			2,				3,				&gsSourceLight_pow[0]			},	// POW() by Stefano D'Amico, VJr 0.57, Apr.26.2015
 		{	_ICODE_PROPER,			1,			(uptr)&function_proper,			1,				1,				&gsSourceLight_proper[0]		},
 		{	_ICODE_PV,				1,			(uptr)&function_pv,				3,				3,				&gsSourceLight_pv[0]			},	// PV() by Stefano D'Amico, VJr 0.56, Mar.18.2015
 		{	_ICODE_QUARTER,			1,			(uptr)&function_quarter,		0,				2,				&gsSourceLight_quarter[0]		},	// QUARTER() by Stefano D'Amico, VJr 0.57, Apr.05.2015

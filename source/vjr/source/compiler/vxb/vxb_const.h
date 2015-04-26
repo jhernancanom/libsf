@@ -689,6 +689,7 @@
 	const s32		_ICODE_PEMSTATUS                                = 1303;
 	const s32		_ICODE_PI                                       = 1304;
 	const s32		_ICODE_POPUP                                    = 1305;
+	const s32		_ICODE_POW			                            = 1488;
 	const s32		_ICODE_PRIMARY                                  = 1306;
 	const s32		_ICODE_PRINTSTATUS                              = 1307;
 	const s32		_ICODE_PRMBAR                                   = 1308;
@@ -864,7 +865,8 @@
 	// typedetail		= 1481				dtransform		= 1482
 	// datetimex		= 1483				secondsx		= 1484
 	// timex			= 1485				microsecond		= 1486
-	// nanosecond		= 1487
+	// nanosecond		= 1487				pow				= 1488
+
 
 // Temporarily added until the processing engine is coded
 	const s32		_ICODE_CONCATENATE								= 1900;
@@ -1630,6 +1632,7 @@
 	const s8		cgc_pemstatus[]									= "pemstatus";
 	const s8		cgc_pi[]										= "pi";
 	const s8		cgc_popup[]										= "popup";
+	const s8		cgc_pow[]										= "pow";
 	const s8		cgc_primary[]									= "primary";
 	const s8		cgc_printstatus[]								= "printstatus";
 	const s8		cgc_prmbar[]									= "prmbar";
