@@ -380,6 +380,222 @@
 
 //////////
 //
+// Function: POW()
+// Return x to the power y, if z is present, return x to the power y, modulo z.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     varNumber1	-- Numeric
+//     varNumber2	-- Numeric
+//	   varNumber3	-- [Optional] Numeric 
+//////
+// Returns:
+//    Numeric		-- Returns varNumber1 to the power varNumber2; if varNumber3 is present, return varNumber1 to the power varNumber2, modulo varNumber3.
+//////
+// Example:
+//    ? pow(10, 3456789, 3)				&& Displays 1
+//////
+	SVariable* function_pow(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable*	varNumber1 = returnsParams->params[0];
+		SVariable*	varNumber2 = returnsParams->params[1];
+		SVariable*	varNumber3 = returnsParams->params[2];
+
+		f64			lfValue1, lfValue2, lfResult;
+		s64			lnPower, lnResult, lnExp, lnMod;
+		bool		error;
+		u32			errorNum;
+		SVariable*	result;
+
+		//////////
+		// If varNumber3 is provided, must also be numeric and varNumber3 must be non zero
+		//////
+			if (varNumber3)
+			{
+				if (!iVariable_isValid(varNumber3) || !iVariable_isTypeInteger(varNumber3))
+				{
+					iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNumber3), false);
+					return(NULL);
+				}
+
+				//////////
+				// Convert to f64
+				//////
+					lnMod = iiVariable_getAs_s64(thisCode, varNumber3, false, &error, &errorNum);
+					if (error)
+					{
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNumber3), false);
+						return(NULL);
+					}
+
+				//////////
+				// Check empty param
+				//////
+					if (lnMod == 0)
+					{
+						iError_reportByNumber(thisCode, _ERROR_CANNOT_BE_ZERO, iVariable_getRelatedComp(thisCode, varNumber3), false);
+						return(NULL);
+					}
+
+				//////////
+				// If varNumber3 is provided, varNumber1 and varNumber2 must be integer type and varNumber2 must be non-negative
+				//////
+					if ( !iVariable_isTypeInteger(varNumber1) )
+					{
+						iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNumber1), false);
+						return(NULL);
+					}
+
+				//////////
+				// Grab varNumber1
+				//////
+					lnPower = iiVariable_getAs_s64(thisCode, varNumber1, false, &error, &errorNum);
+					if (error)
+					{
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNumber1), false);
+						return(NULL);
+					}
+
+				//////////
+				// varNumber2 must also be integer
+				//////
+					if ( !iVariable_isTypeInteger(varNumber2) )
+					{
+						iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNumber2), false);
+						return(NULL);
+					}
+
+
+				//////////
+				// Grab varNumber2
+				//////
+					lnExp = iiVariable_getAs_s64(thisCode, varNumber2, false, &error, &errorNum);
+					if (error)
+					{
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNumber2), false);
+						return(NULL);
+					}
+
+				//////////
+				// varNumber2 must also be non-negative
+				//////
+					if ( lnExp < 0 )
+					{
+						iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNumber2), false);
+						return(NULL);
+					}
+
+				//////////
+				// Compute x^y % z using Euler's theorem
+				//////
+					lnResult = 1;
+
+					while (lnExp)
+					{
+						if (lnExp & 1)
+							lnResult = (lnResult * lnPower) % lnMod;
+						lnPower = (lnPower * lnPower) % lnMod;
+						lnExp >>= 1;
+					}
+
+
+				//////////
+				// Create the value
+				//////
+					result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_U32, (cs8*)&lnResult, sizeof(lnResult), false);
+					if (!result)
+						iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varNumber1), false);
+
+			} else {
+				
+				//////////
+				// varNumber1 must also be numeric
+				//////
+					if (!iVariable_isValid(varNumber1) || !iVariable_isTypeNumeric(varNumber1))
+					{
+						iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNumber1), false);
+						return(NULL);
+					}
+
+
+				//////////
+				// Convert to f64
+				//////
+					lfValue1 = iiVariable_getAs_f64(thisCode, varNumber1, false, &error, &errorNum);
+					if (error)
+					{
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNumber1), false);
+						return(NULL);
+					}
+
+
+				//////////
+				// varNumber2 must also be numeric
+				//////
+					if (!iVariable_isValid(varNumber2) || !iVariable_isTypeNumeric(varNumber2))
+					{
+						iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNumber2), false);
+						return(NULL);
+					}
+
+
+				//////////
+				// Convert to f64
+				//////
+					lfValue2 = iiVariable_getAs_f64(thisCode, varNumber2, false, &error, &errorNum);
+					if (error)
+					{
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNumber2), false);
+						return(NULL);
+					}
+
+
+				//////////
+				// Compute power
+				//////
+					lfResult = pow(lfValue1, lfValue2);
+
+
+				//////////
+				// Create output variable
+				//////
+					result = iVariable_create(thisCode, varNumber1->varType, NULL, true);
+
+					if (!result)
+					{
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNumber1), false);
+						return(NULL);
+					}
+
+
+				//////////
+				// Set the value
+				//////
+					if (!iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfResult, NULL, NULL, NULL, NULL))
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNumber1), false);
+			}
+
+
+
+		//////////
+        // return(result)
+		//////
+	        return(result);
+
+	}
+
+
+
+
+//////////
+//
 // Function: PROPER()
 // Converts the first character after every space to upper-case,
 // and lowercases everything else.

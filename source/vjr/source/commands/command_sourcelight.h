@@ -700,6 +700,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_pow[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_proper[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
