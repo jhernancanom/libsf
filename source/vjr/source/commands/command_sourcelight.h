@@ -635,6 +635,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_microsecond[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_minute[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
@@ -646,6 +651,11 @@
 	};
 
 	SSourceLightData gsSourceLight_month[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_nanosecond[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};

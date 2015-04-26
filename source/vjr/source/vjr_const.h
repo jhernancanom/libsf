@@ -871,6 +871,7 @@ typedef SEM**		SEMpp;
 	const u32			_DMY_COMMON_MDY						= 4;
 	const u32			_DMY_COMMON_DTOS					= 5;
 
+
 //////////
 // Common time functions constants
 //////
@@ -880,6 +881,14 @@ typedef SEM**		SEMpp;
 	const u32			_HMS_COMMON_MILLISECOND				= 3;
 	const u32			_HMS_COMMON_MICROSECOND				= 4;
 
+
+//////////
+// Common xseconds functions constants
+//////
+	const u32			_XSECONDS_FUNCTION_NANOSECOND		= 1;
+	const u32			_XSECONDS_FUNCTION_MICROSECOND		= 2;
+	const u32			_XSECONDS_FUNCTION_SECONDS			= 3;
+	const u32			_XSECONDS_FUNCTION_SECONDSX			= 4;
 
 
 //////////

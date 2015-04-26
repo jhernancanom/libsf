@@ -11440,6 +11440,7 @@ debug_break;
 		f64 lfResult;
 
 
+// TODO:  There needs to be a bias here to correct for the actual startup boot-time, which will most likely be different than the actual clock.  It would be a constant to add or subtract to/from the lnTick value to get the actual tick adjusted to the nearest whole second.
 		// Get the current tick, and the frequency
 		QueryPerformanceCounter(&lnTick);			// Continuously incrementing tick count
 		QueryPerformanceFrequency(&lnFreq);			// Clock speed
@@ -11469,6 +11470,7 @@ debug_break;
 		f64 lfResult;
 
 
+// TODO:  There needs to be a bias here to correct for the actual startup boot-time, which will most likely be different than the actual clock.  It would be a constant to add or subtract to/from the lnTick value to get the actual tick adjusted to the nearest whole second.
 		// Get the current tick, and the frequency
 		QueryPerformanceCounter(&lnTick);			// Continuously incrementing tick count
 		QueryPerformanceFrequency(&lnFreq);			// Clock speed

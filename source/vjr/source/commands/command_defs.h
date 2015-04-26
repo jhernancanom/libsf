@@ -263,10 +263,12 @@ struct SReturnsParams;
 	SVariable*			function_malp								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_max								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_mdy		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_microsecond						(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_min								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_minute		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_mod		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_month		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_nanosecond							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_ncset								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_nvl		/* Hernan Cano */		(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_occurs								(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -298,7 +300,7 @@ struct SReturnsParams;
 	SVariable*			function_rtrim								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_sec		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_seconds	/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			ifunction_seconds_common					(SThisCode* thisCode, SReturnsParams* returnsParams, bool tlIsSecondsX);
+	SVariable*			ifunction_xseconds_common					(SThisCode* thisCode, SReturnsParams* returnsParams, s32 tnFunction);
 	SVariable*			function_secondsx							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_set								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_sign		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -341,6 +343,50 @@ struct SReturnsParams;
 	SVariable*			function_vecsymbol							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_version							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_year		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
+
+	// Apr.25.2015 -- Functions Rick is currently working on, see rick_in_progress.cpp
+	SVariable*			function_timetoseconds						(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_timextoseconds						(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_timextosecondsx					(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_secondstotime						(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_secondstotimex						(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_secondsxtotimex					(SThisCode* thisCode, SReturnsParams* returnsParams);
+
+	SVariable*			function_ttoseconds							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_ttosecondsx						(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_ttotime							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_ttotimex							(SThisCode* thisCode, SReturnsParams* returnsParams);
+
+	SVariable*			function_xtoseconds							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_xtosecondsx						(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_xtotime							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_xtotimex							(SThisCode* thisCode, SReturnsParams* returnsParams);
+
+	SVariable*			function_dtox								(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_ttox								(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_xtod								(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_xtot								(SThisCode* thisCode, SReturnsParams* returnsParams);
+
+	SVariable*			function_cxlatd								(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_cxlatt								(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_cxlatx								(SThisCode* thisCode, SReturnsParams* returnsParams);
+
+	SVariable*			function_dbundle							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_dunbundle							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_tbundle							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_tunbundle							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_xbundle							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_xunbundle							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_timebundle							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_timeunbundle						(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_timexbundle						(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_timexunbundle						(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_secondsbundle						(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_secondsunbundle					(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_secondsxbundle						(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_secondsxunbundle					(SThisCode* thisCode, SReturnsParams* returnsParams);
+
+
 // Added temporarily until the processing engine is coded
 	SVariable*			function_concatenate						(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_add								(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -497,10 +543,12 @@ struct SReturnsParams;
 		{	_ICODE_MALP,			1,			(uptr)&function_malp,			1,				2,				&gsSourceLight_malp[0]			},
 		{	_ICODE_MAX,				1,			(uptr)&function_max,			2,				2,				&gsSourceLight_max[0]			},
 		{	_ICODE_MDY,				1,			(uptr)&function_mdy,			0,				1,				&gsSourceLight_mdy[0]			},	// MDY() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_MICROSECOND,		1,			(uptr)&function_microsecond,	0,				0,				&gsSourceLight_microsecond[0]	},
 		{	_ICODE_MIN,				1,			(uptr)&function_min,			2,				2,				&gsSourceLight_min[0]			},
 		{	_ICODE_MINUTE,			1,			(uptr)&function_minute,			0,				1,				&gsSourceLight_minute[0]		},	// MINUTE() by Stefano D'Amico, VJr 0.57, Apr.07.2015
 		{	_ICODE_MOD,				1,			(uptr)&function_mod,			2,				2,				&gsSourceLight_mod[0]			},	// MOD() by Stefano D'Amico, VJr 0.56, Mar.08.2015
 		{	_ICODE_MONTH,			1,			(uptr)&function_month,			0,				1,				&gsSourceLight_month[0]			},	// MONTH() by Stefano D'Amico, VJr 0.57, Apr.04.2015
+		{	_ICODE_NANOSECOND,		1,			(uptr)&function_nanosecond,		0,				0,				&gsSourceLight_nanosecond[0]	},
 		{	_ICODE_NCSET,			1,			(uptr)&function_ncset,			1,				7,				&gsSourceLight_ncset[0]			},
 		{	_ICODE_NVL,				1,			(uptr)&function_nvl,			1,				2,				&gsSourceLight_nvl[0]			},	// NVL() by Hernan Can, VJr 0.57, Apr.22.2015
 		{	_ICODE_OCCURS,			1,			(uptr)&function_occurs,			2,				2,				&gsSourceLight_occurs[0]		},

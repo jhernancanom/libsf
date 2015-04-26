@@ -637,6 +637,7 @@
 	const s32		_ICODE_MDOWN                                    = 1261;
 	const s32		_ICODE_MDX                                      = 1262;
 	const s32		_ICODE_MDY                                      = 1263;
+	const s32		_ICODE_MICROSECOND								= 1486;
 	const s32		_ICODE_MEMLINES                                 = 1264;
 	const s32		_ICODE_MEMORY                                   = 1265;
 	const s32		_ICODE_MENU                                     = 1266;
@@ -652,6 +653,7 @@
 	const s32		_ICODE_MROW                                     = 1276;
 	const s32		_ICODE_MTON                                     = 1277;
 	const s32		_ICODE_MWINDOW                                  = 1278;
+	const s32		_ICODE_NANOSECOND								= 1487;
 	const s32		_ICODE_NCSET									= 1449;
 	const s32		_ICODE_NDX                                      = 1279;
 	const s32		_ICODE_NEWOBJECT                                = 1280;
@@ -861,7 +863,8 @@
 	// startswithc		= 1479				outside			= 1480
 	// typedetail		= 1481				dtransform		= 1482
 	// datetimex		= 1483				secondsx		= 1484
-	// timex			= 1485
+	// timex			= 1485				microsecond		= 1486
+	// nanosecond		= 1487
 
 // Temporarily added until the processing engine is coded
 	const s32		_ICODE_CONCATENATE								= 1900;
@@ -1580,6 +1583,7 @@
 	const s8		cgc_menu[]										= "menu";
 	const s8		cgc_messagebox[]								= "messagebox";
 	const s8		cgc_message[]									= "message";
+	const s8		cgc_microsecond[]								= "microsecond";
 	const s8		cgc_minute[]									= "minute";
 	const s8		cgc_min[]										= "min";
 	const s8		cgc_mline[]										= "mline";
@@ -1590,6 +1594,7 @@
 	const s8		cgc_mrow[]										= "mrow";
 	const s8		cgc_mton[]										= "mton";
 	const s8		cgc_mwindow[]									= "mwindow";
+	const s8		cgc_nanosecond[]								= "nanosecond";
 	const s8		cgc_ncset[]										= "ncset";
 	const s8		cgc_ndx[]										= "ndx";
 	const s8		cgc_newobject[]									= "newobject";

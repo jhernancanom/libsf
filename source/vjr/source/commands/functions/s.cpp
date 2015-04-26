@@ -140,10 +140,10 @@
 //////
 	SVariable* function_seconds(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_seconds_common(thisCode, returnsParams, false));
+		return(ifunction_xseconds_common(thisCode, returnsParams, _XSECONDS_FUNCTION_SECONDS));
 	}
 
-	SVariable* ifunction_seconds_common(SThisCode* thisCode, SReturnsParams* returnsParams, bool tlIsSecondsX)
+	SVariable* ifunction_xseconds_common(SThisCode* thisCode, SReturnsParams* returnsParams, s32 tnFunction)
 	{
 		f64			lfResult;
 		s32			lnNanosecond;
@@ -154,24 +154,49 @@
 		//////////
 		// Compute the number of seconds that have elapsed since midnight
 		//////
-			if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
-			else				GetLocalTime(&lst);
-
-			if (tlIsSecondsX)
+			switch (tnFunction)
 			{
-				// SECONDSX()
-				lnNanosecond	= iiDateMath_get_currentNanosecond();
-				lfResult		=		((f64)lst.wHour			* 3600.0		)
-									+	((f64)lst.wMinute		* 60.0			)
-									+	((f64)lst.wSecond						)
-									+	((f64)lnNanosecond		* 0.000000001	);		// Nanosecond
+				case _XSECONDS_FUNCTION_NANOSECOND:
+					lfResult = (f64)iiDateMath_get_currentNanosecond();
+					break;
 
-			} else {
-				// SECONDS()
-				lfResult		=		((f64)lst.wHour			* 3600.0		)
-									+	((f64)lst.wMinute		* 60.0			)
-									+	((f64)lst.wSecond						)
-									+	((f64)lst.wMilliseconds	* 0.001			);		// Millisecond
+				case _XSECONDS_FUNCTION_MICROSECOND:
+					lfResult = (f64)iiDateMath_get_currentMicrosecond();
+					break;
+
+				default:
+					// Grab the time
+					if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
+					else				GetLocalTime(&lst);
+
+					// Indicate time since midnight
+					switch (tnFunction)
+					{
+						case _XSECONDS_FUNCTION_SECONDSX:
+							// SECONDSX()
+							lnNanosecond	= iiDateMath_get_currentNanosecond();
+							lfResult		=		((f64)lst.wHour			* 3600.0		)
+												+	((f64)lst.wMinute		* 60.0			)
+												+	((f64)lst.wSecond						)
+												+	((f64)lnNanosecond		* 0.000000001	);		// Nanosecond
+							break;
+
+						case _XSECONDS_FUNCTION_SECONDS:
+							// SECONDS()
+							lfResult		=		((f64)lst.wHour			* 3600.0		)
+												+	((f64)lst.wMinute		* 60.0			)
+												+	((f64)lst.wSecond						)
+												+	((f64)lst.wMilliseconds	* 0.001			);		// Millisecond
+							break;
+
+						default:
+							// Should never happen, indicates an internal programming error.
+							// Check the call stack to see what was passed incorrectly into this function.
+							debug_nop;
+							iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
+							return(NULL);
+					}
+
 			}
 
 
@@ -181,10 +206,7 @@
 			// Note:  There is a dependency in SYS(2) that this value be an f64 type:
 			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_F64, (s8*)&lfResult, sizeof(lfResult), false);
 			if (!result)
-			{
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
-				return(NULL);
-			}
 
 
 		//////////
@@ -218,7 +240,7 @@
 //////
 	SVariable* function_secondsx(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_seconds_common(thisCode, returnsParams, true));
+		return(ifunction_xseconds_common(thisCode, returnsParams, _XSECONDS_FUNCTION_SECONDSX));
 	}
 
 
