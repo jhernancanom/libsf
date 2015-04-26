@@ -303,6 +303,7 @@ struct SThisCode;
 	void					iiDateMath_get_YyyyMmDd_from_julian								(u32  tnJulianDayNumber, u32* year, u32* month, u32* day);
 	void					iiDateMath_get_YyyyMmDd_from_YYYYMMDD							(u8* YYYYMMDD,           u32* year, u32* month, u32* day);
 	void					iiDateMath_get_HhMmSsMss_from_seconds							(f32 tfSeconds, u32* hour, u32* minute, u32* second, s32* millisecond);
+	void					iiDateMath_get_HhMmSsMssMics_from_secondsx						(f64 tfSeconds, u32* hour, u32* minute, u32* second, s32* millisecond, s32* microsecond);
 	f32						iiDateMath_get_seconds_from_HhMmSsMss							(               u32  hour, u32  minute, u32  second, s32  millisecond);
 	s32						iiDateMath_get_currentMicrosecond								(void);
 	s32						iiDateMath_get_currentNanosecond								(void);

@@ -130,6 +130,16 @@
 
 
 		//////////
+		// Validate the parameter is valid
+		//////
+			if (!iVariable_isValid(varP1))
+			{
+				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varP1), false);
+				return(NULL);
+			}
+
+
+		//////////
 		// Populate input
 		//////
 			memset(&adt, 0, sizeof(adt));
@@ -171,13 +181,13 @@
 						} else if (varP1->value.length == 15) {
 							// Hh:Mm:Ss.Micsss
 							adt.nMicrosecond = atoi(varP1->value.data_s8 + 9);
-							adt.nMillisecond	= adt.nMicrosecond / 1000;
+							adt.nMillisecond	= (adt.nMicrosecond + 500) / 1000;
 
 						} else if (varP1->value.length == 18) {
 							// Hh:Mm:Ss.Nanosssss
 							adt.nNanosecond		= atoi(varP1->value.data_s8 + 9);
-							adt.nMicrosecond	= adt.nNanosecond  / 1000;
-							adt.nMillisecond	= adt.nMicrosecond / 1000;
+							adt.nMicrosecond	= (adt.nNanosecond  + 500) / 1000;
+							adt.nMillisecond	= (adt.nMicrosecond + 500) / 1000;
 						}
 					}
 					break;
@@ -257,6 +267,15 @@
 			{
 				case _CONVERSION_FUNCTION_TIME:
 					// Hh:Mm:Ss.Mss
+					switch (tnIn)
+					{
+						case _CONVERSION_FUNCTION_SECONDS:
+						case _CONVERSION_FUNCTION_SECONDSX:
+							iiDateMath_get_HhMmSsMssMics_from_secondsx(adt.fVal, &adt.nHour, &adt.nMinute, &adt.nSecond, &adt.nMillisecond, &adt.nMicrosecond);
+							break;
+					}
+
+					// Convert
 					sprintf(buffer, "%02u:%02u:%02u.%03u\0", adt.nHour, adt.nMinute, adt.nSecond, adt.nMillisecond);
 					result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, (cs8*)buffer, -1, false);
 					break;
@@ -265,19 +284,27 @@
 					// Hh:Mm:Ss.Mss
 					// Hh:Mm:Ss.Micsss
 					// Hh:Mm:Ss.Nanosssss
-					     if (adt.lNanosecondValid)		sprintf(buffer, "%02u:%02u:%02u.%09u\0", adt.nHour, adt.nMinute, adt.nSecond, adt.nNanosecond);
-					else if (adt.lMicrosecondValid)		sprintf(buffer, "%02u:%02u:%02u.%06u\0", adt.nHour, adt.nMinute, adt.nSecond, adt.nMicrosecond);
-					else if (adt.lMillisecondValid)		sprintf(buffer, "%02u:%02u:%02u.%03u\0", adt.nHour, adt.nMinute, adt.nSecond, adt.nMillisecond);
-					else								sprintf(buffer, "%02u:%02u:%02u\0", adt.nHour, adt.nMinute, adt.nSecond);
+					switch (tnIn)
+					{
+						case _CONVERSION_FUNCTION_SECONDS:
+						case _CONVERSION_FUNCTION_SECONDSX:
+							iiDateMath_get_HhMmSsMssMics_from_secondsx(adt.fVal, &adt.nHour, &adt.nMinute, &adt.nSecond, &adt.nMillisecond, &adt.nMicrosecond);
+							break;
+					}
+
+					// Convert
+					     if (adt.lNanosecondValid)		sprintf(buffer, "%02u:%02u:%02u.%09u\0",	adt.nHour, adt.nMinute, adt.nSecond, adt.nNanosecond);
+					else if (adt.lMicrosecondValid)		sprintf(buffer, "%02u:%02u:%02u.%06u\0",	adt.nHour, adt.nMinute, adt.nSecond, adt.nMicrosecond);
+					else if (adt.lMillisecondValid)		sprintf(buffer, "%02u:%02u:%02u.%03u\0",	adt.nHour, adt.nMinute, adt.nSecond, adt.nMillisecond);
+					else /* Default to microsecond */	sprintf(buffer, "%02u:%02u:%02u.%06u\0",	adt.nHour, adt.nMinute, adt.nSecond, adt.nMicrosecond);
 
 					result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, (cs8*)buffer, -1, false);
 					break;
 
 				case _CONVERSION_FUNCTION_SECONDS:
 					// SECONDS()
-					lfVal32 = (f32)((adt.nHour * 60 * 60) + (adt.nMinute * 60) + (adt.nSecond));
-					if (adt.lMillisecondValid)
-						lfVal32 += (f32)adt.nMillisecond / 1000.0f;
+					lfVal32 =	(f32)((adt.nHour * 60 * 60) + (adt.nMinute * 60) + (adt.nSecond));
+					lfVal32 +=	(f32)adt.nMillisecond / 1000.0f;
 
 					result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_F32, (cs8*)&lfVal32, sizeof(lfVal32), false);
 					break;
@@ -285,9 +312,11 @@
 				case _CONVERSION_FUNCTION_SECONDSX:
 					// SECONDSX()
 					lfVal64 = (f64)((adt.nHour * 60 * 60) + (adt.nMinute * 60) + (adt.nSecond));
+
 					     if (adt.lNanosecondValid)		lfVal64 += (f64)adt.nNanosecond / 1000000000.0f;
 					else if (adt.lMicrosecondValid)		lfVal64 += (f64)adt.nMicrosecond / 1000000.0f;
 					else if (adt.lMillisecondValid)		lfVal64 += (f64)adt.nMillisecond / 1000.0f;
+					else /* Default to microseconds */	lfVal64 += (f64)adt.nMicrosecond / 1000000.0f;
 
 					result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_F64, (cs8*)&lfVal64, sizeof(lfVal64), false);
 					break;
@@ -308,7 +337,7 @@
 					break;
 
 				case _CONVERSION_FUNCTION_DATETIMEX:
-					result = iVariable_create(thisCode, _VAR_TYPE_DATETIME, NULL, true);
+					result = iVariable_create(thisCode, _VAR_TYPE_DATETIMEX, NULL, true);
 					if (result)
 						result->value.data_dtx->jseconds = iiDateMath_get_jseconds_from_YyyyMmDdHhMmSsMssMics(NULL, adt.nYear, adt.nMonth, adt.nDay, adt.nHour, adt.nMinute, adt.nSecond, adt.nMillisecond, adt.nMicrosecond);
 					break;
@@ -334,6 +363,106 @@
 		//////
 			return(result);
 
+	}
+
+
+
+
+//////////
+//
+// Function: TIMETOSECONDSX()
+// Converts a TIME() into a SECONDSX().
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Character, in the format of TIME()
+//
+//////
+// Returns:
+//    f64			-- A 64-bit floating point of the equivalent SECONDSX().
+//////
+// Example:
+//    k = TIME()
+//    ? TIMETOSECONDSX(k)
+//////
+	SVariable* function_timetosecondsx(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIME, _CONVERSION_FUNCTION_SECONDSX));
+	}
+
+
+
+
+//////////
+//
+// Function: TIMETOT()
+// Converts a TIME() into a DATETIME().
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Character, in the format of TIME()
+//     p2			-- (Optional) DATE(), DATETIME(), or DATETIMEX()
+//
+//////
+// Returns:
+//    Datetime		-- The equivalent in a datetime with today's date
+//////
+// Example:
+//    k = TIME()
+//    t = DATE()
+//    ? TIMETOT(k, t)
+//////
+	SVariable* function_timetot(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIME, _CONVERSION_FUNCTION_DATETIME));
+	}
+
+
+
+
+//////////
+//
+// Function: TIMETOX()
+// Converts a TIME() into a DATETIMEX().
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Character, in the format of TIME()
+//     p2			-- (Optional) DATE(), DATETIME(), or DATETIMEX()
+//
+//////
+// Returns:
+//    DatetimeX		-- The equivalent in a datetimex with today's date
+//////
+// Example:
+//    k = TIME()
+//    t = DATE()
+//    ? TIMETOX(k, t)
+//////
+	SVariable* function_timetox(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIME, _CONVERSION_FUNCTION_DATETIMEX));
 	}
 
 
@@ -405,6 +534,74 @@
 
 //////////
 //
+// Function: TIMEXTOT()
+// Converts a TIMEX() into a DATETIME().
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Character, in the format of TIMEX()
+//     p2			-- (Optional) DATE(), DATETIME(), or DATETIMEX()
+//
+//////
+// Returns:
+//    Datetime		-- The equivalent in a datetime with today's date
+//////
+// Example:
+//    k = TIMEX()
+//    t = DATE()
+//    ? TIMEXTOT(k, t)
+//////
+	SVariable* function_timextot(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIMEX, _CONVERSION_FUNCTION_DATETIME));
+	}
+
+
+
+
+//////////
+//
+// Function: TIMEXTOX()
+// Converts a TIMEX() into a DATETIMEX().
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Character, in the format of TIMEX()
+//     p2			-- (Optional) DATE(), DATETIME(), or DATETIMEX()
+//
+//////
+// Returns:
+//    DatetimeX		-- The equivalent in a datetimex with today's date
+//////
+// Example:
+//    k = TIMEX()
+//    t = DATE()
+//    ? TIMEXTOX(k, t)
+//////
+	SVariable* function_timextox(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIMEX, _CONVERSION_FUNCTION_DATETIMEX));
+	}
+
+
+
+
+//////////
+//
 // Function: SECONDSTOTIME()
 // Converts a SECONDS() into a TIME().
 //
@@ -462,6 +659,38 @@
 	SVariable* function_secondstotimex(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
 		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDS, _CONVERSION_FUNCTION_TIMEX));
+	}
+
+
+
+
+//////////
+//
+// Function: SECONDSXTOTIME()
+// Converts a SECONDSX() into a TIME().
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    Character		-- Equivalent of SECONDSX() as a TIME()
+//////
+// Example:
+//    k = SECONDSX()
+//    ? SECONDSXTOTIME(k)
+//////
+	SVariable* function_secondsxtotime(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDSX, _CONVERSION_FUNCTION_TIME));
 	}
 
 

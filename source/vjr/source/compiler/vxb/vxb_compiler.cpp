@@ -11267,6 +11267,21 @@ debug_break;
 
 
 		//////////
+		// Validate the date is at or above October 15, 1582
+		//////
+			if (year < 1582)
+			{
+				year = 1582;
+				if (month < 10)
+				{
+					month = 10;
+					if (day < 15)
+						day = 15;
+				}
+			}
+
+
+		//////////
 		// Adjust the months
 		// Note:  To provide compatibility with VFP, we do not perform the month adjustments.
 		//////
@@ -11399,6 +11414,35 @@ debug_break;
 
 		// Compute milliseconds
 		*millisecond	= (s32)(tfSeconds * 999.0);
+	}
+
+
+
+
+//////////
+//
+// Takes the number of secondsx elapsed since midnight, and computes the time.
+//
+//////
+	void iiDateMath_get_HhMmSsMssMics_from_secondsx(f64 tfSeconds, u32* hour, u32* minute, u32* second, s32* millisecond, s32* microsecond)
+	{
+		// Compute hour
+		*hour			= (u32)tfSeconds / (60 * 60);
+		tfSeconds		= tfSeconds - (f32)(*hour * 60 * 60);
+
+		// Compute minute
+		*minute			= (u32)tfSeconds / 60;
+		tfSeconds		= tfSeconds - (f32)(*minute * 60);
+
+		// Compute seconds
+		*second			= (u32)tfSeconds;
+		tfSeconds		= tfSeconds - (f32)*second;
+
+		// Compute milliseconds
+		*millisecond	= (s32)(tfSeconds * 999.0);
+
+		// Compute microseconds
+		*microsecond	= (s32)(tfSeconds * 999999.0);
 	}
 
 

@@ -348,10 +348,16 @@ struct SReturnsParams;
 	// Apr.25.2015 -- Functions Rick is currently working on, see rick_in_progress.cpp
 	SVariable*			function_timetoseconds						(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			ifunction_conversion_common					(SThisCode* thisCode, SReturnsParams* returnsParams, s32 tnIn, s32 tnOut);
+	SVariable*			function_timetosecondsx						(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_timetot							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_timetox							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_timextoseconds						(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_timextosecondsx					(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_timextot							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_timextox							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_secondstotime						(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_secondstotimex						(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_secondsxtotime						(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_secondsxtotimex					(SThisCode* thisCode, SReturnsParams* returnsParams);
 
 	SVariable*			function_ttoseconds							(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -584,6 +590,7 @@ struct SReturnsParams;
 		{	_ICODE_SECONDSTOTIME,	1,			(uptr)&function_secondstotime,	1,				1,				&gsSourceLight_secondstotime[0]	},
 		{	_ICODE_SECONDSTOTIMEX,	1,			(uptr)&function_secondstotimex,	1,				1,				&gsSourceLight_secondstotimex[0] },
 		{	_ICODE_SECONDSX,		1,			(uptr)&function_secondsx,		0,				0,				&gsSourceLight_secondsx[0]		},	// SECONDS() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_SECONDSXTOTIME,	1,			(uptr)&function_secondsxtotime, 1,				1,				&gsSourceLight_secondsxtotime[0] },
 		{	_ICODE_SECONDSXTOTIMEX,	1,			(uptr)&function_secondsxtotimex, 1,				1,				&gsSourceLight_secondsxtotimex[0] },
 		{	_ICODE_SET,				1,			(uptr)&function_set,			1,				2,				&gsSourceLight_set[0]			},
 		{	_ICODE_SIGN,			1,			(uptr)&function_sign,			1,				1,				&gsSourceLight_sign[0]			},	// SIGN() by Stefano D'Amico, VJr 0.56, Mar.14.2015
@@ -603,9 +610,14 @@ struct SReturnsParams;
 		{	_ICODE_TEXTMERGE,		1,			(uptr)&function_textmerge,		1,				4,				&gsSourceLight_textmerge[0]		},
 		{	_ICODE_TIME,			1,			(uptr)&function_time,			0,				2,				&gsSourceLight_time[0]			},	// TIME() by Hernan Cano, VJr 0.57, Apr.20.2015
 		{	_ICODE_TIMETOSECONDS,	1,			(uptr)&function_timetoseconds,	1,				1,				&gsSourceLight_timetoseconds[0] },
+		{	_ICODE_TIMETOSECONDSX,	1,			(uptr)&function_timetosecondsx,	1,				1,				&gsSourceLight_timetosecondsx[0] },
+		{	_ICODE_TIMETOT,			1,			(uptr)&function_timetot,		1,				2,				&gsSourceLight_timetot[0]		},
+		{	_ICODE_TIMETOX,			1,			(uptr)&function_timetox,		1,				2,				&gsSourceLight_timetox[0]		},
 		{	_ICODE_TIMEX,			1,			(uptr)&function_timex,			0,				2,				&gsSourceLight_timex[0]			},	// TIME() by Hernan Cano, VJr 0.57, Apr.20.2015
 		{	_ICODE_TIMEXTOSECONDS,	1,			(uptr)&function_timextoseconds,	1,				1,				&gsSourceLight_timextoseconds[0] },
 		{	_ICODE_TIMEXTOSECONDSX,	1,			(uptr)&function_timextosecondsx, 1,				1,				&gsSourceLight_timextosecondsx[0] },
+		{	_ICODE_TIMEXTOT,		1,			(uptr)&function_timextot,		1,				2,				&gsSourceLight_timextot[0]		},
+		{	_ICODE_TIMEXTOX,		1,			(uptr)&function_timextox,		1,				2,				&gsSourceLight_timextox[0]		},
 		{	_ICODE_TRANSFORM,		1,			(uptr)&function_transform,		1,				2,				&gsSourceLight_transform[0]		},
 		{	_ICODE_TTOC,			1,			(uptr)&function_ttoc,			1,				2,				&gsSourceLight_ttoc[0]			},	// TTOC() by Stefano D'Amico, VJr 0.57, Apr.07.2015
 		{	_ICODE_TTOD,			1,			(uptr)&function_ttod,			1,				1,				&gsSourceLight_ttod[0]			},	// TTOD() by Stefano D'Amico, VJr 0.57, Apr.07.2015

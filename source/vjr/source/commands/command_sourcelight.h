@@ -820,6 +820,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_secondsxtotime[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_secondsxtotimex[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
@@ -909,6 +914,21 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_timetosecondsx[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_timetot[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_timetox[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_timex[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
@@ -920,6 +940,16 @@
 	};
 
 	SSourceLightData gsSourceLight_timextosecondsx[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_timextot[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_timextox[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};

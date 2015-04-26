@@ -736,6 +736,7 @@
 	const s32		_ICODE_SECONDSTOTIME							= 1490;
 	const s32		_ICODE_SECONDSTOTIMEX							= 1491;
 	const s32		_ICODE_SECONDSX									= 1484;
+	const s32		_ICODE_SECONDSXTOTIME							= 1507;
 	const s32		_ICODE_SECONDSXTOTIMEX							= 1492;
 	const s32		_ICODE_SEC                                      = 1345;
 	const s32		_ICODE_SEEK                                     = 1346;
@@ -792,9 +793,14 @@
 	const s32		_ICODE_TEXTMERGE                                = 1391;
 	const s32		_ICODE_TIME                                     = 1392;
 	const s32		_ICODE_TIMETOSECONDS							= 1493;
+	const s32		_ICODE_TIMETOSECONDSX							= 1508;
+	const s32		_ICODE_TIMETOT									= 1509;
+	const s32		_ICODE_TIMETOX									= 1510;
 	const s32		_ICODE_TIMEX									= 1485;
 	const s32		_ICODE_TIMEXTOSECONDS							= 1494;
 	const s32		_ICODE_TIMEXTOSECONDSX							= 1495;
+	const s32		_ICODE_TIMEXTOT									= 1511;
+	const s32		_ICODE_TIMEXTOX									= 1512;
 	const s32		_ICODE_TRANSFORM                                = 1393;
 	const s32		_ICODE_TRIM                                     = 1394;
 	const s32		_ICODE_TTOC                                     = 1395;
@@ -893,6 +899,9 @@
 	// xtod				= 1501				xtoseconds		= 1502
 	// xtosecondsx		= 1503				xtot			= 1504
 	// xtotime			= 1505				xtotimex		= 1506
+	// secondsxtotime	= 1507				timetosecondsx	= 1508
+	// timetot			= 1509				timetox			= 1510
+	// timextot			= 1511				timextox		= 1512
 
 
 // Temporarily added until the processing engine is coded
@@ -1706,6 +1715,7 @@
 	const s8		cgc_secondstotime[]								= "secondstotime";
 	const s8		cgc_secondstotimex[]							= "secondstotimex";
 	const s8		cgc_secondsx[]									= "secondsx";
+	const s8		cgc_secondsxtotime[]							= "secondsxtotime";
 	const s8		cgc_secondsxtotimex[]							= "secondsxtotimex";
 	const s8		cgc_sec[]										= "sec";
 	const s8		cgc_seek[]										= "seek";
@@ -1763,9 +1773,14 @@
 	const s8		cgc_textmerge[]									= "textmerge";
 	const s8		cgc_time[]										= "time";
 	const s8		cgc_timetoseconds[]								= "timetoseconds";
+	const s8		cgc_timetosecondsx[]							= "timetosecondsx";
+	const s8		cgc_timetot[]									= "timetot";
+	const s8		cgc_timetox[]									= "timetox";
 	const s8		cgc_timex[]										= "timex";
 	const s8		cgc_timextoseconds[]							= "timextoseconds";
 	const s8		cgc_timextosecondsx[]							= "timextosecondsx";
+	const s8		cgc_timextot[]									= "timextot";
+	const s8		cgc_timextox[]									= "timextox";
 	const s8		cgc_transform[]									= "transform";
 	const s8		cgc_trim[]										= "trim";
 	const s8		cgc_ttoc[]										= "ttoc";
