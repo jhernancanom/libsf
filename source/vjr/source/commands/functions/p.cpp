@@ -392,167 +392,144 @@
 //     Apr.26.2015 - Initial creation by Stefano D'Amico
 //////
 // Parameters:
-//     varNumber1	-- Numeric
-//     varNumber2	-- Numeric
-//	   varNumber3	-- [Optional] Numeric 
+//     varP1		-- Numeric
+//     varP2		-- Numeric
+//	   varP3		-- [Optional] Numeric 
 //////
 // Returns:
-//    Numeric		-- Returns varNumber1 to the power varNumber2; if varNumber3 is present, return varNumber1 to the power varNumber2, modulo varNumber3.
+//    Numeric		--	Returns varP1 to the power varP2; if varP3 is present, return varP1 to the power varP2, modulo varP3.
+//						If varP1, varP2, and varP3 are all integer, then Euler's algorithm can be used, which is faster.
 //////
 // Example:
 //    ? pow(10, 3456789, 3)				&& Displays 1
+//    ? pow(10.0, 3456789.0, 3.0)		&& Displays 1.00
 //////
 	SVariable* function_pow(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		SVariable*	varNumber1 = returnsParams->params[0];
-		SVariable*	varNumber2 = returnsParams->params[1];
-		SVariable*	varNumber3 = returnsParams->params[2];
+		SVariable*	varP1 = returnsParams->params[0];
+		SVariable*	varP2 = returnsParams->params[1];
+		SVariable*	varP3 = returnsParams->params[2];
 
-		f64			lfValue1, lfValue2, lfResult;
+		f64			lfVal1, lfVal2, lfVal3, lfResult;
 		s64			lnPower, lnResult, lnExp, lnMod;
-		bool		error;
+		bool		llIsP1Valid, llIsP2Valid, llIsP3Valid, llIsP1Integer, llIsP2Integer, llIsP3Integer;
+		bool		error, error1, error2, error3;
 		u32			errorNum;
 		SVariable*	result;
 
+
 		//////////
-		// If varNumber3 is provided, must also be numeric and varNumber3 must be non zero
+		// Determine parameter input formats
 		//////
-			if (varNumber3)
+			llIsP1Valid = (iVariable_isValid(varP1) && iVariable_isTypeNumeric(varP1));
+			llIsP2Valid = (iVariable_isValid(varP2) && iVariable_isTypeNumeric(varP2));
+			if (llIsP1Valid && llIsP2Valid)
 			{
-				if (!iVariable_isValid(varNumber3) || !iVariable_isTypeInteger(varNumber3))
+				if (returnsParams->pcount == 3)
 				{
-					iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNumber3), false);
-					return(NULL);
+					// POW(p1, p2, p3)
+					llIsP1Integer	= iVariable_isTypeInteger(varP1);
+					llIsP2Integer	= iVariable_isTypeInteger(varP2);
+
+					llIsP3Valid		= (iVariable_isValid(varP3) && iVariable_isTypeNumeric(varP3));
+					if (llIsP3Valid)
+						llIsP3Integer = iVariable_isTypeInteger(varP3);
+
+				} else if (returnsParams->pcount == 2) {
+					// POW(p1, p2)
+					llIsP1Integer	= false;	// Default to floating point algorithm
+					llIsP2Integer	= false;	// Default to floating point algorithm
+					llIsP3Valid		= true;
 				}
+			}
 
+
+		/////////
+		// Validate parameters
+		//////
+			if (!llIsP1Valid || !llIsP2Valid || !llIsP3Valid)
+			{
+				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, ((!llIsP1Valid) ? varP1 : ((!llIsP2Valid) ? varP2 : varP3))), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Can we use Euler's algorithm?
+		// To do so, all three parameters must be integer.
+		//////
+			if (returnsParams->pcount == 3 && llIsP1Integer && llIsP2Integer && llIsP3Integer)
+			{
 				//////////
-				// Convert to f64
+				// Grab varP1
 				//////
-					lnMod = iiVariable_getAs_s64(thisCode, varNumber3, false, &error, &errorNum);
+					lnPower = iiVariable_getAs_s64(thisCode, varP1, false, &error, &errorNum);
 					if (error)
 					{
-						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNumber3), false);
-						return(NULL);
-					}
-
-				//////////
-				// Check empty param
-				//////
-					if (lnMod == 0)
-					{
-						iError_reportByNumber(thisCode, _ERROR_CANNOT_BE_ZERO, iVariable_getRelatedComp(thisCode, varNumber3), false);
-						return(NULL);
-					}
-
-				//////////
-				// If varNumber3 is provided, varNumber1 and varNumber2 must be integer type and varNumber2 must be non-negative
-				//////
-					if ( !iVariable_isTypeInteger(varNumber1) )
-					{
-						iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNumber1), false);
-						return(NULL);
-					}
-
-				//////////
-				// Grab varNumber1
-				//////
-					lnPower = iiVariable_getAs_s64(thisCode, varNumber1, false, &error, &errorNum);
-					if (error)
-					{
-						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNumber1), false);
-						return(NULL);
-					}
-
-				//////////
-				// varNumber2 must also be integer
-				//////
-					if ( !iVariable_isTypeInteger(varNumber2) )
-					{
-						iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNumber2), false);
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP1), false);
 						return(NULL);
 					}
 
 
 				//////////
-				// Grab varNumber2
+				// Grab varP2, and validate it's non-negative
 				//////
-					lnExp = iiVariable_getAs_s64(thisCode, varNumber2, false, &error, &errorNum);
-					if (error)
+					lnExp = iiVariable_getAs_s64(thisCode, varP2, false, &error, &errorNum);
+					if (error || (lnExp < 0 && (errorNum = _ERROR_PARAMETER_IS_INCORRECT)))
 					{
-						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNumber2), false);
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP2), false);
 						return(NULL);
 					}
 
+
 				//////////
-				// varNumber2 must also be non-negative
+				// Grab varP3 and validate it's not zero
 				//////
-					if ( lnExp < 0 )
+					lnMod = iiVariable_getAs_s64(thisCode, varP3, false, &error, &errorNum);
+					if (error || (lnMod == 0 && (errorNum = _ERROR_CANNOT_BE_ZERO)))
 					{
-						iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNumber2), false);
+						// Error, or 0
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP3), false);
 						return(NULL);
 					}
+
 
 				//////////
 				// Compute x^y % z using Euler's theorem
 				//////
 					lnResult = 1;
-
-					while (lnExp)
+					for (lnResult = 1; lnExp; lnPower = (lnPower * lnPower) % lnMod, lnExp >>= 1)
 					{
+						// Every other iteration...
 						if (lnExp & 1)
 							lnResult = (lnResult * lnPower) % lnMod;
-						lnPower = (lnPower * lnPower) % lnMod;
-						lnExp >>= 1;
 					}
 
 
 				//////////
 				// Create the value
 				//////
-					result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_U32, (cs8*)&lnResult, sizeof(lnResult), false);
-					if (!result)
-						iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varNumber1), false);
+					result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_S64, (cs8*)&lnResult, sizeof(lnResult), false);
+
 
 			} else {
-				
-				//////////
-				// varNumber1 must also be numeric
-				//////
-					if (!iVariable_isValid(varNumber1) || !iVariable_isTypeNumeric(varNumber1))
-					{
-						iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNumber1), false);
-						return(NULL);
-					}
-
+				// Fall-back on the slower algorithm
 
 				//////////
-				// Convert to f64
+				// Grab as f64
 				//////
-					lfValue1 = iiVariable_getAs_f64(thisCode, varNumber1, false, &error, &errorNum);
-					if (error)
+					lfVal1 = iiVariable_getAs_f64(thisCode, varP1, false, &error1, &errorNum);
+					lfVal2 = iiVariable_getAs_f64(thisCode, varP2, false, &error2, &errorNum);
+
+					// Grab P3 if need be
+					error3 = false;
+					if (returnsParams->pcount == 3)		lfVal3 = iiVariable_getAs_f64(thisCode, varP3, false, &error3, &errorNum);
+					else								lfVal3 = 1.0;
+
+					// Make sure we don't have an error in conversion, and that lfValue3 is > 0.0
+					if (error1 || error2 || error3 || (lfVal3 <= 0.0 && (error3 = true) && (errorNum = _ERROR_INVALID_ARGUMENT_TYPE_COUNT)))
 					{
-						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNumber1), false);
-						return(NULL);
-					}
-
-
-				//////////
-				// varNumber2 must also be numeric
-				//////
-					if (!iVariable_isValid(varNumber2) || !iVariable_isTypeNumeric(varNumber2))
-					{
-						iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNumber2), false);
-						return(NULL);
-					}
-
-
-				//////////
-				// Convert to f64
-				//////
-					lfValue2 = iiVariable_getAs_f64(thisCode, varNumber2, false, &error, &errorNum);
-					if (error)
-					{
-						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNumber2), false);
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, ((error1) ? varP1 : ((error2) ? varP2 : varP3))), false);
 						return(NULL);
 					}
 
@@ -560,32 +537,33 @@
 				//////////
 				// Compute power
 				//////
-					lfResult = pow(lfValue1, lfValue2);
+					lfResult = pow(lfVal1, lfVal2);
+
+
+				//////////
+				// Mod if need be
+				//////
+					if (returnsParams->pcount == 3)
+						lfResult = fmod(lfResult, lfVal3);
 
 
 				//////////
 				// Create output variable
 				//////
-					result = iVariable_create(thisCode, varNumber1->varType, NULL, true);
+					result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_F64, (cs8*)&lfResult, sizeof(lfResult), false);
 
-					if (!result)
-					{
-						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNumber1), false);
-						return(NULL);
-					}
-
-
-				//////////
-				// Set the value
-				//////
-					if (!iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfResult, NULL, NULL, NULL, NULL))
-						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNumber1), false);
 			}
 
 
+		//////////
+		// Are we good?
+		//////
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varP1), false);
+
 
 		//////////
-        // return(result)
+        // Signify the result
 		//////
 	        return(result);
 
