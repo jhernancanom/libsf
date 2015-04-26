@@ -88,6 +88,34 @@
 
 //////////
 //
+// Function: NANOSECOND()
+// The current nanosecond (1/1000000000 one billionth of a second) as a floating point in the range 0..999999999
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     none
+//
+//////
+// Returns:
+//    f64		-- A floating point value containing the number of one billionths of a second which have gone by this second
+//////
+	SVariable* function_nanosecond(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_xseconds_common(thisCode, returnsParams, _XSECONDS_FUNCTION_NANOSECOND));
+	}
+
+
+
+
+//////////
+//
 // Function: NCSET()
 // Nuance compatibility settings. Used to enable or disable enhancements
 // in VXB which may not be present in other xbase languages.

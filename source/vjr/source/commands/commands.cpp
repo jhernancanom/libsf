@@ -668,6 +668,9 @@
 	#include "commands\functions\y.cpp"
 	#include "commands\functions\z.cpp"
 
+	// Apr.26.2015 -- Temporarily isolated into one area:
+	#include "commands\functions\rick_in_progress.cpp"
+
 
 
 
