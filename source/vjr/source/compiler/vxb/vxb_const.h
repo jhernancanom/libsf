@@ -738,6 +738,10 @@
 	const s32		_ICODE_SECONDSX									= 1484;
 	const s32		_ICODE_SECONDSXTOTIME							= 1507;
 	const s32		_ICODE_SECONDSXTOTIMEX							= 1492;
+	const s32		_ICODE_SECONDSTOT								= 1513;
+	const s32		_ICODE_SECONDSTOX								= 1514;
+	const s32		_ICODE_SECONDSXTOT								= 1515;
+	const s32		_ICODE_SECONDSXTOX								= 1516;
 	const s32		_ICODE_SEC                                      = 1345;
 	const s32		_ICODE_SEEK                                     = 1346;
 	const s32		_ICODE_SELECT                                   = 1347;
@@ -902,6 +906,8 @@
 	// secondsxtotime	= 1507				timetosecondsx	= 1508
 	// timetot			= 1509				timetox			= 1510
 	// timextot			= 1511				timextox		= 1512
+	// secondstot		= 1513				secondstox		= 1514
+	// secondsxtot		= 1515				secondsxtox		= 1516
 
 
 // Temporarily added until the processing engine is coded
@@ -1717,6 +1723,10 @@
 	const s8		cgc_secondsx[]									= "secondsx";
 	const s8		cgc_secondsxtotime[]							= "secondsxtotime";
 	const s8		cgc_secondsxtotimex[]							= "secondsxtotimex";
+	const s8		cgc_secondstot[]								= "secondstot";
+	const s8		cgc_secondstox[]								= "secondstox";
+	const s8		cgc_secondsxtot[]								= "secondsxtot";
+	const s8		cgc_secondsxtox[]								= "secondsxtox";
 	const s8		cgc_sec[]										= "sec";
 	const s8		cgc_seek[]										= "seek";
 	const s8		cgc_select[]									= "select";

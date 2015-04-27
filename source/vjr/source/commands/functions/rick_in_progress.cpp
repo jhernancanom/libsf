@@ -116,9 +116,11 @@
 	}
 
 	// Note: Functions that use this must guarantee that at least one parameter is provided
+	// Note: Two parameters are only valid if the output is a datetime or datetimex, the second parameter is used to obtain the missing information
 	SVariable* ifunction_conversion_common(SThisCode* thisCode, SReturnsParams* returnsParams, s32 tnIn, s32 tnOut)
 	{
 		SVariable* varP1 = returnsParams->params[0];
+		SVariable* varP2 = returnsParams->params[1];
 
 		SAllDatetime	adt;
 		f32				lfVal32;
@@ -140,9 +142,93 @@
 
 
 		//////////
-		// Populate input
+		// A second parameter is allowed for time, timex, seconds, and secondsx inputs, but only if their target is a datetime or datetimex
 		//////
 			memset(&adt, 0, sizeof(adt));
+			if (iVariable_isValid(varP2))
+			{
+				if (tnOut == _CONVERSION_FUNCTION_DATETIME || tnOut == _CONVERSION_FUNCTION_DATETIMEX)
+				{
+					// Determine the source, only time, timex, seconds, and secondx are valid if a second parameter is provided
+					switch (tnIn)
+					{
+						// Populate the date if it is provided properly
+						case _CONVERSION_FUNCTION_DATE:
+						case _CONVERSION_FUNCTION_DATETIME:
+						case _CONVERSION_FUNCTION_DATETIMEX:
+							if (iVariable_isTypeNumeric(varP2))
+							{
+								// Can be seconds,secondsx
+								adt.fVal64 = iiVariable_getAs_f64(thisCode, varP2, false, &error, &errorNum);
+								if (error)
+								{
+									iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP1), false);
+									return(NULL);
+								}
+								iiDateMath_get_HhMmSsMss_from_seconds((f32)adt.fVal64, &adt.nHour, &adt.nMinute, &adt.nSecond, &adt.nMillisecond);
+
+							} else if (iVariable_isTypeDatetime(varP2)) {
+								// Extract the seconds
+								iiDateMath_get_HhMmSsMss_from_seconds(varP2->value.data_dt->seconds, &adt.nHour, &adt.nMinute, &adt.nSecond, &adt.nMillisecond);
+
+							} else if (iVariable_isTypeDatetimeX(varP2)) {
+								// Extract the seconds
+								iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_jseconds(varP2->value.data_dtx->jseconds, NULL, NULL, NULL, NULL, &adt.nHour, &adt.nMinute, &adt.nSecond, &adt.nMillisecond, &adt.nMicrosecond);
+
+							} else {
+								// Invalid
+								iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varP1), false);
+								return(NULL);
+							}
+							break;
+
+						case _CONVERSION_FUNCTION_TIME:
+						case _CONVERSION_FUNCTION_TIMEX:
+						case _CONVERSION_FUNCTION_SECONDS:
+						case _CONVERSION_FUNCTION_SECONDSX:
+							// These can receive the date parameter as well
+							if (iVariable_isTypeDate(varP2))
+							{
+								// Date
+								iiDateMath_get_YyyyMmDd_from_YYYYMMDD(varP2->value.data_u8, &adt.nYear, &adt.nMonth, &adt.nDay);
+
+							} else if (iVariable_isTypeDatetime(varP2)) {
+								// Datetime
+								iiDateMath_get_YyyyMmDd_from_julian(varP2->value.data_dt->julian, &adt.nYear, &adt.nMonth, &adt.nDay);
+								// Note:  The SECONDS() comes from the time, timex, seconds, or secondsx
+
+							} else if (iVariable_isTypeDatetimeX(varP2)) {
+								// DatetimeX
+								iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_jseconds(varP2->value.data_dtx->jseconds, NULL, &adt.nYear, &adt.nMonth, &adt.nDay, NULL, NULL, NULL, NULL, NULL);
+
+							} else {
+								// Invalid
+								iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varP1), false);
+								return(NULL);
+							}
+							break;
+
+						default:
+							// These cannot receive the date parameter
+							iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varP1), false);
+							return(NULL);
+					}
+
+				} else if (tnOut == _CONVERSION_FUNCTION_DATETIME || tnOut == _CONVERSION_FUNCTION_DATETIMEX) {
+					// 
+
+				} else {
+					// Invalid for this type
+					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varP1), false);
+					return(NULL);
+				}
+			}
+
+
+
+		//////////
+		// Populate input
+		//////
 			switch (tnIn)
 			{
 				case _CONVERSION_FUNCTION_TIME:
@@ -198,7 +284,7 @@
 						iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varP1), false);
 						return(NULL);
 					}
-					adt.fVal = iiVariable_getAs_f64(thisCode, varP1, false, &error, &errorNum);
+					adt.fVal64 = iiVariable_getAs_f64(thisCode, varP1, false, &error, &errorNum);
 					if (error)
 					{
 						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP1), false);
@@ -212,7 +298,7 @@
 						iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varP1), false);
 						return(NULL);
 					}
-					adt.fVal = iiVariable_getAs_f64(thisCode, varP1, false, &error, &errorNum);
+					adt.fVal64 = iiVariable_getAs_f64(thisCode, varP1, false, &error, &errorNum);
 					if (error)
 					{
 						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP1), false);
@@ -271,7 +357,7 @@
 					{
 						case _CONVERSION_FUNCTION_SECONDS:
 						case _CONVERSION_FUNCTION_SECONDSX:
-							iiDateMath_get_HhMmSsMssMics_from_secondsx(adt.fVal, &adt.nHour, &adt.nMinute, &adt.nSecond, &adt.nMillisecond, &adt.nMicrosecond);
+							iiDateMath_get_HhMmSsMssMics_from_secondsx(adt.fVal64, &adt.nHour, &adt.nMinute, &adt.nSecond, &adt.nMillisecond, &adt.nMicrosecond);
 							break;
 					}
 
@@ -288,7 +374,7 @@
 					{
 						case _CONVERSION_FUNCTION_SECONDS:
 						case _CONVERSION_FUNCTION_SECONDSX:
-							iiDateMath_get_HhMmSsMssMics_from_secondsx(adt.fVal, &adt.nHour, &adt.nMinute, &adt.nSecond, &adt.nMillisecond, &adt.nMicrosecond);
+							iiDateMath_get_HhMmSsMssMics_from_secondsx(adt.fVal64, &adt.nHour, &adt.nMinute, &adt.nSecond, &adt.nMillisecond, &adt.nMicrosecond);
 							break;
 					}
 
@@ -331,6 +417,14 @@
 					result = iVariable_create(thisCode, _VAR_TYPE_DATETIME, NULL, true);
 					if (result)
 					{
+						switch (tnIn)
+						{
+							case _CONVERSION_FUNCTION_SECONDS:
+							case _CONVERSION_FUNCTION_SECONDSX:
+								iiDateMath_get_HhMmSsMssMics_from_secondsx(adt.fVal64, &adt.nHour, &adt.nMinute, &adt.nSecond, &adt.nMillisecond, &adt.nMicrosecond);
+								break;
+						}
+
 						result->value.data_dt->julian	= iiDateMath_get_julian_from_YyyyMmDd(NULL, adt.nYear, adt.nMonth, adt.nDay);
 						result->value.data_dt->seconds	= iiDateMath_get_seconds_from_HhMmSsMss(adt.nHour, adt.nMinute, adt.nSecond, adt.nMillisecond);
 					}
@@ -339,7 +433,17 @@
 				case _CONVERSION_FUNCTION_DATETIMEX:
 					result = iVariable_create(thisCode, _VAR_TYPE_DATETIMEX, NULL, true);
 					if (result)
+					{
+						switch (tnIn)
+						{
+							case _CONVERSION_FUNCTION_SECONDS:
+							case _CONVERSION_FUNCTION_SECONDSX:
+								iiDateMath_get_HhMmSsMssMics_from_secondsx(adt.fVal64, &adt.nHour, &adt.nMinute, &adt.nSecond, &adt.nMillisecond, &adt.nMicrosecond);
+								break;
+						}
+
 						result->value.data_dtx->jseconds = iiDateMath_get_jseconds_from_YyyyMmDdHhMmSsMssMics(NULL, adt.nYear, adt.nMonth, adt.nDay, adt.nHour, adt.nMinute, adt.nSecond, adt.nMillisecond, adt.nMicrosecond);
+					}
 					break;
 
 				default:
@@ -723,6 +827,142 @@
 	SVariable* function_secondsxtotimex(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
 		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDSX, _CONVERSION_FUNCTION_TIMEX));
+	}
+
+
+
+
+//////////
+//
+// Function: SECONDSTOT()
+// Converts a SECONDS() into a DATETIME().
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//     p2			-- (Optional) A date, datetime, or datetimex from which to extract the year,month,day
+//
+//////
+// Returns:
+//    Datetime		-- Equivalent of SECONDS() (and optionally the year,month,day input from p2) as a DATETIME()
+//////
+// Example:
+//    k = SECONDS()
+//    d = DATE()
+//    ? SECONDSTOT(k, d)
+//////
+	SVariable* function_secondstot(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDS, _CONVERSION_FUNCTION_DATETIME));
+	}
+
+
+
+
+//////////
+//
+// Function: SECONDSTOX()
+// Converts a SECONDS() into a DATETIMEX().
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//     p2			-- (Optional) A date, datetime, or datetimex from which to extract the year,month,day
+//
+//////
+// Returns:
+//    Datetime		-- Equivalent of SECONDS() (and optionally the year,month,day input from p2) as a DATETIMEX()
+//////
+// Example:
+//    k = SECONDS()
+//    d = DATE()
+//    ? SECONDSTOX(k, d)
+//////
+	SVariable* function_secondstox(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDS, _CONVERSION_FUNCTION_DATETIMEX));
+	}
+
+
+
+
+//////////
+//
+// Function: SECONDSXTOT()
+// Converts a SECONDSX() into a DATETIMEX().
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//     p2			-- (Optional) A date, datetime, or datetimex from which to extract the year,month,day
+//
+//////
+// Returns:
+//    Datetime		-- Equivalent of SECONDSX() (and optionally the year,month,day input from p2) as a DATETIME()
+//////
+// Example:
+//    k = SECONDSX()
+//    d = DATE()
+//    ? SECONDSXTOt(k, d)
+//////
+	SVariable* function_secondsxtot(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDSX, _CONVERSION_FUNCTION_DATETIME));
+	}
+
+
+
+
+//////////
+//
+// Function: SECONDSXTOX()
+// Converts a SECONDSX() into a DATETIMEX().
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//     p2			-- (Optional) A date, datetime, or datetimex from which to extract the year,month,day
+//
+//////
+// Returns:
+//    Datetime		-- Equivalent of SECONDSX() (and optionally the year,month,day input from p2) as a DATETIMEX()
+//////
+// Example:
+//    k = SECONDS()
+//    d = DATE()
+//    ? SECONDSXTOX(k, d)
+//////
+	SVariable* function_secondsxtox(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDSX, _CONVERSION_FUNCTION_DATETIMEX));
 	}
 
 

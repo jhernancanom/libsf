@@ -11400,6 +11400,16 @@ debug_break;
 //////
 	void iiDateMath_get_HhMmSsMss_from_seconds(f32 tfSeconds, u32* hour, u32* minute, u32* second, s32* millisecond)
 	{
+		s32 lnMillisecond;
+		u32 lnHour, lnMinute, lnSecond;
+
+
+		// Make sure our parameters exist
+		if (!hour)			hour		= &lnHour;
+		if (!minute)		minute		= &lnMinute;
+		if (!second)		second		= &lnSecond;
+		if (!millisecond)	millisecond	= &lnMillisecond;
+
 		// Compute hour
 		*hour			= (u32)tfSeconds / (60 * 60);
 		tfSeconds		= tfSeconds - (f32)(*hour * 60 * 60);
@@ -11426,6 +11436,17 @@ debug_break;
 //////
 	void iiDateMath_get_HhMmSsMssMics_from_secondsx(f64 tfSeconds, u32* hour, u32* minute, u32* second, s32* millisecond, s32* microsecond)
 	{
+		s32 lnMillisecond, lnMicrosecond;
+		u32 lnHour, lnMinute, lnSecond;
+
+
+		// Make sure our parameters exist
+		if (!hour)			hour		= &lnHour;
+		if (!minute)		minute		= &lnMinute;
+		if (!second)		second		= &lnSecond;
+		if (!millisecond)	millisecond	= &lnMillisecond;
+		if (!microsecond)	microsecond	= &lnMicrosecond;
+
 		// Compute hour
 		*hour			= (u32)tfSeconds / (60 * 60);
 		tfSeconds		= tfSeconds - (f32)(*hour * 60 * 60);

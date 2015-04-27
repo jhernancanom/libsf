@@ -830,6 +830,26 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_secondstot[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_secondstox[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_secondsxtot[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_secondsxtox[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_set[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}

@@ -337,7 +337,7 @@ struct SAllDatetime
 	bool		lNanosecondValid;
 	s32			nNanosecond;
 
-	f64			fVal;
+	f64			fVal64;
 };
 
 struct SVariable
