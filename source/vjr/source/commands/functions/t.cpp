@@ -892,49 +892,7 @@
 //////
 	SVariable* function_ttod(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		SVariable* varParam = returnsParams->params[0];
-
-		u32			lnYear, lnMonth, lnDay;
-		s8			buffer[16];
-		SVariable*	result;
-
-
-		//////////
-		// Parameter 1 must be datetime
-		//////
-			if (!iVariable_isValid(varParam) || !iVariable_isTypeDatetime(varParam))
-			{
-				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
-				return(NULL);
-			}
-
-
-		//////////
-		// Grab year, month, day from datetime
-		//////
-			iiDateMath_get_YyyyMmDd_from_julian(varParam->value.data_dt->julian, (u32*)&lnYear, (u32*)&lnMonth, &lnDay);
-
-
-		//////////
-		// Convert datetime into a VJr date variable
-		//////
-			// Date is stored as YYYYMMDD
-			iiDateMath_get_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
-			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
-
-
-		//////////
-		// Are we good?
-		//////
-			if (!result)
-				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
-
-
-		//////////
-        // Return our converted result
-		//////
-	        return(result);
-
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_DATE));
 	}
 
 

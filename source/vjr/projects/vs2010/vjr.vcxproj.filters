@@ -256,6 +256,9 @@
     <ClCompile Include="..\..\source\commands\functions\y.cpp">
       <Filter>commands\functions</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\commands\functions\rick_in_progress.cpp">
+      <Filter>commands\functions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\utils\common\cpp\common_types.h">

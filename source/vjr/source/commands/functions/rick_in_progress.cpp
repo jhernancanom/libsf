@@ -112,12 +112,12 @@
 //////
 	SVariable* function_timetoseconds(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIME, _CONVERSION_FUNCTION_SECONDS));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIME, _CONVERSION_FUNCTION_SECONDS));
 	}
 
 	// Note: Functions that use this must guarantee that at least one parameter is provided
 	// Note: Two parameters are only valid if the output is a datetime or datetimex, the second parameter is used to obtain the missing information
-	SVariable* ifunction_conversion_common(SThisCode* thisCode, SReturnsParams* returnsParams, s32 tnIn, s32 tnOut)
+	SVariable* ifunction_timesAndDatesConversion_common(SThisCode* thisCode, SReturnsParams* returnsParams, s32 tnIn, s32 tnOut)
 	{
 		SVariable* varP1 = returnsParams->params[0];
 		SVariable* varP2 = returnsParams->params[1];
@@ -498,7 +498,7 @@
 //////
 	SVariable* function_timetosecondsx(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIME, _CONVERSION_FUNCTION_SECONDSX));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIME, _CONVERSION_FUNCTION_SECONDSX));
 	}
 
 
@@ -532,7 +532,7 @@
 //////
 	SVariable* function_timetot(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIME, _CONVERSION_FUNCTION_DATETIME));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIME, _CONVERSION_FUNCTION_DATETIME));
 	}
 
 
@@ -566,7 +566,7 @@
 //////
 	SVariable* function_timetox(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIME, _CONVERSION_FUNCTION_DATETIMEX));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIME, _CONVERSION_FUNCTION_DATETIMEX));
 	}
 
 
@@ -598,7 +598,7 @@
 //////
 	SVariable* function_timextoseconds(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIMEX, _CONVERSION_FUNCTION_SECONDS));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIMEX, _CONVERSION_FUNCTION_SECONDS));
 	}
 
 
@@ -630,7 +630,7 @@
 //////
 	SVariable* function_timextosecondsx(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIMEX, _CONVERSION_FUNCTION_SECONDSX));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIMEX, _CONVERSION_FUNCTION_SECONDSX));
 	}
 
 
@@ -664,7 +664,7 @@
 //////
 	SVariable* function_timextot(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIMEX, _CONVERSION_FUNCTION_DATETIME));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIMEX, _CONVERSION_FUNCTION_DATETIME));
 	}
 
 
@@ -698,7 +698,7 @@
 //////
 	SVariable* function_timextox(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIMEX, _CONVERSION_FUNCTION_DATETIMEX));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIMEX, _CONVERSION_FUNCTION_DATETIMEX));
 	}
 
 
@@ -730,7 +730,7 @@
 //////
 	SVariable* function_secondstotime(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDS, _CONVERSION_FUNCTION_TIME));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDS, _CONVERSION_FUNCTION_TIME));
 	}
 
 
@@ -762,7 +762,7 @@
 //////
 	SVariable* function_secondstotimex(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDS, _CONVERSION_FUNCTION_TIMEX));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDS, _CONVERSION_FUNCTION_TIMEX));
 	}
 
 
@@ -794,7 +794,7 @@
 //////
 	SVariable* function_secondsxtotime(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDSX, _CONVERSION_FUNCTION_TIME));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDSX, _CONVERSION_FUNCTION_TIME));
 	}
 
 
@@ -826,7 +826,7 @@
 //////
 	SVariable* function_secondsxtotimex(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDSX, _CONVERSION_FUNCTION_TIMEX));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDSX, _CONVERSION_FUNCTION_TIMEX));
 	}
 
 
@@ -860,7 +860,7 @@
 //////
 	SVariable* function_secondstot(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDS, _CONVERSION_FUNCTION_DATETIME));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDS, _CONVERSION_FUNCTION_DATETIME));
 	}
 
 
@@ -894,7 +894,7 @@
 //////
 	SVariable* function_secondstox(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDS, _CONVERSION_FUNCTION_DATETIMEX));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDS, _CONVERSION_FUNCTION_DATETIMEX));
 	}
 
 
@@ -928,7 +928,7 @@
 //////
 	SVariable* function_secondsxtot(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDSX, _CONVERSION_FUNCTION_DATETIME));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDSX, _CONVERSION_FUNCTION_DATETIME));
 	}
 
 
@@ -962,7 +962,7 @@
 //////
 	SVariable* function_secondsxtox(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDSX, _CONVERSION_FUNCTION_DATETIMEX));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDSX, _CONVERSION_FUNCTION_DATETIMEX));
 	}
 
 
@@ -994,7 +994,7 @@
 //////
 	SVariable* function_ttoseconds(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_SECONDS));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_SECONDS));
 	}
 
 
@@ -1026,7 +1026,7 @@
 //////
 	SVariable* function_ttosecondsx(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_SECONDSX));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_SECONDSX));
 	}
 
 
@@ -1058,7 +1058,7 @@
 //////
 	SVariable* function_ttotime(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_TIME));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_TIME));
 	}
 
 
@@ -1090,7 +1090,7 @@
 //////
 	SVariable* function_ttotimex(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_TIMEX));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_TIMEX));
 	}
 
 
@@ -1122,7 +1122,7 @@
 //////
 	SVariable* function_xtoseconds(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_SECONDS));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_SECONDS));
 	}
 
 
@@ -1154,7 +1154,7 @@
 //////
 	SVariable* function_xtosecondsx(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_SECONDSX));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_SECONDSX));
 	}
 
 
@@ -1186,7 +1186,7 @@
 //////
 	SVariable* function_xtotime(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_TIME));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_TIME));
 	}
 
 
@@ -1218,7 +1218,7 @@
 //////
 	SVariable* function_xtotimex(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_TIMEX));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_TIMEX));
 	}
 
 
@@ -1250,7 +1250,7 @@
 //////
 	SVariable* function_dtox(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATE, _CONVERSION_FUNCTION_DATETIMEX));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATE, _CONVERSION_FUNCTION_DATETIMEX));
 	}
 
 
@@ -1282,7 +1282,7 @@
 //////
 	SVariable* function_ttox(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_DATETIMEX));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_DATETIMEX));
 	}
 
 
@@ -1314,7 +1314,7 @@
 //////
 	SVariable* function_xtod(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_DATE));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_DATE));
 	}
 
 
@@ -1346,7 +1346,7 @@
 //////
 	SVariable* function_xtot(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		return(ifunction_conversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_DATETIME));
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_DATETIME));
 	}
 
 

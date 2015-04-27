@@ -11573,13 +11573,17 @@ debug_break;
 
 	void iiDateMath_get_YYYYMMDD_from_YyyyMmDd(s8* YYYYMMDD, u32 year, u32 month, u32 day)
 	{
+		s8 buffer[16];
+
+
 		// Make sure they're in range for target
 		year	= max(min(year, 9999), 1600);
 		month	= max(min(month, 12), 1);
 		day		= max(min(day, 31), 1);
 
 		// Render
-		sprintf(YYYYMMDD, "%04u%02u%02u", year, month, day);
+		sprintf(buffer, "%04u%02u%02u", year, month, day);
+		memcpy(YYYYMMDD, buffer, 8);
 	}
 
 

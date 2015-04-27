@@ -347,7 +347,7 @@ struct SReturnsParams;
 
 	// Apr.25.2015 -- Functions Rick is currently working on, see rick_in_progress.cpp
 	SVariable*			function_timetoseconds						(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			ifunction_conversion_common					(SThisCode* thisCode, SReturnsParams* returnsParams, s32 tnIn, s32 tnOut);
+	SVariable*			ifunction_timesAndDatesConversion_common	(SThisCode* thisCode, SReturnsParams* returnsParams, s32 tnIn, s32 tnOut);
 	SVariable*			function_timetosecondsx						(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_timetot							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_timetox							(SThisCode* thisCode, SReturnsParams* returnsParams);
