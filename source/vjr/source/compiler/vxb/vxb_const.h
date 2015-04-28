@@ -247,6 +247,8 @@
 	const u8		cgcIndexCorruptNeedsRebuilt[]					= "index is corrupt and needs rebuilt";
 	const u8		cgcUnableToLockForWrite[]						= "unable to lock for write";
 	const u8		cgcUnableToLockForRead[]						= "unable to lock for read";
+	const u8		cgcUnableToInitialize[]							= "unable to initialize";
+	const u8		cgcUnknownFunction[]							= "unknown function";
 #else
 	#error Language not specified
 #endif
@@ -1153,6 +1155,8 @@
 	const s32       _ICODE_POINT                                    = 2189;
 	const s32       _ICODE_POP                                      = 2190;
 	const s32       _ICODE_POPUPS                                   = 2191;
+	const s32		_ICODE_PRECISIONSBFP							= 2338;
+	const s32		_ICODE_PRECISIONSBI								= 2339;
 	const s32       _ICODE_PRINTER                                  = 2192;
 	const s32       _ICODE_PRINTJOB                                 = 2193;
 	const s32       _ICODE_PRIVATE                                  = 2194;
@@ -1286,6 +1290,7 @@
 	// LONG					= 2332			SHORT					= 2333
 	// vecseparator			= 2334			visualize				= 2335
 	// journal				= 2336			NCSETDATETIMEMILLISECONDS = 2337
+	// PRECISIONSBFP		= 2338			PRECISIONSBI			= 2339
 
 
 //////////
@@ -1676,6 +1681,8 @@
 	const s8		cgc_pi[]										= "pi";
 	const s8		cgc_popup[]										= "popup";
 	const s8		cgc_pow[]										= "pow";
+	const s8		cgc_precisionbfp[]								= "precisionbfp";
+	const s8		cgc_precisionbi[]								= "precisionbi";
 	const s8		cgc_primary[]									= "primary";
 	const s8		cgc_printstatus[]								= "printstatus";
 	const s8		cgc_prmbar[]									= "prmbar";

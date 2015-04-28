@@ -211,6 +211,332 @@
 
 //////////
 //
+// Function: BFP()
+// Creates an arbitrary precision big floating point value.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.27.2015
+//////
+// Change log:
+//     Apr.27.2015 - Initial creation
+//////
+// Parameters:
+// Note:  Uses SET PRECISIONBFP bits
+//     varP1		-- (Optional) An initialization value
+//     varP2		-- (Optional) The number of bits to initialize
+//
+//////
+// Returns:
+//    Numeric		-- The input is populated into the big floating point
+//////
+	SVariable* function_bfp(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* varP1	= returnsParams->params[0];
+		SVariable* varP2	= returnsParams->params[1];
+
+		s32			lnBits;
+		s64			lnVal64;
+		f64			lfVal64;
+		SVariable*	result;
+		s8			buffer[64];
+		bool		error;
+		u32			errorNum;
+
+
+		//////////
+		// Determine our size and initialization value
+		//////
+			switch (returnsParams->pcount)
+			{
+				case 0:
+					lnBits = propGet_settings_PrecisionBFP(_settings);
+					break;
+
+				case 1:
+					//////////
+					// Initialization value only
+					//////
+						if (!iVariable_isValid(varP1) || (!iVariable_isTypeNumeric(varP1) && !iVariable_isTypeCharacter(varP1)))
+						{
+							iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP1), false);
+							return(NULL);
+						}
+
+
+					//////////
+					// Default precision
+					//////
+						lnBits = propGet_settings_PrecisionBFP(_settings);
+						break;
+
+				case 2:
+					//////////
+					// Initialization value, and bits override
+					//////
+						if (!iVariable_isValid(varP1) || (!iVariable_isTypeNumeric(varP1) && !iVariable_isTypeCharacter(varP1)))
+						{
+							iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP1), false);
+							return(NULL);
+						}
+						if (!iVariable_isValid(varP2) || !iVariable_isTypeNumeric(varP2))
+						{
+							iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP2), false);
+							return(NULL);
+						}
+
+
+					//////////
+					// Grab the bits
+					//////
+						lnBits = iiVariable_getAs_s32(thisCode, varP2, false, &error, &errorNum);
+						if (error)
+						{
+							iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP2), false);
+							return(NULL);
+						}
+						break;
+
+			}
+
+
+		//////////
+		// Construct the appropriate variable
+		//////
+			result = iVariable_create(thisCode, _VAR_TYPE_BFP, NULL, true, lnBits);
+			if (result && returnsParams->pcount >= 1)
+			{
+				// Initialize
+				if (iVariable_isTypeCharacter(varP1))
+				{
+					// Initializing from the string
+					m_apm_set_string(result->value.data_big, varP1->value.data_s8);
+
+				} else if (iVariable_isTypeBig(varP1)) {
+					// bfp or bi
+					m_apm_copy(result->value.data_big, varP1->value.data_big);
+
+				} else if (iVariable_isTypeInteger(varP1)) {
+					// Integer
+					lnVal64 = iiVariable_getAs_s64(thisCode, varP1, false, &error, &errorNum);
+					if (error)
+					{
+						// Should never happen
+						iError_reportByNumber(thisCode, _ERROR_UNABLE_TO_INITIALIZE, iVariable_getRelatedComp(thisCode, varP2), false);
+
+					} else {
+						// We're good
+						if (lnVal64 >= (s64)_s32_min && lnVal64 <= (s64)_s32_max)
+						{
+							// We can set it directly as a long
+							m_apm_set_long(result->value.data_big, (s32)lnVal64);
+
+						} else {
+							// Convert it to a string first, then set it
+							sprintf((s8*)buffer, "%I64d\0", lnVal64);
+							m_apm_set_string(result->value.data_big, buffer);
+						}
+					}
+
+				} else {
+					// Floating point
+					lfVal64 = iiVariable_getAs_f64(thisCode, varP1, false, &error, &errorNum);
+					if (error)
+					{
+						// Should never happen
+						iError_reportByNumber(thisCode, _ERROR_UNABLE_TO_INITIALIZE, iVariable_getRelatedComp(thisCode, varP2), false);
+
+					} else {
+						// We're good
+						m_apm_set_double(result->value.data_big, lfVal64);
+					}
+				}
+			}
+
+
+		//////////
+		// Are we good?
+		//////
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varP1), false);
+
+
+		//////////
+		// Indicate our result
+		//////
+			return(result);
+
+	}
+
+
+
+
+//////////
+//
+// Function: BI()
+// Creates an arbitrary precision big integer value.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.27.2015
+//////
+// Change log:
+//     Apr.27.2015 - Initial creation
+//////
+// Parameters:
+// Note:  Uses SET PRECISIONBFP bits
+//     varP1		-- (Optional) An initialization value
+//     varP2		-- (Optional) The number of bits to initialize
+//
+//////
+// Returns:
+//    Numeric		-- The input is populated into the big integer
+//////
+	SVariable* function_bi(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* varP1	= returnsParams->params[0];
+		SVariable* varP2	= returnsParams->params[1];
+
+		s32			lnBits;
+		s64			lnVal64;
+		f64			lfVal64;
+		SVariable*	result;
+		s8			buffer[64];
+		bool		error;
+		u32			errorNum;
+
+
+		//////////
+		// Determine our size and initialization value
+		//////
+			switch (returnsParams->pcount)
+			{
+				case 0:
+					lnBits = propGet_settings_PrecisionBI(_settings);
+					break;
+
+				case 1:
+					//////////
+					// Initialization value only
+					//////
+						if (!iVariable_isValid(varP1) || (!iVariable_isTypeNumeric(varP1) && !iVariable_isTypeCharacter(varP1)))
+						{
+							iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP1), false);
+							return(NULL);
+						}
+
+
+					//////////
+					// Default precision
+					//////
+						lnBits = propGet_settings_PrecisionBI(_settings);
+						break;
+
+				case 2:
+					//////////
+					// Initialization value, and bits override
+					//////
+						if (!iVariable_isValid(varP1) || (!iVariable_isTypeNumeric(varP1) && !iVariable_isTypeCharacter(varP1)))
+						{
+							iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP1), false);
+							return(NULL);
+						}
+						if (!iVariable_isValid(varP2) || !iVariable_isTypeNumeric(varP2))
+						{
+							iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP2), false);
+							return(NULL);
+						}
+
+
+					//////////
+					// Grab the bits
+					//////
+						lnBits = iiVariable_getAs_s32(thisCode, varP2, false, &error, &errorNum);
+						if (error)
+						{
+							iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP2), false);
+							return(NULL);
+						}
+						break;
+
+			}
+
+
+		//////////
+		// Construct the appropriate variable
+		//////
+			result = iVariable_create(thisCode, _VAR_TYPE_BI, NULL, true, lnBits);
+			if (result && returnsParams->pcount >= 1)
+			{
+				// Initialize
+				if (iVariable_isTypeCharacter(varP1))
+				{
+					// Initializing from the string
+					m_apm_set_string(result->value.data_big, varP1->value.data_s8);
+
+				} else if (iVariable_isTypeBig(varP1)) {
+					// bfp or bi
+					m_apm_copy(result->value.data_big, varP1->value.data_big);
+
+				} else if (iVariable_isTypeInteger(varP1)) {
+					// Integer
+					lnVal64 = iiVariable_getAs_s64(thisCode, varP1, false, &error, &errorNum);
+					if (error)
+					{
+						// Should never happen
+						iError_reportByNumber(thisCode, _ERROR_UNABLE_TO_INITIALIZE, iVariable_getRelatedComp(thisCode, varP2), false);
+
+					} else {
+						// We're good
+						if (lnVal64 >= (s64)_s32_min && lnVal64 <= (s64)_s32_max)
+						{
+							// We can set it directly as a long
+							m_apm_set_long(result->value.data_big, (s32)lnVal64);
+
+						} else {
+							// Convert it to a string first, then set it
+							sprintf((s8*)buffer, "%I64d\0", lnVal64);
+							m_apm_set_string(result->value.data_big, buffer);
+						}
+					}
+
+				} else {
+					// Floating point
+					lfVal64 = iiVariable_getAs_f64(thisCode, varP1, false, &error, &errorNum);
+					if (error)
+					{
+						// Should never happen
+						iError_reportByNumber(thisCode, _ERROR_UNABLE_TO_INITIALIZE, iVariable_getRelatedComp(thisCode, varP2), false);
+
+					} else {
+						// We're good
+						m_apm_set_double(result->value.data_big, lfVal64);
+					}
+				}
+			}
+
+
+		//////////
+		// Are we good?
+		//////
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varP1), false);
+
+
+		//////////
+		// Indicate our result
+		//////
+			return(result);
+
+	}
+
+
+
+
+//////////
+//
 // Function: BITS()
 // Creates the closest larger 2^n numeric value than the size indicated by bits.
 //

@@ -295,6 +295,8 @@ typedef SEM**		SEMpp;
 	#define propGet_settings_ncset_optimizeVariables(obj)			propGet_settings_ncset(obj, _INDEX_SET_NCSET_OPTIMIZE_VARIABLES)
 	#define propGet_settings_ncset_signSign2(obj)					propGet_settings_ncset(obj, _INDEX_SET_NCSET_SIGN_SIGN2)
 	#define propGet_settings_Point(obj)								iObjProp_get_character			(thisCode, obj, _INDEX_SET_POINT)
+	#define propGet_settings_PrecisionBFP(obj)						iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_PRECISIONBFP)
+	#define propGet_settings_PrecisionBI(obj)						iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_PRECISIONBI)
 	#define propGet_settings_Reprocess(obj)							iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_REPROCESS)	// negative attempts, positive seconds
 	#define propGet_settings_ReprocessAttempts(obj)					iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_REPROCESSATTEMPTS)
 	#define propGet_settings_ReprocessInterval(obj)					iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_REPROCESSINTERVAL)
@@ -491,6 +493,8 @@ typedef SEM**		SEMpp;
 	const u32			_ERROR_INVALID_CORRUPT_NEEDS_REBUILT	= 99;
 	const u32			_ERROR_UNABLE_TO_LOCK_FOR_WRITE			= 100;
 	const u32			_ERROR_UNABLE_TO_LOCK_FOR_READ			= 101;
+	const u32			_ERROR_UNABLE_TO_INITIALIZE				= 102;
+	const u32			_ERROR_UNKNOWN_FUNCTION					= 103;
 
 
 //////////

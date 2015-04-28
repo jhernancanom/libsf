@@ -120,7 +120,7 @@ SET STEP ON
 FUNCTION load_class
 LPARAMETERS tcClass, tcLibrary
 
-	return(iload_class(tcClass, tcClass, tcLibrary, .NULL., .f., 1))
+	return(iload_class(tcClass, tcClass, tcLibrary, .NULL., .f., 1, .f., SPACE(0)))
 
 
 
@@ -141,11 +141,14 @@ LPARAMETERS tcClass, tcLibrary
 *										laCode[m, 2] -- Source code lines
 *****
 FUNCTION iload_class
-LPARAMETERS tcName, tcClass, tcLibrary, toParent, tlAugmentProperties, tnLevel
+LPARAMETERS tcName, tcClass, tcLibrary, toParent, tlAugmentProperties, tnLevel, tlSubSubCreated, tcParentRecnos
 LOCAL lnI, lnJ, lcAlias, loNew, loNewSib, loClass, lcPropName, lcPropNameDescent, lcThisName
 LOCAL lcValue, lnEqualPos, llError, lcNameNext, lcClassNext, lcLibraryNext, lcCodeArrayName, lnFoundRecno
+LOCAL llSubSubCreated
 
-? REPLICATE("|   ", tnLevel) + " ---- Sub-loading " + tcClass + " in " + tcLibrary + " called " + tcName
+IF NOT "base_" $ LOWER(tcClass)
+	? REPLICATE("|   ", tnLevel) + " ---- Sub-loading " + tcClass + " in " + tcLibrary + " called " + tcName
+ENDIF
 	**********
 	* Locate the library
 	*****
@@ -198,13 +201,40 @@ LOCAL lcValue, lnEqualPos, llError, lcNameNext, lcClassNext, lcLibraryNext, lcCo
 	**********
 	* Append any parent classes
 	*****
+*IF "test1" $ LOWER(&lcAlias..parent)
+*	SET STEP ON
+*ENDIF
+*		lcObjParent = &lcAlias..parent
+*		SCAN FOR EMPTY(&lcAlias..reserved1) AND LOWER(&lcAlias..objName) = LOWER(lcObjParent) AND NOT EMPTY(&lcAlias..parent) AND NOT "." $ &lcAlias..parent
+*			IF RECNO() != lnFoundRecno AND NOT TRANSFORM(RECNO()) $ tcParentRecnos AND LOWER(tcClass) != &lcAlias..class
+*SET STEP ON
+*				iload_class("[parent augment for class]", &lcAlias..parent, tcLibrary, loNew, .t., tnLevel + 1, @llSubSubCreated, tcParentRecnos + CHR(13) + TRANSFORM(RECNO()))
+*				IF llSubSubCreated
+*					IF NOT "base_" $ tcClass
+*						? REPLICATE("|   ", tnLevel + 1) + " ---- Loaded parent " + lcClassNext + " in " + lcLibraryNext + " called " + lcNameNext
+*					ENDIF
+*				ENDIF
+*			ENDIF
+*		ENDSCAN
+*		GOTO lnFoundRecno
+
+
+	**********
+	* Add any named classes
+	*****
 		lcNameNext		= &lcAlias..objName
 		lcClassNext		= &lcAlias..class
 		lcLibraryNext	= FULLPATH(ADDBS(JUSTPATH(tcLibrary)) + ALLTRIM(&lcAlias..classloc))
 		IF NOT EMPTY(&lcAlias..classloc) AND (lcClassNext != tcClass OR lcLibraryNext != tcLibrary)
 			* Add all parent classes
-			iload_class(lcNameNext, lcClassNext, lcLibraryNext, loNew, .t., tnLevel + 1)
-? REPLICATE("|   ", tnLevel + 1) + " ---- Finished on " + lcClassNext + " in " + lcLibraryNext + " called " + lcNameNext
+			llSubSubCreated	= .t.
+			llSubSubCreated	= .f.
+			iload_class(lcNameNext, lcClassNext, lcLibraryNext, loNew, .t., tnLevel + 1, @llSubSubCreated, SPACE(0))
+			IF llSubSubCreated
+				IF NOT "base_" $ tcClass
+					? REPLICATE("|   ", tnLevel + 1) + " ---- Finished on " + lcClassNext + " in " + lcLibraryNext + " called " + lcNameNext
+				ENDIF
+			ENDIF
 		ENDIF
 	
 	
@@ -213,14 +243,20 @@ LOCAL lcValue, lnEqualPos, llError, lcNameNext, lcClassNext, lcLibraryNext, lcCo
 	*****
 		SELECT (lcAlias)
 		SCAN FOR LOWER(parent) == LOWER(tcClass) AND NOT EMPTY(classloc)
-		
+
 			* Create the object
 			lcNameNext		= &lcAlias..objName
 			lcClassNext		= &lcAlias..class
 			lcLibraryNext	= FULLPATH(ADDBS(JUSTPATH(tcLibrary)) + ALLTRIM(&lcAlias..classloc))
-			iload_class(lcNameNext, lcClassNext, lcLibraryNext, loNew, .f., tnLevel + 1)
-			* Note:  Their methods are added when they are added
-? REPLICATE("|   ", tnLevel + 1) + " ---- Finished on " + lcClassNext + " in " + lcLibraryNext + " called " + lcNameNext
+			tlSubSubCreated	= .t.
+			llSubSubCreated	= .f.
+			iload_class(lcNameNext, lcClassNext, lcLibraryNext, loNew, .f., tnLevel + 1, @llSubSubCreated, SPACE(0))
+			IF llSubSubCreated
+				* Note:  Their methods are added when they are added
+				IF NOT "base_" $ tcClass
+					? REPLICATE("|   ", tnLevel + 1) + " ---- Finished on " + lcClassNext + " in " + lcLibraryNext + " called " + lcNameNext
+				ENDIF
+			ENDIF
 
 		ENDSCAN
 
@@ -235,6 +271,7 @@ LOCAL lcValue, lnEqualPos, llError, lcNameNext, lcClassNext, lcLibraryNext, lcCo
 			lcClassNext		= LOWER(&lcAlias..class)
 			loNew.ADDOBJECT(lcName, lcClassNext)
 			loNewSib		= loNew.&lcName
+			tlSubSubCreated	= .t.
 			
 			* Add any events or methods, and their code
 			iiload_class_set_properties(loNewSib, &lcAlias..properties)

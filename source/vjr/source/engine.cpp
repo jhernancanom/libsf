@@ -731,6 +731,9 @@
 					++lfl;
 				}
 
+				// If we get here, not found
+				iError_reportByNumber(thisCode, _ERROR_UNKNOWN_FUNCTION, comp, false);
+
 		}
 		return(NULL);
 	}

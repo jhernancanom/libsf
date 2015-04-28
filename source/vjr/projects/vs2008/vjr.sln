@@ -8,6 +8,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vjr", "vjr.vcproj", "{BE3F7
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bmps", "bmps.vcproj", "{A67E8718-81F3-490E-9849-FA5977727D40}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mapm", "mapm\mapm.vcproj", "{61745B51-37EB-4E7E-9E0B-1BA0FEEE93BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -22,6 +24,10 @@ Global
 		{A67E8718-81F3-490E-9849-FA5977727D40}.Debug|Win32.Build.0 = Debug|Win32
 		{A67E8718-81F3-490E-9849-FA5977727D40}.Release|Win32.ActiveCfg = Release|Win32
 		{A67E8718-81F3-490E-9849-FA5977727D40}.Release|Win32.Build.0 = Release|Win32
+		{61745B51-37EB-4E7E-9E0B-1BA0FEEE93BF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{61745B51-37EB-4E7E-9E0B-1BA0FEEE93BF}.Debug|Win32.Build.0 = Debug|Win32
+		{61745B51-37EB-4E7E-9E0B-1BA0FEEE93BF}.Release|Win32.ActiveCfg = Release|Win32
+		{61745B51-37EB-4E7E-9E0B-1BA0FEEE93BF}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

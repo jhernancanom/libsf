@@ -227,7 +227,7 @@ struct SThisCode;
 
 	// Variable functions
 	SVariable*				iiVariable_terminateIndirect				(SThisCode* thisCode, SVariable* var);
-	SVariable*				iVariable_create							(SThisCode* thisCode, s32 tnVarType, SVariable* varIndirect, bool tlAllocateDefaultValue);
+	SVariable*				iVariable_create							(SThisCode* thisCode, s32 tnVarType, SVariable* varIndirect, bool tlAllocateDefaultValue, s32 tnBits = -1);
 	SVariable*				iVariable_createAndPopulate_byDatum			(SThisCode* thisCode, s32 tnVarType, SDatum* datum, bool tlCreateReference);
 	SVariable*				iVariable_createAndPopulate_byText			(SThisCode* thisCode, s32 tnVarType, u8*  tcData, s32 tnDataLength, bool tlCreateReference);
 	SVariable*				iVariable_createAndPopulate_byText			(SThisCode* thisCode, s32 tnVarType, s8*  tcData, s32 tnDataLength, bool tlCreateReference);
@@ -314,6 +314,16 @@ struct SThisCode;
 	bool					iDateMath_isDayValidForDate										(u32 year, u32 month, u32 day);
 	bool					iDateMath_isLeapYear											(u32 year);
 	u32						iDateMath_getDayNumberIntoYear									(u32 tnYear, u32 tnMonth, u32 tnDay);
+
+	// Big floating point
+	s32						iiBfp_calc_significantDigits_bySize			(SVariable* varVal);
+	void					iiBfp_convertForDisplay						(SThisCode* thisCode, SVariable* varDisp, SVariable* varVal);
+	void					iiBfp_convertFrom_scientificNotation		(SThisCode* thisCode, SVariable* varDisp, SVariable* varVal);
+	// Big integer
+	s32						iiBi_calc_significantDigits_bySize			(SVariable* varVal);
+	void					iiBi_convertForDisplay						(SThisCode* thisCode, SVariable* varDisp, SVariable* varVal);
+	void					iiBi_convertFrom_scientificNotation			(SThisCode* thisCode, SVariable* varDisp, SVariable* varVal);
+
 
 	// Op functions
 	bool					iOp_setNull									(SOp* op);

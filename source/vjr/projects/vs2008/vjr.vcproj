@@ -71,7 +71,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="..\..\source\lib32\glew32.lib ..\..\source\lib32\glew32s.lib ..\..\source\lib32\freeglut.lib ..\..\source\sound\SDL-1.2.15\lib\x86\SDL.lib"
+				AdditionalDependencies="..\..\source\lib32\glew32.lib ..\..\source\lib32\glew32s.lib ..\..\source\lib32\freeglut.lib ..\..\source\sound\SDL-1.2.15\lib\x86\SDL.lib ..\..\source\3rd_party\mapm\mapm.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -155,7 +155,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="..\..\source\lib64\glew32.lib ..\..\source\lib64\glew32s.lib ..\..\source\lib64\freeglut.lib ..\..\source\sound\SDL-1.2.15\lib\x64\SDL.lib"
+				AdditionalDependencies="..\..\source\lib64\glew32.lib ..\..\source\lib64\glew32s.lib ..\..\source\lib64\freeglut.lib ..\..\source\sound\SDL-1.2.15\lib\x64\SDL.lib ..\..\source\3rd_party\mapm\mapm.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -239,7 +239,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="..\..\source\lib32\glew32.lib ..\..\source\lib32\glew32s.lib ..\..\source\lib32\freeglut.lib ..\..\source\sound\SDL-1.2.15\lib\x86\SDL.lib"
+				AdditionalDependencies="..\..\source\lib32\glew32.lib ..\..\source\lib32\glew32s.lib ..\..\source\lib32\freeglut.lib ..\..\source\sound\SDL-1.2.15\lib\x86\SDL.lib ..\..\source\3rd_party\mapm\mapm.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -323,7 +323,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="..\..\source\lib64\glew32.lib ..\..\source\lib64\glew32s.lib ..\..\source\lib64\freeglut.lib ..\..\source\sound\SDL-1.2.15\lib\x64\SDL.lib"
+				AdditionalDependencies="..\..\source\lib64\glew32.lib ..\..\source\lib64\glew32s.lib ..\..\source\lib64\freeglut.lib ..\..\source\sound\SDL-1.2.15\lib\x64\SDL.lib ..\..\source\3rd_party\mapm\mapm.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"

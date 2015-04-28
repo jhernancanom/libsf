@@ -171,11 +171,15 @@
 			// Store the new data
 			if (dataLength > 0)
 			{
-				datum->data = (s8*)malloc(dataLength);
+				// Allocate one extra byte for a trailing NULL
+				datum->data = (s8*)malloc(dataLength + 1);
 
 				// Copy over if we were successful
 				if (datum->data)
+				{
 					memcpy(datum->data, data, dataLength);
+					datum->data[dataLength] = 0;
+				}
 
 			} else {
 				// There is no data here
@@ -221,7 +225,7 @@
 				return(true);		// It's already the same length
 
 			// Allocate our new block
-			ptr = (s8*)malloc(newDataLength);
+			ptr = (s8*)malloc(newDataLength + 1);
 			if (ptr)
 			{
 				// Copy everything that will fit
@@ -230,6 +234,9 @@
 				// Fill the remainder with NULLs if any
 				if (newDataLength > datum->length)
 					memset(ptr + datum->length, 0, newDataLength - datum->length);
+
+				// Null-terminate
+				ptr[newDataLength] = 0;
 
 				// Delete the old data
 				if (datum->data)

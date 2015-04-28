@@ -102,7 +102,6 @@ struct SDate;
 struct SBgra;
 struct SBgr;
 
-
 	struct SDatum
 	{
 		union {
@@ -127,6 +126,8 @@ struct SBgr;
 			SDate*		data_date;				// To access the data as a date in the text-form YYYYMMDD
 			SBgra*		data_bgra;				// To access the data as SBgra
 			SBgr*		data_bgr;				// To access the data as SBgr
+			SMapm*		data_big;				// To access the data as an arbitrary precision structure wrapped around SMapm (see 3rd_party\mapm\m_apm.h)
+
 		};
 		s32				length;												// Content length
 	};

@@ -4819,7 +4819,7 @@ debug_break;
 // no identity.
 //
 //////
-	SVariable* iVariable_create(SThisCode* thisCode, s32 tnVarType, SVariable* varIndirect, bool tlAllocateDefaultValue)
+	SVariable* iVariable_create(SThisCode* thisCode, s32 tnVarType, SVariable* varIndirect, bool tlAllocateDefaultValue, s32 tnBits)
 	{
 		SVariable*	varDefault;
 		SVariable*	varNew;
@@ -4911,6 +4911,16 @@ debug_break;
 						case _VAR_TYPE_CHARACTER:
 							// We do not initially allocate anything, but rather this variable can be populated later.
 							// Right now it will be a .NULL. variable.
+							break;
+
+						case _VAR_TYPE_BI:
+						case _VAR_TYPE_BFP:
+							tnBits					= max(tnBits, 128);
+							varNew->value.data_big	= m_apm_init();
+							varNew->value.length	= tnBits;
+
+							// Store the bits for this creation in 
+							iEngine_update_meta1(thisCode, (s64)tnBits);
 							break;
 
 						default:
@@ -5782,6 +5792,12 @@ if (!gsProps_master[lnI].varInit)
 							case _VAR_TYPE_BITMAP:
 								// Copy the bitmap
 								varDst->bmp = iBmp_copy(varSrc->bmp);
+								break;
+
+							case _VAR_TYPE_BFP:
+							case _VAR_TYPE_BI:
+								varDst->value.data_big = m_apm_init();
+								m_apm_copy(varDst->value.data_big, varSrc->value.data_big);
 								break;
 
 							default:
@@ -7647,8 +7663,7 @@ debug_break;
 
 				case _VAR_TYPE_BI:
 				case _VAR_TYPE_BFP:
-// Not yet supported
-debug_break;
+					m_apm_set_long(var->value.data_big, 0);
 					break;
 
 				case _VAR_TYPE_ARRAY:
@@ -7800,16 +7815,14 @@ debug_break;
 						iDatum_duplicate(&varDisp->value, buffer + lnI, -1);
 						break;
 
-					case _VAR_TYPE_BI:
-	// TODO:  BI needs coded
+					case _VAR_TYPE_BFP:
 						varDisp->isValueAllocated = true;
-						iDatum_duplicate(&varDisp->value, cgcBigInteger, -1);
+						iiBfp_convertForDisplay(thisCode, varDisp, var);
 						break;
 
-					case _VAR_TYPE_BFP:
-	// TODO:  BFP needs coded
+					case _VAR_TYPE_BI:
 						varDisp->isValueAllocated = true;
-						iDatum_duplicate(&varDisp->value, cgcBigFloatingPoint, -1);
+						iiBi_convertForDisplay(thisCode, varDisp, var);
 						break;
 
 					case _VAR_TYPE_DATE:
@@ -8132,6 +8145,14 @@ debug_break;
 							// Delete the bitmap
 							iBmp_delete(&var->bmp, true, true);
 							var->bmp = NULL;
+							break;
+
+						case _VAR_TYPE_BI:
+						case _VAR_TYPE_BFP:
+							m_apm_free(var->value.data_big);
+							var->value.data_big = NULL;
+							var->value.length	= 0;
+							break;
 
 						default:
 							// Delete the datum
@@ -8152,7 +8173,7 @@ debug_break;
 			//////
 				if (tlDeleteSelf)
 				{
-					// "Bye bye, Hathaway."
+					// Delete this node in the variable link list
 					iLl_deleteNode((SLL*)var, true);
 
 				} else {
@@ -11748,6 +11769,126 @@ debug_break;
 		// Return the day of year
 		//////
 			return(result);
+	}
+
+
+
+
+//////////
+//
+// Called to compute convert the big floating point to its human readable form
+//
+//////
+	s32 iiBfp_calc_significantDigits_bySize(SVariable* var)
+	{
+		f32 lfVal32;
+
+
+		// Calculate the maximum number of significant digits, and then round down 10% in support of the minimum number of significant digits
+		lfVal32 = 0.9f * (1.0f + ((f32)((var->value.length - max(var->value.data_big->m_apm_exponent, 16)) * 0.3010299957f/*Log10(2)*/)));
+		return((s32)lfVal32);
+	}
+
+	void iiBfp_convertForDisplay(SThisCode* thisCode, SVariable* varDisp, SVariable* varVal)
+	{
+		s32 lnLength;
+
+
+		//////////
+		// Generate
+		//////
+			lnLength = iiBfp_calc_significantDigits_bySize(varVal);
+			iDatum_allocateSpace(&varDisp->value, lnLength * 2);
+			m_apm_to_string(varDisp->value.data_s8, lnLength, varVal->value.data_big);
+
+
+		//////////
+		// Fixup
+		//////
+			iiBfp_convertFrom_scientificNotation(thisCode, varDisp, varVal);
+
+	}
+
+	// This adjusts the display version of the value, which must be in sync (being just converted, for example)
+	void iiBfp_convertFrom_scientificNotation(SThisCode* thisCode, SVariable* varDisp, SVariable* varVal)
+	{
+		s32 lnI, lnSigDigs;
+
+
+		//////////
+		// Move the decimal point over as indicated
+		//////
+			lnSigDigs = iiBfp_calc_significantDigits_bySize(varVal);
+			for (lnI = 1; lnI < lnSigDigs && lnI < varVal->value.data_big->m_apm_exponent; lnI++)
+			{
+				// Copy the digit over
+				varDisp->value.data[lnI] = varDisp->value.data[lnI + 1];
+			}
+
+			// Add the period back in
+			varDisp->value.data[lnI] = '.';
+
+
+		//////////
+		// Based on the decimals setting, terminate after that decimal
+		//////
+			varDisp->value.length						= min(lnI + propGet_settings_Decimals(_settings) + 1, varDisp->value.length);
+			varDisp->value.data[varDisp->value.length]	= 0;
+
+	}
+
+
+
+
+//////////
+//
+// Called to compute convert the big integer to its human readable form
+//
+//////
+	s32 iiBi_calc_significantDigits_bySize(SVariable* varVal)
+	{
+		return((s32)(1.0 + ((f32)varVal->value.length * 0.3010299957/*Log10(2)*/)));
+	}
+
+	void iiBi_convertForDisplay(SThisCode* thisCode, SVariable* varDisp, SVariable* varVal)
+	{
+		s32 lnLength;
+
+
+		//////////
+		// Round to integer at the current number of decimals
+		//////
+			m_apm_round(varVal->value.data_big, varVal->value.data_big->m_apm_exponent - 1, varVal->value.data_big);
+
+
+		//////////
+		// Generate
+		//////
+			lnLength = iiBi_calc_significantDigits_bySize(varVal);
+			iDatum_allocateSpace(&varDisp->value, lnLength * 2);
+			m_apm_to_fixpt_string(varDisp->value.data_s8, lnLength, varVal->value.data_big);
+
+
+		//////////
+		// Fixup
+		//////
+			iiBi_convertFrom_scientificNotation(thisCode, varDisp, varVal);
+
+	}
+
+	// This adjusts the display version of the value, which must be in sync (being just converted, for example)
+	void iiBi_convertFrom_scientificNotation(SThisCode* thisCode, SVariable* varDisp, SVariable* varVal)
+	{
+		s32 lnSigDigs;
+
+
+		//////////
+		// Size and null-terminate
+		//////
+			lnSigDigs									= iiBi_calc_significantDigits_bySize(varVal);
+			varDisp->value.length						= min(min(lnSigDigs, varVal->value.data_big->m_apm_exponent), varDisp->value.length);
+			varDisp->value.data[varDisp->value.length]	= 0;
+
 	}
 
 

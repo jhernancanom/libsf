@@ -212,6 +212,8 @@
 			case _ERROR_INVALID_CORRUPT_NEEDS_REBUILT:		{	iError_report(thisCode, cgcIndexCorruptNeedsRebuilt,		tlInvasive);		break;	}
 			case _ERROR_UNABLE_TO_LOCK_FOR_WRITE:			{	iError_report(thisCode, cgcUnableToLockForWrite,			tlInvasive);		break;	}
 			case _ERROR_UNABLE_TO_LOCK_FOR_READ:			{	iError_report(thisCode, cgcUnableToLockForRead,				tlInvasive);		break;	}
+			case _ERROR_UNABLE_TO_INITIALIZE:				{	iError_report(thisCode, cgcUnableToInitialize,				tlInvasive);		break;	}
+			case _ERROR_UNKNOWN_FUNCTION:					{	iError_report(thisCode, cgcUnknownFunction,					tlInvasive);		break;	}
 
 		}
 

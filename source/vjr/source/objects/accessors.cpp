@@ -1076,6 +1076,58 @@ debug_break;
 
 //////////
 //
+// Called to set the integer to the closest 64-bit range from the value indicated, using a minimum of 128
+//
+//////
+	bool iObjProp_setInteger_bits(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet)
+	{
+		s32		lnValue;
+		bool	llResult;
+		bool	error;
+		u32		errorNum;
+
+
+		//////////
+		// Validate it's numeric
+		//////
+			llResult = false;
+			if (iVariable_isTypeNumeric(varNew))
+			{
+				// Gab the value
+				lnValue = iiVariable_getAs_s32(thisCode, varNew, false, &error, &errorNum);
+				if (!error)
+				{
+					// Potentially adjust the value
+					lnValue = max(128, ((lnValue / 64) + ((lnValue % 64 != 0) ? 1 : 0)) * 64);
+					iVariable_setNumeric_toNumericType(thisCode, varNew, NULL, NULL, &lnValue, NULL, NULL, NULL);
+
+					// Set the value
+					iVariable_set(thisCode, varSet, varNew);
+
+					// Indicate success
+					llResult = true;
+				}
+			}
+
+
+		//////////
+		// Optionally clean house
+		//////
+			if (tlDeleteVarNewAfterSet)
+				iVariable_delete(thisCode, varNew, true);
+
+
+		//////////
+		// Indicate our status
+		//////
+			return(llResult);
+	}
+
+
+
+
+//////////
+//
 // Called to set the u16 value from the indicated input
 //
 //////

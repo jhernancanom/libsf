@@ -299,6 +299,16 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_bfp[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_bi[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_bits[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}

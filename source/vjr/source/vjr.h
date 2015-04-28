@@ -129,6 +129,9 @@
 
 	#define _USE_MATH_DEFINES
 	#include <math.h>
+
+	#include "3rd_party\mapm\m_apm.h"
+
 	#include "sound\SDL-1.2.15\include\sdl\SDL.h"
 	#include "sound\SDL-1.2.15\include\sdl\SDL_audio.h"
 
