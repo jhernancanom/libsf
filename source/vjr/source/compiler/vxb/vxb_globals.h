@@ -340,6 +340,7 @@
 		{ cgc_dbf,					3,			false,		_ICODE_DBF,								false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_dbgetprop,			9,			false,		_ICODE_DBGETPROP,						false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_dbsetprop,			9,			false,		_ICODE_DBSETPROP,						false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
+		{ cgc_dbundle,				7,			false,		_ICODE_DBUNDLE,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_dbused,				6,			false,		_ICODE_DBUSED,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_ddeaborttrans,		13,			false,		_ICODE_DDEABORTTRANS,					false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_ddeadvise,			9,			false,		_ICODE_DDEADVISE,						false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },

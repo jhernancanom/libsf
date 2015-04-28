@@ -694,7 +694,7 @@
 						//////////
 						// We need to find the minimum number of parameters between)
 						//////
-							if (!iiEngine_getParametersBetween(thisCode, compLeftParen, &lnParamsFound, lfl->requiredCount, lfl->parameterCount, &returnsParams.params[0]))
+							if (!iiEngine_getParametersBetween(thisCode, compLeftParen, &lnParamsFound, lfl->req_pcount, lfl->max_pcount, &returnsParams.params[0]))
 								return(NULL);
 
 

@@ -1495,6 +1495,12 @@
 //////
 	SVariable* function_dbundle(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varR1	= returnsParams->params[0];
+		SVariable* varP1	= returnsParams->params[1];
+		SVariable* varP2	= returnsParams->params[2];
+		SVariable* varP3	= returnsParams->params[3];
+
+
 		//////////
 		// If it's ldDate = DBUNDLE(lnYear, lnMonth, lnDay), then it's the same as DATE()
 		//////

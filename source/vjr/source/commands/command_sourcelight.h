@@ -939,6 +939,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_dbundle[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_timetoseconds[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}

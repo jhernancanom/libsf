@@ -477,6 +477,7 @@
 	const s32		_ICODE_DBF                                      = 1109;
 	const s32		_ICODE_DBGETPROP                                = 1110;
 	const s32		_ICODE_DBSETPROP                                = 1111;
+	const s32		_ICODE_DBUNDLE									= 1517;
 	const s32		_ICODE_DBUSED                                   = 1112;
 	const s32		_ICODE_DDEABORTTRANS                            = 1113;
 	const s32		_ICODE_DDEADVISE                                = 1114;
@@ -910,6 +911,7 @@
 	// timextot			= 1511				timextox		= 1512
 	// secondstot		= 1513				secondstox		= 1514
 	// secondsxtot		= 1515				secondsxtox		= 1516
+	// dbundle			= 1517
 
 
 // Temporarily added until the processing engine is coded
@@ -1464,6 +1466,7 @@
 	const s8		cgc_dbf[]										= "dbf";
 	const s8		cgc_dbgetprop[]									= "dbgetprop";
 	const s8		cgc_dbsetprop[]									= "dbsetprop";
+	const s8		cgc_dbundle[]									= "dbundle";
 	const s8		cgc_dbused[]									= "dbused";
 	const s8		cgc_ddeaborttrans[]								= "ddeaborttrans";
 	const s8		cgc_ddeadvise[]									= "ddeadvise";

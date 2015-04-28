@@ -224,6 +224,7 @@ struct SReturnsParams;
 	SVariable*			function_dtor		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_dtos		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_dtot		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_dtox								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_dtransform	/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	s32					iifunction_append_text						(s8* tcDst, s8* tcSrc, s32 tnLength);
 	u32					ifunction_dtransform_textmerge_common		(SThisCode* thisCode, s8** tcResult, cs8* tcFormatStr, s32 tnFormatStrLength, SDatum* leftTextmergeDelim, SDatum* rightTextmergeDelim, SVariable* varDatesOrDatetimes[9], bool tlDateCodes, bool tlTextMerge);
@@ -304,7 +305,15 @@ struct SReturnsParams;
 	SVariable*			function_sec		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_seconds	/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			ifunction_xseconds_common					(SThisCode* thisCode, SReturnsParams* returnsParams, s32 tnFunction);
+	SVariable*			function_secondstotime						(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_secondstotimex						(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_secondstot							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_secondstox							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_secondsx							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_secondsxtotime						(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_secondsxtotimex					(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_secondsxtot						(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_secondsxtox						(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_set								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_sign		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_sign2								(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -326,11 +335,25 @@ struct SReturnsParams;
 	SVariable*			function__test								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_textmerge							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_time		/* Hernan Cano */		(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_timetoseconds						(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			ifunction_timesAndDatesConversion_common	(SThisCode* thisCode, SReturnsParams* returnsParams, s32 tnIn, s32 tnOut);
+	SVariable*			function_timetosecondsx						(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_timetot							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_timetox							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			ifunction_timex_common						(SThisCode* thisCode, SReturnsParams* returnsParams, bool tlIsTimeX);
 	SVariable*			function_timex								(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_timextoseconds						(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_timextosecondsx					(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_timextot							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_timextox							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_transform							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_ttoc		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_ttod		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_ttoseconds							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_ttosecondsx						(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_ttotime							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_ttotimex							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_ttox								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_type								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			ifunction_type_common						(SThisCode* thisCode, SVariable* var, bool tlExtraInfo, bool tlIsVartype, bool tlNullIsType);
 	SVariable*			function_typedetail							(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -345,42 +368,15 @@ struct SReturnsParams;
 	SVariable*			function_vecstuff							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_vecsymbol							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_version							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_xtod								(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_xtoseconds							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_xtosecondsx						(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_xtot								(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_xtotime							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_xtotimex							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_year		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 
 	// Apr.25.2015 -- Functions Rick is currently working on, see rick_in_progress.cpp
-	SVariable*			function_timetoseconds						(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			ifunction_timesAndDatesConversion_common	(SThisCode* thisCode, SReturnsParams* returnsParams, s32 tnIn, s32 tnOut);
-	SVariable*			function_timetosecondsx						(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_timetot							(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_timetox							(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_timextoseconds						(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_timextosecondsx					(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_timextot							(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_timextox							(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_secondstotime						(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_secondstotimex						(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_secondsxtotime						(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_secondsxtotimex					(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_secondstot							(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_secondstox							(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_secondsxtot						(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_secondsxtox						(SThisCode* thisCode, SReturnsParams* returnsParams);
-
-	SVariable*			function_ttoseconds							(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_ttosecondsx						(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_ttotime							(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_ttotimex							(SThisCode* thisCode, SReturnsParams* returnsParams);
-
-	SVariable*			function_xtoseconds							(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_xtosecondsx						(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_xtotime							(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_xtotimex							(SThisCode* thisCode, SReturnsParams* returnsParams);
-
-	SVariable*			function_dtox								(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_ttox								(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_xtod								(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_xtot								(SThisCode* thisCode, SReturnsParams* returnsParams);
-
 	SVariable*			function_cxlatd								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_cxlatt								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_cxlatx								(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -449,7 +445,8 @@ struct SReturnsParams;
 		//////////
 		// Number of return variables this function generates
 		//////
-			s32		returnCount;
+			s32		req_rcount;
+			s32		max_rcount;
 
 
 		//////////
@@ -464,8 +461,8 @@ struct SReturnsParams;
 		//////////
 		// Input parameters the function handles
 		//////
-			s32		requiredCount;
-			s32		parameterCount;
+			s32		req_pcount;
+			s32		max_pcount;
 
 
 		//////////
@@ -476,194 +473,195 @@ struct SReturnsParams;
 
 // TODO:  Need to add a compile-time test to verify that the maximum parameter count is representative of the function definition's actual parameters because the function is referenced through the union struct above in SFunctionData
 	SFunctionData gsKnownFunctions[] = {
-		//							Return										Parameters		Parameter
-		//	iCode					Count		Function Algorithm				Required		Maximum Count	SourceLight data
-		//  ------------------		------		--------------------------		----------		-------------	----------------------------------
-		{	_ICODE_ABS,				1,			(uptr)&function_abs,			1,				1,				&gsSourceLight_abs[0]			},	// ABS() by Stefano D'Amico, VJr 0.56, Mar.18.2015
-		{	_ICODE_ACOS,			1,			(uptr)&function_acos,			1,				1,				&gsSourceLight_acos[0]			},	// ACOS() by Stefano D'Amico, VJr 0.56, Mar.18.2015
-		{	_ICODE_ADDBS,			1,			(uptr)&function_addbs,			1,				4,				&gsSourceLight_addbs[0]		},
-		{	_ICODE_ALLTRIM,			1,			(uptr)&function_alltrim,		1,				4,				&gsSourceLight_alltrim[0]		},
-		{	_ICODE_ALP,				1,			(uptr)&function_alp,			1,				1,				&gsSourceLight_alp[0]			},
-		{	_ICODE_ASC,				1,			(uptr)&function_asc,			1,				1,				&gsSourceLight_asc[0]			},
-		{	_ICODE_ASIN,			1,			(uptr)&function_asin,			1,				1,				&gsSourceLight_asin[0]			},	// ASIN() by Stefano D'Amico, VJr 0.56, Mar.18.2015
-		{	_ICODE_AT,				1,			(uptr)&function_at,				2,				3,				&gsSourceLight_at[0]			},
-		{	_ICODE_ATAN,			1,			(uptr)&function_atan,			1,				1,				&gsSourceLight_atan[0]			},	// ATAN() by Stefano D'Amico, VJr 0.56, Mar.18.2015
-		{	_ICODE_ATC,				1,			(uptr)&function_atc,			2,				3,				&gsSourceLight_atc[0]			},
-		{	_ICODE_ATN2,			1,			(uptr)&function_atn2,			2,				2,				&gsSourceLight_atn2[0]			},
-		{	_ICODE_BETWEEN,			1,			(uptr)&function_between,		3,				3,				&gsSourceLight_between[0]		},	// BETWEEN() by Stefano D'Amico, VJr 0.57, Mar.23.2015
-		{	_ICODE_BFP,				1,			(uptr)&function_bfp,			0,				2,				&gsSourceLight_bfp[0]			},
-		{	_ICODE_BI,				1,			(uptr)&function_bi,				0,				2,				&gsSourceLight_bi[0]			},
-		{	_ICODE_BITS,			1,			(uptr)&function_bits,			1,				2,				&gsSourceLight_bits[0]			},
-		{	_ICODE_BITS8,			1,			(uptr)&function_bits8,			1,				1,				&gsSourceLight_bits8[0]			},
-		{	_ICODE_BITS16,			1,			(uptr)&function_bits16,			1,				1,				&gsSourceLight_bits16[0]		},
-		{	_ICODE_BITS32,			1,			(uptr)&function_bits32,			1,				1,				&gsSourceLight_bits32[0]		},
-		{	_ICODE_BITS64,			1,			(uptr)&function_bits64,			1,				1,				&gsSourceLight_bits64[0]		},
-		{	_ICODE_BITSLICE,		1,			(uptr)&function_bitslice,		2,				3,				&gsSourceLight_bitslice[0]		},
-		{	_ICODE_BITSTR,			1,			(uptr)&function_bitstr,			1,				2,				&gsSourceLight_bitstr[0]		},
-		{	_ICODE_BGR,				1,			(uptr)&function_bgr,			3,				3,				&gsSourceLight_bgr[0]			},
-		{	_ICODE_BGRA,			1,			(uptr)&function_bgra,			4,				4,				&gsSourceLight_bgra[0]			},
-		{	_ICODE_BLU,				1,			(uptr)&function_blu,			1,				1,				&gsSourceLight_blu[0]			},
-		{	_ICODE_CDOW,			1,			(uptr)&function_cdow,			0,				1,				&gsSourceLight_cdow[0]			},	// CDOW() by Stefano D'Amico, VJr 0.57, Apr.04.2015
-		{	_ICODE_CEILING,			1,			(uptr)&function_ceiling,		1,				1,				&gsSourceLight_ceiling[0]		},	// CEILING() by Stefano D'Amico, VJr 0.56, Mar.15.2015
-		{	_ICODE_CHR,				1,			(uptr)&function_chr,			1,				1,				&gsSourceLight_chr[0]			},
-		{	_ICODE_CHRTRAN,			1,			(uptr)&function_chrtran,		2,				3,				&gsSourceLight_chrtran[0]		},
-		{	_ICODE_CHRTRANC,		1,			(uptr)&function_chrtranc,		2,				3,				&gsSourceLight_chrtranc[0]		},
-		{	_ICODE_CMONTH,			1,			(uptr)&function_cmonth,			0,				1,				&gsSourceLight_cmonth[0]		},	// CMONTH() by Stefano D'Amico, VJr 0.57, Apr.05.2015
-		{	_ICODE_COLORIZE,		1,			(uptr)&function_colorize,		2,				3,				&gsSourceLight_colorize[0]		},
-		{	_ICODE_COS,				1,			(uptr)&function_cos,			1,				1,				&gsSourceLight_cos[0]			},	// COS() by Stefano D'Amico, VJr 0.56, Mar.17.2015
-		{	_ICODE_CREATEOBJECT,	1,			(uptr)&function_createobject,	1,				1,				&gsSourceLight_createobject[0]	},
-		{	_ICODE_CTOD,			1,			(uptr)&function_ctod,			1,				1,				&gsSourceLight_ctod[0]			},	// CTOD() by Stefano D'Amico, VJr 0.57, Apr.11.2015
-		{	_ICODE_CTOT,			1,			(uptr)&function_ctot,			1,				1,				&gsSourceLight_ctot[0]			},	// CTOT() by Stefano D'Amico, VJr 0.57, Apr.11.2015
-		{	_ICODE_CURDIR,			1,			(uptr)&function_curdir,			0,				0,				&gsSourceLight_curdir[0]		},
-		{	_ICODE_DATE,			1,			(uptr)&function_date,			0,				3,				&gsSourceLight_date[0]			},	// DATE() by Stefano D'Amico, VJr 0.57, Apr.04.2015
-		{	_ICODE_DATETIME,		1,			(uptr)&function_datetime,		0,				7,				&gsSourceLight_datetime[0]		},
-		{	_ICODE_DATETIMEX,		1,			(uptr)&function_datetimex,		0,				8,				&gsSourceLight_datetimex[0]		},
-		{	_ICODE_DAY,				1,			(uptr)&function_day,			0,				1,				&gsSourceLight_day[0]			},	// DAY() by Stefano D'Amico, VJr 0.57, Apr.04.2015
-		{	_ICODE_DMY,				1,			(uptr)&function_dmy,			0,				1,				&gsSourceLight_dmy[0]			},	// DMY() by Stefano D'Amico, VJr 0.57, Apr.07.2015
-		{	_ICODE_DOW,				1,			(uptr)&function_dow,			0,				2,				&gsSourceLight_dow[0]			},	// DOW() by Hernan Cano, VJr 0.75, Apr.20.2015
-		{	_ICODE_DTOC,			1,			(uptr)&function_dtoc,			0,				2,				&gsSourceLight_dtoc[0]			},	// DTOC() by Stefano D'Amico, VJr 0.57, Apr.07.2015
-		{	_ICODE_DTOR,			1,			(uptr)&function_dtor,			1,				1,				&gsSourceLight_dtor[0]			},	// DTOR() by Stefano D'Amico, VJr 0.56, Mar.16.2015
-		{	_ICODE_DTOS,			1,			(uptr)&function_dtos,			0,				1,				&gsSourceLight_dtos[0]			},	// DTOS() by Stefano D'Amico, VJr 0.57, Apr.07.2015
-		{	_ICODE_DTOT,			1,			(uptr)&function_dtot,			1,				2,				&gsSourceLight_dtot[0]			},	// DTOT() by Stefano D'Amico, VJr 0.57, Apr.07.2015
-		{	_ICODE_DTOX,			1,			(uptr)&function_dtox,			1,				2,				&gsSourceLight_dtox[0]			},
-		{	_ICODE_DTRANSFORM,		1,			(uptr)&function_dtransform,		1,				10,				&gsSourceLight_dtransform[0]	},	// DTRANSFORM() by Stefano D'Amico, VJr 0.57, Apr.16.2015
-		{	_ICODE_EMPTY,			1,			(uptr)&function_empty,			1,				1,				&gsSourceLight_empty[0]			},	// EMPTY() by Stefano D'Amico, VJr 0.56, Mar.19.2015
-		{	_ICODE_ENDSWITH,		1,			(uptr)&function_endswith,		2,				4,				&gsSourceLight_endswith[0]		},
-		{	_ICODE_ENDSWITHC,		1,			(uptr)&function_endswith,		2,				4,				&gsSourceLight_endswithc[0]		},
-		{	_ICODE_EVL,				1,			(uptr)&function_evl,			2,				2,				&gsSourceLight_evl[0]			},	// EVL() by Stefano D'Amico, VJr 0.56, Mar.20.2015
-		{	_ICODE_EXP,				1,			(uptr)&function_exp,			1,				1,				&gsSourceLight_exp[0]			},	// EXP() by Stefano D'Amico, VJr 0.56, Mar.15.2015
-		{	_ICODE_FLOOR,			1,			(uptr)&function_floor,			1,				1,				&gsSourceLight_floor[0]			},	// FLOOR() by Stefano D'Amico, VJr 0.56, Mar.15.2015
-		{	_ICODE_FORCEEXT,		1,			(uptr)&function_forceext,		2,				2,				&gsSourceLight_forceext[0]		},
-		{	_ICODE_FORCEFNAME,		1,			(uptr)&function_forcefname,		2,				2,				&gsSourceLight_forcefname[0]	},
-		{	_ICODE_FORCEPATH,		1,			(uptr)&function_forcepath,		2,				2,				&gsSourceLight_forcepath[0]		},
-		{	_ICODE_FORCESTEM,		1,			(uptr)&function_forcestem,		2,				2,				&gsSourceLight_forcestem[0]		},
-		{	_ICODE_FV,				1,			(uptr)&function_fv,				3,				3,				&gsSourceLight_fv[0]			},	// FV() by Stefano D'Amico, VJr 0.56, Mar.18.2015
-		{	_ICODE_GOMONTH,			1,			(uptr)&function_gomonth,		2,				2,				&gsSourceLight_gomonth[0]		},	// GOMONTH() by Stefano D'Amico, VJr 0.57, Apr.06.2015
-		{	_ICODE_GRAYSCALE,		1,			(uptr)&function_grayscale,		1,				2,				&gsSourceLight_grayscale[0]		},
-		{	_ICODE_GRN,				1,			(uptr)&function_grn,			1,				1,				&gsSourceLight_grn[0]			},
-		{	_ICODE_HOUR,			1,			(uptr)&function_hour,			0,				1,				&gsSourceLight_hour[0]			},	// HOUR() by Stefano D'Amico, VJr 0.57, Apr.07.2015
-		{	_ICODE_IIF,				1,			(uptr)&function_iif,			2,				3,				&gsSourceLight_iif[0]			},
-		{	_ICODE_INLIST,			1,			(uptr)&function_inlist,			2,				26,				&gsSourceLight_inlist[0]		},
-		{	_ICODE_INT,				1,			(uptr)&function_int,			1,				1,				&gsSourceLight_int[0]			},
-		{	_ICODE_ISNULL,			1,			(uptr)&function_isnull,			1,				1,				&gsSourceLight_isnull[0]		},	// ISNULL() by Hernan Cano, VJr 0.57, Apr.22.2015
-		{	_ICODE_JUSTDRIVE,		1,			(uptr)&function_justdrive,		1,				1,				&gsSourceLight_justdrive[0]		},
-		{	_ICODE_JUSTEXT,			1,			(uptr)&function_justext,		1,				1,				&gsSourceLight_justext[0]		},
-		{	_ICODE_JUSTFNAME,		1,			(uptr)&function_justfname,		1,				1,				&gsSourceLight_justfname[0]		},
-		{	_ICODE_JUSTPATH,		1,			(uptr)&function_justpath,		1,				1,				&gsSourceLight_justpath[0]		},
-		{	_ICODE_JUSTSTEM,		1,			(uptr)&function_juststem,		1,				2,				&gsSourceLight_juststem[0]		},
-		{	_ICODE_LEFT,			1,			(uptr)&function_left,			2,				2,				&gsSourceLight_left[0]			},
-		{	_ICODE_LEN,				1,			(uptr)&function_len,			1,				1,				&gsSourceLight_len[0]			},
-		{	_ICODE_LOG,				1,			(uptr)&function_log,			1,				1,				&gsSourceLight_log[0]			},	// LOG() by Stefano D'Amico, VJr 0.56, Mar.15.2015
-		{	_ICODE_LOG10,			1,			(uptr)&function_log10,			1,				1,				&gsSourceLight_log10[0]			},	// LOG10() by Stefano D'Amico, VJr 0.56, Mar.15.2015
-		{	_ICODE_LOWER,			1,			(uptr)&function_lower,			1,				1,				&gsSourceLight_lower[0]			},
-		{	_ICODE_LTRIM,			1,			(uptr)&function_ltrim,			1,				1,				&gsSourceLight_ltrim[0]			},
-		{	_ICODE_MALP,			1,			(uptr)&function_malp,			1,				2,				&gsSourceLight_malp[0]			},
-		{	_ICODE_MAX,				1,			(uptr)&function_max,			2,				2,				&gsSourceLight_max[0]			},
-		{	_ICODE_MDY,				1,			(uptr)&function_mdy,			0,				1,				&gsSourceLight_mdy[0]			},	// MDY() by Stefano D'Amico, VJr 0.57, Apr.07.2015
-		{	_ICODE_MICROSECOND,		1,			(uptr)&function_microsecond,	0,				0,				&gsSourceLight_microsecond[0]	},
-		{	_ICODE_MIN,				1,			(uptr)&function_min,			2,				2,				&gsSourceLight_min[0]			},
-		{	_ICODE_MINUTE,			1,			(uptr)&function_minute,			0,				1,				&gsSourceLight_minute[0]		},	// MINUTE() by Stefano D'Amico, VJr 0.57, Apr.07.2015
-		{	_ICODE_MOD,				1,			(uptr)&function_mod,			2,				2,				&gsSourceLight_mod[0]			},	// MOD() by Stefano D'Amico, VJr 0.56, Mar.08.2015
-		{	_ICODE_MONTH,			1,			(uptr)&function_month,			0,				1,				&gsSourceLight_month[0]			},	// MONTH() by Stefano D'Amico, VJr 0.57, Apr.04.2015
-		{	_ICODE_NANOSECOND,		1,			(uptr)&function_nanosecond,		0,				0,				&gsSourceLight_nanosecond[0]	},
-		{	_ICODE_NCSET,			1,			(uptr)&function_ncset,			1,				7,				&gsSourceLight_ncset[0]			},
-		{	_ICODE_NVL,				1,			(uptr)&function_nvl,			1,				2,				&gsSourceLight_nvl[0]			},	// NVL() by Hernan Can, VJr 0.57, Apr.22.2015
-		{	_ICODE_OCCURS,			1,			(uptr)&function_occurs,			2,				2,				&gsSourceLight_occurs[0]		},
-		{	_ICODE_OCCURSC,			1,			(uptr)&function_occursc,		2,				2,				&gsSourceLight_occursc[0]		},
-		{	_ICODE_OUTSIDE,			1,			(uptr)&function_outside,		3,				3,				&gsSourceLight_outside[0]		},	// OUTSIDE() by Stefano D'Amico, VJr 0.57, Mar.23.2015
-		{	_ICODE_PADC,			1,			(uptr)&function_padc,			2,				3,				&gsSourceLight_padc[0]			},
-		{	_ICODE_PADL,			1,			(uptr)&function_padl,			2,				3,				&gsSourceLight_padl[0]			},
-		{	_ICODE_PADR,			1,			(uptr)&function_padr,			2,				3,				&gsSourceLight_padr[0]			},
-		{	_ICODE_PAYMENT,			1,			(uptr)&function_payment,		3,				3,				&gsSourceLight_payment[0]		},	// PAYMENT() by Stefano D'Amico, VJr 0.56, Mar.19.2015
-		{	_ICODE_PI,				1,			(uptr)&function_pi,				0,				0,				&gsSourceLight_pi[0]			},	// PI() by Stefano D'Amico, VJr 0.56, Mar.15.2015
-		{	_ICODE_POW,				1,			(uptr)&function_pow,			2,				3,				&gsSourceLight_pow[0]			},	// POW() by Stefano D'Amico, VJr 0.57, Apr.26.2015
-		{	_ICODE_PROPER,			1,			(uptr)&function_proper,			1,				1,				&gsSourceLight_proper[0]		},
-		{	_ICODE_PV,				1,			(uptr)&function_pv,				3,				3,				&gsSourceLight_pv[0]			},	// PV() by Stefano D'Amico, VJr 0.56, Mar.18.2015
-		{	_ICODE_QUARTER,			1,			(uptr)&function_quarter,		0,				2,				&gsSourceLight_quarter[0]		},	// QUARTER() by Stefano D'Amico, VJr 0.57, Apr.05.2015
-		{	_ICODE_RANGER,			1,			(uptr)&function_ranger,			3,				3,				&gsSourceLight_ranger[0]		},	// RANGER() by Stefano D'Amico, VJr 0.56, Mar.14.2015
-		{	_ICODE_RANGER2,			1,			(uptr)&function_ranger2,		3,				3,				&gsSourceLight_ranger2[0]		},
-		{	_ICODE_RAT,				1,			(uptr)&function_rat,			2,				3,				&gsSourceLight_rat[0]			},
-		{	_ICODE_RATC,			1,			(uptr)&function_ratc,			2,				3,				&gsSourceLight_ratc[0]			},
-		{	_ICODE_RED,				1,			(uptr)&function_red,			1,				1,				&gsSourceLight_red[0]			},
-		{	_ICODE_REPLICATE,		1,			(uptr)&function_replicate,		2,				2,				&gsSourceLight_replicate[0]		},
-		{	_ICODE_RGB,				1,			(uptr)&function_rgb,			3,				3,				&gsSourceLight_rgb[0]			},
-		{	_ICODE_RGBA,			1,			(uptr)&function_rgba,			4,				4,				&gsSourceLight_rgba[0]			},
-		{	_ICODE_RIGHT,			1,			(uptr)&function_right,			2,				2,				&gsSourceLight_right[0]			},
-		{	_ICODE_ROUND,			1,			(uptr)&function_round,			2,				2,				&gsSourceLight_round[0]			},	// ROUND() by Stefano D'Amico, VJr 0.56, Mar.16.2015
-		{	_ICODE_RTOD,			1,			(uptr)&function_rtod,			1,				1,				&gsSourceLight_rtod[0]			},	// RTOD() by Stefano D'Amico, VJr 0.56, Mar.16.2015
-		{	_ICODE_RTRIM,			1,			(uptr)&function_rtrim,			1,				4,				&gsSourceLight_rtrim[0]			},
-		{	_ICODE_TRIM,			1,			(uptr)&function_rtrim,			1,				4,				&gsSourceLight_rtrim[0]			},
-		{	_ICODE_SEC,				1,			(uptr)&function_sec,			0,				1,				&gsSourceLight_sec[0]			},	// SEC() by Stefano D'Amico, VJr 0.57, Apr.07.2015
-		{	_ICODE_SECONDS,			1,			(uptr)&function_seconds,		0,				0,				&gsSourceLight_seconds[0]		},	// SECONDS() by Stefano D'Amico, VJr 0.57, Apr.07.2015
-		{	_ICODE_SECONDSTOTIME,	1,			(uptr)&function_secondstotime,	1,				1,				&gsSourceLight_secondstotime[0]	},
-		{	_ICODE_SECONDSTOTIMEX,	1,			(uptr)&function_secondstotimex,	1,				1,				&gsSourceLight_secondstotimex[0] },
-		{	_ICODE_SECONDSX,		1,			(uptr)&function_secondsx,		0,				0,				&gsSourceLight_secondsx[0]		},	// SECONDS() by Stefano D'Amico, VJr 0.57, Apr.07.2015
-		{	_ICODE_SECONDSXTOTIME,	1,			(uptr)&function_secondsxtotime, 1,				1,				&gsSourceLight_secondsxtotime[0] },
-		{	_ICODE_SECONDSXTOTIMEX,	1,			(uptr)&function_secondsxtotimex, 1,				1,				&gsSourceLight_secondsxtotimex[0] },
-		{	_ICODE_SECONDSTOT,		1,			(uptr)&function_secondstot,		1,				2,				&gsSourceLight_secondstot[0]	},
-		{	_ICODE_SECONDSTOX,		1,			(uptr)&function_secondstox,		1,				2,				&gsSourceLight_secondstox[0]	},
-		{	_ICODE_SECONDSXTOT,		1,			(uptr)&function_secondsxtot,	1,				2,				&gsSourceLight_secondsxtot[0]	},
-		{	_ICODE_SECONDSXTOX,		1,			(uptr)&function_secondsxtox,	1,				2,				&gsSourceLight_secondsxtox[0]	},
-		{	_ICODE_SET,				1,			(uptr)&function_set,			1,				2,				&gsSourceLight_set[0]			},
-		{	_ICODE_SIGN,			1,			(uptr)&function_sign,			1,				1,				&gsSourceLight_sign[0]			},	// SIGN() by Stefano D'Amico, VJr 0.56, Mar.14.2015
-		{	_ICODE_SIN,				1,			(uptr)&function_sin,			1,				1,				&gsSourceLight_sin[0]			},	// SIN() by Stefano D'Amico, VJr 0.56, Mar.17.2015
-		{	_ICODE_SLICE,			1,			(uptr)&function_slice,			2,				3,				&gsSourceLight_slice[0]			},
-		{	_ICODE_SPACE,			1,			(uptr)&function_space,			1,				1,				&gsSourceLight_space[0]			},
-		{	_ICODE_SQRT,			1,			(uptr)&function_sqrt,			1,				1,				&gsSourceLight_sqrt[0]			},	// SQRT() by Stefano D'Amico, VJr 0.56, Mar.15.2015
-		{	_ICODE_STARTSWITH,		1,			(uptr)&function_startswith,		2,				4,				&gsSourceLight_startswith[0]	},
-		{	_ICODE_STARTSWITHC,		1,			(uptr)&function_startswithc,	2,				4,				&gsSourceLight_startswithc[0]	},
-		{	_ICODE_STRTRAN,			1,			(uptr)&function_strtran,		2,				4,				&gsSourceLight_strtran[0]		},
-		{	_ICODE_STRTRANC,		1,			(uptr)&function_strtranc,		2,				4,				&gsSourceLight_strtranc[0]		},
-		{	_ICODE_STUFF,			1,			(uptr)&function_stuff,			3,				4,				&gsSourceLight_stuff[0]			},
-		{	_ICODE_SYS,				1,			(uptr)&function_sys,			1,				7,				&gsSourceLight_sys[0]			},
-		{	_ICODE_SYSMETRIC,		1,			(uptr)&function_sysmetric,		1,				1,				&gsSourceLight_sysmetric[0]		},
-		{	_ICODE_TAN,				1,			(uptr)&function_tan,			1,				1,				&gsSourceLight_tan[0]			},	// TAN() by Stefano D'Amico, VJr 0.56, Mar.19.2015
-		{	_ICODE__TEST,			1,			(uptr)&function__test,			1,				1,				NULL							},
-		{	_ICODE_TEXTMERGE,		1,			(uptr)&function_textmerge,		1,				4,				&gsSourceLight_textmerge[0]		},
-		{	_ICODE_TIME,			1,			(uptr)&function_time,			0,				2,				&gsSourceLight_time[0]			},	// TIME() by Hernan Cano, VJr 0.57, Apr.20.2015
-		{	_ICODE_TIMETOSECONDS,	1,			(uptr)&function_timetoseconds,	1,				1,				&gsSourceLight_timetoseconds[0] },
-		{	_ICODE_TIMETOSECONDSX,	1,			(uptr)&function_timetosecondsx,	1,				1,				&gsSourceLight_timetosecondsx[0] },
-		{	_ICODE_TIMETOT,			1,			(uptr)&function_timetot,		1,				2,				&gsSourceLight_timetot[0]		},
-		{	_ICODE_TIMETOX,			1,			(uptr)&function_timetox,		1,				2,				&gsSourceLight_timetox[0]		},
-		{	_ICODE_TIMEX,			1,			(uptr)&function_timex,			0,				2,				&gsSourceLight_timex[0]			},	// TIME() by Hernan Cano, VJr 0.57, Apr.20.2015
-		{	_ICODE_TIMEXTOSECONDS,	1,			(uptr)&function_timextoseconds,	1,				1,				&gsSourceLight_timextoseconds[0] },
-		{	_ICODE_TIMEXTOSECONDSX,	1,			(uptr)&function_timextosecondsx, 1,				1,				&gsSourceLight_timextosecondsx[0] },
-		{	_ICODE_TIMEXTOT,		1,			(uptr)&function_timextot,		1,				2,				&gsSourceLight_timextot[0]		},
-		{	_ICODE_TIMEXTOX,		1,			(uptr)&function_timextox,		1,				2,				&gsSourceLight_timextox[0]		},
-		{	_ICODE_TRANSFORM,		1,			(uptr)&function_transform,		1,				2,				&gsSourceLight_transform[0]		},
-		{	_ICODE_TTOC,			1,			(uptr)&function_ttoc,			1,				2,				&gsSourceLight_ttoc[0]			},	// TTOC() by Stefano D'Amico, VJr 0.57, Apr.07.2015
-		{	_ICODE_TTOD,			1,			(uptr)&function_ttod,			1,				1,				&gsSourceLight_ttod[0]			},	// TTOD() by Stefano D'Amico, VJr 0.57, Apr.07.2015
-		{	_ICODE_TTOSECONDS,		1,			(uptr)&function_ttoseconds,		1,				1,				&gsSourceLight_ttoseconds[0]	},
-		{	_ICODE_TTOSECONDSX,		1,			(uptr)&function_ttosecondsx,	1,				1,				&gsSourceLight_ttosecondsx[0]	},
-		{	_ICODE_TTOTIME,			1,			(uptr)&function_ttotime,		1,				1,				&gsSourceLight_ttotime[0]		},
-		{	_ICODE_TTOTIMEX,		1,			(uptr)&function_ttotimex,		1,				1,				&gsSourceLight_ttotimex[0]		},
-		{	_ICODE_TTOX,			1,			(uptr)&function_ttox,			1,				2,				&gsSourceLight_ttod[0]			},
-		{	_ICODE_TYPE,			1,			(uptr)&function_type,			1,				2,				&gsSourceLight_type[0]	},
-		{	_ICODE_TYPEDETAIL,		1,			(uptr)&function_typedetail,		1,				1,				&gsSourceLight_typedetail[0]	},
-		{	_ICODE_UPPER,			1,			(uptr)&function_upper,			1,				1,				&gsSourceLight_upper[0]			},
-		{	_ICODE_VAL,				1,			(uptr)&function_val,			1,				2,				&gsSourceLight_val[0]			}, 	// VAL() by Stefano D'Amico, VJr 0.56, Mar.22.2015
-		{	_ICODE_VARTYPE,			1,			(uptr)&function_vartype,		1,				2,				&gsSourceLight_vartype[0]		},
-		{	_ICODE_VEC,				1,			(uptr)&function_vec,			1,				10,				&gsSourceLight_vec[0]			},
-		{	_ICODE_VECCOUNT,		1,			(uptr)&function_veccount,		1,				1,				&gsSourceLight_veccount[0]		},
-		{	_ICODE_VECEL,			1,			(uptr)&function_vecel,			1,				3,				&gsSourceLight_vecel[0]			},
-		{	_ICODE_VECSLICE,		1,			(uptr)&function_vecslice,		2,				3,				&gsSourceLight_vecslice[0]		},
-		{	_ICODE_VECSTR,			1,			(uptr)&function_vecstr,			1,				2,				&gsSourceLight_vecstr[0]		},
-		{	_ICODE_VECSTUFF,		1,			(uptr)&function_vecstuff,		3,				4,				&gsSourceLight_vecstuff[0]		},
-		{	_ICODE_VECSYMBOL,		1,			(uptr)&function_vecsymbol,		1,				3,				&gsSourceLight_vecsymbol[0]		},
-		{	_ICODE_VERSION,			1,			(uptr)&function_version,		0,				1,				&gsSourceLight_version[0]		},
-		{	_ICODE_XTOD,			1,			(uptr)&function_xtod,			1,				1,				&gsSourceLight_xtod[0]			},
-		{	_ICODE_XTOSECONDS,		1,			(uptr)&function_xtoseconds,		1,				1,				&gsSourceLight_xtoseconds[0]	},
-		{	_ICODE_XTOSECONDSX,		1,			(uptr)&function_xtosecondsx,	1,				1,				&gsSourceLight_xtosecondsx[0]	},
-		{	_ICODE_XTOT,			1,			(uptr)&function_xtot,			1,				1,				&gsSourceLight_xtot[0]			},
-		{	_ICODE_XTOTIME,			1,			(uptr)&function_xtotime,		1,				1,				&gsSourceLight_xtotime[0]		},
-		{	_ICODE_XTOTIMEX,		1,			(uptr)&function_xtotimex,		1,				1,				&gsSourceLight_xtotimex[0]		},
-		{	_ICODE_YEAR,			1,			(uptr)&function_year,			0,				1,				&gsSourceLight_year[0]			},	// YEAR() by Stefano D'Amico, VJr 0.57, Apr.04.2015
-// Added temporarily until the processing engine is coded
-		{	_ICODE_CONCATENATE,		1,			(uptr)&function_concatenate,	2,				2,				&gsSourceLight_concatenate[0]	},
-		{	_ICODE_ADD,				1,			(uptr)&function_add,			2,				2,				&gsSourceLight_add[0]			},
-		{	_ICODE_SUB,				1,			(uptr)&function_sub,			2,				2,				&gsSourceLight_sub[0]			},
-		{	_ICODE_MUL,				1,			(uptr)&function_mul,			2,				2,				&gsSourceLight_mul[0]			},
-		{	_ICODE_DIV,				1,			(uptr)&function_div,			2,				2,				&gsSourceLight_div[0]			},
+		//							Return		Return											Parameters		Parameter
+		//	iCode					Required	Maximum Count	Function Algorithm				Required		Maximum Count	SourceLight data
+		//  ------------------		--------	-------------	--------------------------		----------		-------------	----------------------------------
+		{	_ICODE_ABS,				1,			1,				(uptr)&function_abs,			1,				1,				&gsSourceLight_abs[0]			},	// ABS() by Stefano D'Amico, VJr 0.56, Mar.18.2015
+		{	_ICODE_ACOS,			1,			1,				(uptr)&function_acos,			1,				1,				&gsSourceLight_acos[0]			},	// ACOS() by Stefano D'Amico, VJr 0.56, Mar.18.2015
+		{	_ICODE_ADDBS,			1,			1,				(uptr)&function_addbs,			1,				4,				&gsSourceLight_addbs[0]			},
+		{	_ICODE_ALLTRIM,			1,			1,				(uptr)&function_alltrim,		1,				4,				&gsSourceLight_alltrim[0]		},
+		{	_ICODE_ALP,				1,			1,				(uptr)&function_alp,			1,				1,				&gsSourceLight_alp[0]			},
+		{	_ICODE_ASC,				1,			1,				(uptr)&function_asc,			1,				1,				&gsSourceLight_asc[0]			},
+		{	_ICODE_ASIN,			1,			1,				(uptr)&function_asin,			1,				1,				&gsSourceLight_asin[0]			},	// ASIN() by Stefano D'Amico, VJr 0.56, Mar.18.2015
+		{	_ICODE_AT,				1,			1,				(uptr)&function_at,				2,				3,				&gsSourceLight_at[0]			},
+		{	_ICODE_ATAN,			1,			1,				(uptr)&function_atan,			1,				1,				&gsSourceLight_atan[0]			},	// ATAN() by Stefano D'Amico, VJr 0.56, Mar.18.2015
+		{	_ICODE_ATC,				1,			1,				(uptr)&function_atc,			2,				3,				&gsSourceLight_atc[0]			},
+		{	_ICODE_ATN2,			1,			1,				(uptr)&function_atn2,			2,				2,				&gsSourceLight_atn2[0]			},
+		{	_ICODE_BETWEEN,			1,			1,				(uptr)&function_between,		3,				3,				&gsSourceLight_between[0]		},	// BETWEEN() by Stefano D'Amico, VJr 0.57, Mar.23.2015
+		{	_ICODE_BFP,				1,			1,				(uptr)&function_bfp,			0,				2,				&gsSourceLight_bfp[0]			},
+		{	_ICODE_BI,				1,			1,				(uptr)&function_bi,				0,				2,				&gsSourceLight_bi[0]			},
+		{	_ICODE_BITS,			1,			1,				(uptr)&function_bits,			1,				2,				&gsSourceLight_bits[0]			},
+		{	_ICODE_BITS8,			1,			1,				(uptr)&function_bits8,			1,				1,				&gsSourceLight_bits8[0]			},
+		{	_ICODE_BITS16,			1,			1,				(uptr)&function_bits16,			1,				1,				&gsSourceLight_bits16[0]		},
+		{	_ICODE_BITS32,			1,			1,				(uptr)&function_bits32,			1,				1,				&gsSourceLight_bits32[0]		},
+		{	_ICODE_BITS64,			1,			1,				(uptr)&function_bits64,			1,				1,				&gsSourceLight_bits64[0]		},
+		{	_ICODE_BITSLICE,		1,			1,				(uptr)&function_bitslice,		2,				3,				&gsSourceLight_bitslice[0]		},
+		{	_ICODE_BITSTR,			1,			1,				(uptr)&function_bitstr,			1,				2,				&gsSourceLight_bitstr[0]		},
+		{	_ICODE_BGR,				1,			1,				(uptr)&function_bgr,			3,				3,				&gsSourceLight_bgr[0]			},
+		{	_ICODE_BGRA,			1,			1,				(uptr)&function_bgra,			4,				4,				&gsSourceLight_bgra[0]			},
+		{	_ICODE_BLU,				1,			1,				(uptr)&function_blu,			1,				1,				&gsSourceLight_blu[0]			},
+		{	_ICODE_CDOW,			1,			1,				(uptr)&function_cdow,			0,				1,				&gsSourceLight_cdow[0]			},	// CDOW() by Stefano D'Amico, VJr 0.57, Apr.04.2015
+		{	_ICODE_CEILING,			1,			1,				(uptr)&function_ceiling,		1,				1,				&gsSourceLight_ceiling[0]		},	// CEILING() by Stefano D'Amico, VJr 0.56, Mar.15.2015
+		{	_ICODE_CHR,				1,			1,				(uptr)&function_chr,			1,				1,				&gsSourceLight_chr[0]			},
+		{	_ICODE_CHRTRAN,			1,			1,				(uptr)&function_chrtran,		2,				3,				&gsSourceLight_chrtran[0]		},
+		{	_ICODE_CHRTRANC,		1,			1,				(uptr)&function_chrtranc,		2,				3,				&gsSourceLight_chrtranc[0]		},
+		{	_ICODE_CMONTH,			1,			1,				(uptr)&function_cmonth,			0,				1,				&gsSourceLight_cmonth[0]		},	// CMONTH() by Stefano D'Amico, VJr 0.57, Apr.05.2015
+		{	_ICODE_COLORIZE,		1,			1,				(uptr)&function_colorize,		2,				3,				&gsSourceLight_colorize[0]		},
+		{	_ICODE_COS,				1,			1,				(uptr)&function_cos,			1,				1,				&gsSourceLight_cos[0]			},	// COS() by Stefano D'Amico, VJr 0.56, Mar.17.2015
+		{	_ICODE_CREATEOBJECT,	1,			1,				(uptr)&function_createobject,	1,				1,				&gsSourceLight_createobject[0]	},
+		{	_ICODE_CTOD,			1,			1,				(uptr)&function_ctod,			1,				1,				&gsSourceLight_ctod[0]			},	// CTOD() by Stefano D'Amico, VJr 0.57, Apr.11.2015
+		{	_ICODE_CTOT,			1,			1,				(uptr)&function_ctot,			1,				1,				&gsSourceLight_ctot[0]			},	// CTOT() by Stefano D'Amico, VJr 0.57, Apr.11.2015
+		{	_ICODE_CURDIR,			1,			1,				(uptr)&function_curdir,			0,				0,				&gsSourceLight_curdir[0]		},
+		{	_ICODE_DATE,			1,			1,				(uptr)&function_date,			0,				3,				&gsSourceLight_date[0]			},	// DATE() by Stefano D'Amico, VJr 0.57, Apr.04.2015
+		{	_ICODE_DATETIME,		1,			1,				(uptr)&function_datetime,		0,				7,				&gsSourceLight_datetime[0]		},
+		{	_ICODE_DATETIMEX,		1,			1,				(uptr)&function_datetimex,		0,				8,				&gsSourceLight_datetimex[0]		},
+		{	_ICODE_DAY,				1,			1,				(uptr)&function_day,			0,				1,				&gsSourceLight_day[0]			},	// DAY() by Stefano D'Amico, VJr 0.57, Apr.04.2015
+		{	_ICODE_DBUNDLE,			0,			1,				(uptr)&function_dbundle,		0,				2,				&gsSourceLight_dbundle[0]		},
+		{	_ICODE_DMY,				1,			1,				(uptr)&function_dmy,			0,				1,				&gsSourceLight_dmy[0]			},	// DMY() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_DOW,				1,			1,				(uptr)&function_dow,			0,				2,				&gsSourceLight_dow[0]			},	// DOW() by Hernan Cano, VJr 0.75, Apr.20.2015
+		{	_ICODE_DTOC,			1,			1,				(uptr)&function_dtoc,			0,				2,				&gsSourceLight_dtoc[0]			},	// DTOC() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_DTOR,			1,			1,				(uptr)&function_dtor,			1,				1,				&gsSourceLight_dtor[0]			},	// DTOR() by Stefano D'Amico, VJr 0.56, Mar.16.2015
+		{	_ICODE_DTOS,			1,			1,				(uptr)&function_dtos,			0,				1,				&gsSourceLight_dtos[0]			},	// DTOS() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_DTOT,			1,			1,				(uptr)&function_dtot,			1,				2,				&gsSourceLight_dtot[0]			},	// DTOT() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_DTOX,			1,			1,				(uptr)&function_dtox,			1,				2,				&gsSourceLight_dtox[0]			},
+		{	_ICODE_DTRANSFORM,		1,			1,				(uptr)&function_dtransform,		1,				10,				&gsSourceLight_dtransform[0]	},	// DTRANSFORM() by Stefano D'Amico, VJr 0.57, Apr.16.2015
+		{	_ICODE_EMPTY,			1,			1,				(uptr)&function_empty,			1,				1,				&gsSourceLight_empty[0]			},	// EMPTY() by Stefano D'Amico, VJr 0.56, Mar.19.2015
+		{	_ICODE_ENDSWITH,		1,			1,				(uptr)&function_endswith,		2,				4,				&gsSourceLight_endswith[0]		},
+		{	_ICODE_ENDSWITHC,		1,			1,				(uptr)&function_endswith,		2,				4,				&gsSourceLight_endswithc[0]		},
+		{	_ICODE_EVL,				1,			1,				(uptr)&function_evl,			2,				2,				&gsSourceLight_evl[0]			},	// EVL() by Stefano D'Amico, VJr 0.56, Mar.20.2015
+		{	_ICODE_EXP,				1,			1,				(uptr)&function_exp,			1,				1,				&gsSourceLight_exp[0]			},	// EXP() by Stefano D'Amico, VJr 0.56, Mar.15.2015
+		{	_ICODE_FLOOR,			1,			1,				(uptr)&function_floor,			1,				1,				&gsSourceLight_floor[0]			},	// FLOOR() by Stefano D'Amico, VJr 0.56, Mar.15.2015
+		{	_ICODE_FORCEEXT,		1,			1,				(uptr)&function_forceext,		2,				2,				&gsSourceLight_forceext[0]		},
+		{	_ICODE_FORCEFNAME,		1,			1,				(uptr)&function_forcefname,		2,				2,				&gsSourceLight_forcefname[0]	},
+		{	_ICODE_FORCEPATH,		1,			1,				(uptr)&function_forcepath,		2,				2,				&gsSourceLight_forcepath[0]		},
+		{	_ICODE_FORCESTEM,		1,			1,				(uptr)&function_forcestem,		2,				2,				&gsSourceLight_forcestem[0]		},
+		{	_ICODE_FV,				1,			1,				(uptr)&function_fv,				3,				3,				&gsSourceLight_fv[0]			},	// FV() by Stefano D'Amico, VJr 0.56, Mar.18.2015
+		{	_ICODE_GOMONTH,			1,			1,				(uptr)&function_gomonth,		2,				2,				&gsSourceLight_gomonth[0]		},	// GOMONTH() by Stefano D'Amico, VJr 0.57, Apr.06.2015
+		{	_ICODE_GRAYSCALE,		1,			1,				(uptr)&function_grayscale,		1,				2,				&gsSourceLight_grayscale[0]		},
+		{	_ICODE_GRN,				1,			1,				(uptr)&function_grn,			1,				1,				&gsSourceLight_grn[0]			},
+		{	_ICODE_HOUR,			1,			1,				(uptr)&function_hour,			0,				1,				&gsSourceLight_hour[0]			},	// HOUR() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_IIF,				1,			1,				(uptr)&function_iif,			2,				3,				&gsSourceLight_iif[0]			},
+		{	_ICODE_INLIST,			1,			1,				(uptr)&function_inlist,			2,				26,				&gsSourceLight_inlist[0]		},
+		{	_ICODE_INT,				1,			1,				(uptr)&function_int,			1,				1,				&gsSourceLight_int[0]			},
+		{	_ICODE_ISNULL,			1,			1,				(uptr)&function_isnull,			1,				1,				&gsSourceLight_isnull[0]		},	// ISNULL() by Hernan Cano, VJr 0.57, Apr.22.2015
+		{	_ICODE_JUSTDRIVE,		1,			1,				(uptr)&function_justdrive,		1,				1,				&gsSourceLight_justdrive[0]		},
+		{	_ICODE_JUSTEXT,			1,			1,				(uptr)&function_justext,		1,				1,				&gsSourceLight_justext[0]		},
+		{	_ICODE_JUSTFNAME,		1,			1,				(uptr)&function_justfname,		1,				1,				&gsSourceLight_justfname[0]		},
+		{	_ICODE_JUSTPATH,		1,			1,				(uptr)&function_justpath,		1,				1,				&gsSourceLight_justpath[0]		},
+		{	_ICODE_JUSTSTEM,		1,			1,				(uptr)&function_juststem,		1,				2,				&gsSourceLight_juststem[0]		},
+		{	_ICODE_LEFT,			1,			1,				(uptr)&function_left,			2,				2,				&gsSourceLight_left[0]			},
+		{	_ICODE_LEN,				1,			1,				(uptr)&function_len,			1,				1,				&gsSourceLight_len[0]			},
+		{	_ICODE_LOG,				1,			1,				(uptr)&function_log,			1,				1,				&gsSourceLight_log[0]			},	// LOG() by Stefano D'Amico, VJr 0.56, Mar.15.2015
+		{	_ICODE_LOG10,			1,			1,				(uptr)&function_log10,			1,				1,				&gsSourceLight_log10[0]			},	// LOG10() by Stefano D'Amico, VJr 0.56, Mar.15.2015
+		{	_ICODE_LOWER,			1,			1,				(uptr)&function_lower,			1,				1,				&gsSourceLight_lower[0]			},
+		{	_ICODE_LTRIM,			1,			1,				(uptr)&function_ltrim,			1,				1,				&gsSourceLight_ltrim[0]			},
+		{	_ICODE_MALP,			1,			1,				(uptr)&function_malp,			1,				2,				&gsSourceLight_malp[0]			},
+		{	_ICODE_MAX,				1,			1,				(uptr)&function_max,			2,				2,				&gsSourceLight_max[0]			},
+		{	_ICODE_MDY,				1,			1,				(uptr)&function_mdy,			0,				1,				&gsSourceLight_mdy[0]			},	// MDY() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_MICROSECOND,		1,			1,				(uptr)&function_microsecond,	0,				0,				&gsSourceLight_microsecond[0]	},
+		{	_ICODE_MIN,				1,			1,				(uptr)&function_min,			2,				2,				&gsSourceLight_min[0]			},
+		{	_ICODE_MINUTE,			1,			1,				(uptr)&function_minute,			0,				1,				&gsSourceLight_minute[0]		},	// MINUTE() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_MOD,				1,			1,				(uptr)&function_mod,			2,				2,				&gsSourceLight_mod[0]			},	// MOD() by Stefano D'Amico, VJr 0.56, Mar.08.2015
+		{	_ICODE_MONTH,			1,			1,				(uptr)&function_month,			0,				1,				&gsSourceLight_month[0]			},	// MONTH() by Stefano D'Amico, VJr 0.57, Apr.04.2015
+		{	_ICODE_NANOSECOND,		1,			1,				(uptr)&function_nanosecond,		0,				0,				&gsSourceLight_nanosecond[0]	},
+		{	_ICODE_NCSET,			1,			1,				(uptr)&function_ncset,			1,				7,				&gsSourceLight_ncset[0]			},
+		{	_ICODE_NVL,				1,			1,				(uptr)&function_nvl,			1,				2,				&gsSourceLight_nvl[0]			},	// NVL() by Hernan Can, VJr 0.57, Apr.22.2015
+		{	_ICODE_OCCURS,			1,			1,				(uptr)&function_occurs,			2,				2,				&gsSourceLight_occurs[0]		},
+		{	_ICODE_OCCURSC,			1,			1,				(uptr)&function_occursc,		2,				2,				&gsSourceLight_occursc[0]		},
+		{	_ICODE_OUTSIDE,			1,			1,				(uptr)&function_outside,		3,				3,				&gsSourceLight_outside[0]		},	// OUTSIDE() by Stefano D'Amico, VJr 0.57, Mar.23.2015
+		{	_ICODE_PADC,			1,			1,				(uptr)&function_padc,			2,				3,				&gsSourceLight_padc[0]			},
+		{	_ICODE_PADL,			1,			1,				(uptr)&function_padl,			2,				3,				&gsSourceLight_padl[0]			},
+		{	_ICODE_PADR,			1,			1,				(uptr)&function_padr,			2,				3,				&gsSourceLight_padr[0]			},
+		{	_ICODE_PAYMENT,			1,			1,				(uptr)&function_payment,		3,				3,				&gsSourceLight_payment[0]		},	// PAYMENT() by Stefano D'Amico, VJr 0.56, Mar.19.2015
+		{	_ICODE_PI,				1,			1,				(uptr)&function_pi,				0,				0,				&gsSourceLight_pi[0]			},	// PI() by Stefano D'Amico, VJr 0.56, Mar.15.2015
+		{	_ICODE_POW,				1,			1,				(uptr)&function_pow,			2,				3,				&gsSourceLight_pow[0]			},	// POW() by Stefano D'Amico, VJr 0.57, Apr.26.2015
+		{	_ICODE_PROPER,			1,			1,				(uptr)&function_proper,			1,				1,				&gsSourceLight_proper[0]		},
+		{	_ICODE_PV,				1,			1,				(uptr)&function_pv,				3,				3,				&gsSourceLight_pv[0]			},	// PV() by Stefano D'Amico, VJr 0.56, Mar.18.2015
+		{	_ICODE_QUARTER,			1,			1,				(uptr)&function_quarter,		0,				2,				&gsSourceLight_quarter[0]		},	// QUARTER() by Stefano D'Amico, VJr 0.57, Apr.05.2015
+		{	_ICODE_RANGER,			1,			1,				(uptr)&function_ranger,			3,				3,				&gsSourceLight_ranger[0]		},	// RANGER() by Stefano D'Amico, VJr 0.56, Mar.14.2015
+		{	_ICODE_RANGER2,			1,			1,				(uptr)&function_ranger2,		3,				3,				&gsSourceLight_ranger2[0]		},
+		{	_ICODE_RAT,				1,			1,				(uptr)&function_rat,			2,				3,				&gsSourceLight_rat[0]			},
+		{	_ICODE_RATC,			1,			1,				(uptr)&function_ratc,			2,				3,				&gsSourceLight_ratc[0]			},
+		{	_ICODE_RED,				1,			1,				(uptr)&function_red,			1,				1,				&gsSourceLight_red[0]			},
+		{	_ICODE_REPLICATE,		1,			1,				(uptr)&function_replicate,		2,				2,				&gsSourceLight_replicate[0]		},
+		{	_ICODE_RGB,				1,			1,				(uptr)&function_rgb,			3,				3,				&gsSourceLight_rgb[0]			},
+		{	_ICODE_RGBA,			1,			1,				(uptr)&function_rgba,			4,				4,				&gsSourceLight_rgba[0]			},
+		{	_ICODE_RIGHT,			1,			1,				(uptr)&function_right,			2,				2,				&gsSourceLight_right[0]			},
+		{	_ICODE_ROUND,			1,			1,				(uptr)&function_round,			2,				2,				&gsSourceLight_round[0]			},	// ROUND() by Stefano D'Amico, VJr 0.56, Mar.16.2015
+		{	_ICODE_RTOD,			1,			1,				(uptr)&function_rtod,			1,				1,				&gsSourceLight_rtod[0]			},	// RTOD() by Stefano D'Amico, VJr 0.56, Mar.16.2015
+		{	_ICODE_RTRIM,			1,			1,				(uptr)&function_rtrim,			1,				4,				&gsSourceLight_rtrim[0]			},
+		{	_ICODE_TRIM,			1,			1,				(uptr)&function_rtrim,			1,				4,				&gsSourceLight_rtrim[0]			},
+		{	_ICODE_SEC,				1,			1,				(uptr)&function_sec,			0,				1,				&gsSourceLight_sec[0]			},	// SEC() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_SECONDS,			1,			1,				(uptr)&function_seconds,		0,				0,				&gsSourceLight_seconds[0]		},	// SECONDS() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_SECONDSTOTIME,	1,			1,				(uptr)&function_secondstotime,	1,				1,				&gsSourceLight_secondstotime[0]	},
+		{	_ICODE_SECONDSTOTIMEX,	1,			1,				(uptr)&function_secondstotimex,	1,				1,				&gsSourceLight_secondstotimex[0] },
+		{	_ICODE_SECONDSX,		1,			1,				(uptr)&function_secondsx,		0,				0,				&gsSourceLight_secondsx[0]		},	// SECONDS() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_SECONDSXTOTIME,	1,			1,				(uptr)&function_secondsxtotime, 1,				1,				&gsSourceLight_secondsxtotime[0] },
+		{	_ICODE_SECONDSXTOTIMEX,	1,			1,				(uptr)&function_secondsxtotimex, 1,				1,				&gsSourceLight_secondsxtotimex[0] },
+		{	_ICODE_SECONDSTOT,		1,			1,				(uptr)&function_secondstot,		1,				2,				&gsSourceLight_secondstot[0]	},
+		{	_ICODE_SECONDSTOX,		1,			1,				(uptr)&function_secondstox,		1,				2,				&gsSourceLight_secondstox[0]	},
+		{	_ICODE_SECONDSXTOT,		1,			1,				(uptr)&function_secondsxtot,	1,				2,				&gsSourceLight_secondsxtot[0]	},
+		{	_ICODE_SECONDSXTOX,		1,			1,				(uptr)&function_secondsxtox,	1,				2,				&gsSourceLight_secondsxtox[0]	},
+		{	_ICODE_SET,				1,			1,				(uptr)&function_set,			1,				2,				&gsSourceLight_set[0]			},
+		{	_ICODE_SIGN,			1,			1,				(uptr)&function_sign,			1,				1,				&gsSourceLight_sign[0]			},	// SIGN() by Stefano D'Amico, VJr 0.56, Mar.14.2015
+		{	_ICODE_SIN,				1,			1,				(uptr)&function_sin,			1,				1,				&gsSourceLight_sin[0]			},	// SIN() by Stefano D'Amico, VJr 0.56, Mar.17.2015
+		{	_ICODE_SLICE,			1,			1,				(uptr)&function_slice,			2,				3,				&gsSourceLight_slice[0]			},
+		{	_ICODE_SPACE,			1,			1,				(uptr)&function_space,			1,				1,				&gsSourceLight_space[0]			},
+		{	_ICODE_SQRT,			1,			1,				(uptr)&function_sqrt,			1,				1,				&gsSourceLight_sqrt[0]			},	// SQRT() by Stefano D'Amico, VJr 0.56, Mar.15.2015
+		{	_ICODE_STARTSWITH,		1,			1,				(uptr)&function_startswith,		2,				4,				&gsSourceLight_startswith[0]	},
+		{	_ICODE_STARTSWITHC,		1,			1,				(uptr)&function_startswithc,	2,				4,				&gsSourceLight_startswithc[0]	},
+		{	_ICODE_STRTRAN,			1,			1,				(uptr)&function_strtran,		2,				4,				&gsSourceLight_strtran[0]		},
+		{	_ICODE_STRTRANC,		1,			1,				(uptr)&function_strtranc,		2,				4,				&gsSourceLight_strtranc[0]		},
+		{	_ICODE_STUFF,			1,			1,				(uptr)&function_stuff,			3,				4,				&gsSourceLight_stuff[0]			},
+		{	_ICODE_SYS,				1,			1,				(uptr)&function_sys,			1,				7,				&gsSourceLight_sys[0]			},
+		{	_ICODE_SYSMETRIC,		1,			1,				(uptr)&function_sysmetric,		1,				1,				&gsSourceLight_sysmetric[0]		},
+		{	_ICODE_TAN,				1,			1,				(uptr)&function_tan,			1,				1,				&gsSourceLight_tan[0]			},	// TAN() by Stefano D'Amico, VJr 0.56, Mar.19.2015
+		{	_ICODE__TEST,			1,			1,				(uptr)&function__test,			1,				1,				NULL							},
+		{	_ICODE_TEXTMERGE,		1,			1,				(uptr)&function_textmerge,		1,				4,				&gsSourceLight_textmerge[0]		},
+		{	_ICODE_TIME,			1,			1,				(uptr)&function_time,			0,				2,				&gsSourceLight_time[0]			},	// TIME() by Hernan Cano, VJr 0.57, Apr.20.2015
+		{	_ICODE_TIMETOSECONDS,	1,			1,				(uptr)&function_timetoseconds,	1,				1,				&gsSourceLight_timetoseconds[0] },
+		{	_ICODE_TIMETOSECONDSX,	1,			1,				(uptr)&function_timetosecondsx,	1,				1,				&gsSourceLight_timetosecondsx[0] },
+		{	_ICODE_TIMETOT,			1,			1,				(uptr)&function_timetot,		1,				2,				&gsSourceLight_timetot[0]		},
+		{	_ICODE_TIMETOX,			1,			1,				(uptr)&function_timetox,		1,				2,				&gsSourceLight_timetox[0]		},
+		{	_ICODE_TIMEX,			1,			1,				(uptr)&function_timex,			0,				2,				&gsSourceLight_timex[0]			},	// TIME() by Hernan Cano, VJr 0.57, Apr.20.2015
+		{	_ICODE_TIMEXTOSECONDS,	1,			1,				(uptr)&function_timextoseconds,	1,				1,				&gsSourceLight_timextoseconds[0] },
+		{	_ICODE_TIMEXTOSECONDSX,	1,			1,				(uptr)&function_timextosecondsx, 1,				1,				&gsSourceLight_timextosecondsx[0] },
+		{	_ICODE_TIMEXTOT,		1,			1,				(uptr)&function_timextot,		1,				2,				&gsSourceLight_timextot[0]		},
+		{	_ICODE_TIMEXTOX,		1,			1,				(uptr)&function_timextox,		1,				2,				&gsSourceLight_timextox[0]		},
+		{	_ICODE_TRANSFORM,		1,			1,				(uptr)&function_transform,		1,				2,				&gsSourceLight_transform[0]		},
+		{	_ICODE_TTOC,			1,			1,				(uptr)&function_ttoc,			1,				2,				&gsSourceLight_ttoc[0]			},	// TTOC() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_TTOD,			1,			1,				(uptr)&function_ttod,			1,				1,				&gsSourceLight_ttod[0]			},	// TTOD() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_TTOSECONDS,		1,			1,				(uptr)&function_ttoseconds,		1,				1,				&gsSourceLight_ttoseconds[0]	},
+		{	_ICODE_TTOSECONDSX,		1,			1,				(uptr)&function_ttosecondsx,	1,				1,				&gsSourceLight_ttosecondsx[0]	},
+		{	_ICODE_TTOTIME,			1,			1,				(uptr)&function_ttotime,		1,				1,				&gsSourceLight_ttotime[0]		},
+		{	_ICODE_TTOTIMEX,		1,			1,				(uptr)&function_ttotimex,		1,				1,				&gsSourceLight_ttotimex[0]		},
+		{	_ICODE_TTOX,			1,			1,				(uptr)&function_ttox,			1,				2,				&gsSourceLight_ttod[0]			},
+		{	_ICODE_TYPE,			1,			1,				(uptr)&function_type,			1,				2,				&gsSourceLight_type[0]	},
+		{	_ICODE_TYPEDETAIL,		1,			1,				(uptr)&function_typedetail,		1,				1,				&gsSourceLight_typedetail[0]	},
+		{	_ICODE_UPPER,			1,			1,				(uptr)&function_upper,			1,				1,				&gsSourceLight_upper[0]			},
+		{	_ICODE_VAL,				1,			1,				(uptr)&function_val,			1,				2,				&gsSourceLight_val[0]			}, 	// VAL() by Stefano D'Amico, VJr 0.56, Mar.22.2015
+		{	_ICODE_VARTYPE,			1,			1,				(uptr)&function_vartype,		1,				2,				&gsSourceLight_vartype[0]		},
+		{	_ICODE_VEC,				1,			1,				(uptr)&function_vec,			1,				10,				&gsSourceLight_vec[0]			},
+		{	_ICODE_VECCOUNT,		1,			1,				(uptr)&function_veccount,		1,				1,				&gsSourceLight_veccount[0]		},
+		{	_ICODE_VECEL,			1,			1,				(uptr)&function_vecel,			1,				3,				&gsSourceLight_vecel[0]			},
+		{	_ICODE_VECSLICE,		1,			1,				(uptr)&function_vecslice,		2,				3,				&gsSourceLight_vecslice[0]		},
+		{	_ICODE_VECSTR,			1,			1,				(uptr)&function_vecstr,			1,				2,				&gsSourceLight_vecstr[0]		},
+		{	_ICODE_VECSTUFF,		1,			1,				(uptr)&function_vecstuff,		3,				4,				&gsSourceLight_vecstuff[0]		},
+		{	_ICODE_VECSYMBOL,		1,			1,				(uptr)&function_vecsymbol,		1,				3,				&gsSourceLight_vecsymbol[0]		},
+		{	_ICODE_VERSION,			1,			1,				(uptr)&function_version,		0,				1,				&gsSourceLight_version[0]		},
+		{	_ICODE_XTOD,			1,			1,				(uptr)&function_xtod,			1,				1,				&gsSourceLight_xtod[0]			},
+		{	_ICODE_XTOSECONDS,		1,			1,				(uptr)&function_xtoseconds,		1,				1,				&gsSourceLight_xtoseconds[0]	},
+		{	_ICODE_XTOSECONDSX,		1,			1,				(uptr)&function_xtosecondsx,	1,				1,				&gsSourceLight_xtosecondsx[0]	},
+		{	_ICODE_XTOT,			1,			1,				(uptr)&function_xtot,			1,				1,				&gsSourceLight_xtot[0]			},
+		{	_ICODE_XTOTIME,			1,			1,				(uptr)&function_xtotime,		1,				1,				&gsSourceLight_xtotime[0]		},
+		{	_ICODE_XTOTIMEX,		1,			1,				(uptr)&function_xtotimex,		1,				1,				&gsSourceLight_xtotimex[0]		},
+		{	_ICODE_YEAR,			1,			1,				(uptr)&function_year,			0,				1,				&gsSourceLight_year[0]			},	// YEAR() by Stefano D'Amico, VJr 0.57, Apr.04.2015
+
+		{	_ICODE_CONCATENATE,		1,			1,				(uptr)&function_concatenate,	2,				2,				&gsSourceLight_concatenate[0]	},
+		{	_ICODE_ADD,				1,			1,				(uptr)&function_add,			2,				2,				&gsSourceLight_add[0]			},
+		{	_ICODE_SUB,				1,			1,				(uptr)&function_sub,			2,				2,				&gsSourceLight_sub[0]			},
+		{	_ICODE_MUL,				1,			1,				(uptr)&function_mul,			2,				2,				&gsSourceLight_mul[0]			},
+		{	_ICODE_DIV,				1,			1,				(uptr)&function_div,			2,				2,				&gsSourceLight_div[0]			},
 	//////
 	// Insert above this step somewhere in the list of functions.
 	// STEP2:
