@@ -83,11 +83,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>\libsf\source\vjr\source\3rd_party\mapm\</OutDir>
-    <TargetName>mapm.lib</TargetName>
+    <TargetName>mapm</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>\libsf\source\vjr\source\3rd_party\mapm\</OutDir>
-    <TargetName>mapm.lib</TargetName>
+    <TargetName>mapm</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
