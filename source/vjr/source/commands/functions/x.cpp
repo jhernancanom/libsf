@@ -86,4 +86,191 @@
 
 
 
-// Nothing currently defined
+//////////
+//
+// Function: XTOD()
+// Converts a DATETIMEX() into a DATE().
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- DatetimeX
+//
+//////
+// Returns:
+//    Date			-- A conversion into the DATE() format.
+//////
+// Example:
+//    k = DATETIMEX()
+//    ? XTOD(k)
+//////
+	SVariable* function_xtod(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_DATE));
+	}
+
+
+
+
+//////////
+//
+// Function: XTOSECONDS()
+// Converts a DATETIMEX() into a SECONDS().
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- DatetimeX
+//
+//////
+// Returns:
+//    Character		-- A conversion into the SECONDS() format.
+//////
+// Example:
+//    k = DATETIMEX()
+//    ? XTOSECONDS(k)
+//////
+	SVariable* function_xtoseconds(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_SECONDS));
+	}
+
+
+
+
+//////////
+//
+// Function: XTOSECONDSX()
+// Converts a DATETIMEX() into a SECONDSX().
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- DatetimeX
+//
+//////
+// Returns:
+//    Character		-- A conversion into the SECONDSX() format.
+//////
+// Example:
+//    k = DATETIMEX()
+//    ? XTOSECONDSX(k)
+//////
+	SVariable* function_xtosecondsx(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_SECONDSX));
+	}
+
+
+
+
+//////////
+//
+// Function: XTOTIME()
+// Converts a DATETIMEX() into a TIME().
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- DatetimeX
+//
+//////
+// Returns:
+//    Character		-- A conversion into the TIME() format.
+//////
+// Example:
+//    k = DATETIMEX()
+//    ? XTOTIME(k)
+//////
+	SVariable* function_xtotime(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_TIME));
+	}
+
+
+
+
+//////////
+//
+// Function: XTOTIMEX()
+// Converts a DATETIMEX() into a TIMEX().
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- DatetimeX
+//
+//////
+// Returns:
+//    Character		-- A conversion into the TIMEX() format.
+//////
+// Example:
+//    k = DATETIMEX()
+//    ? XTOTIMEX(k)
+//////
+	SVariable* function_xtotimex(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_TIMEX));
+	}
+
+
+
+
+//////////
+//
+// Function: XTOT()
+// Converts a DATETIMEX() into a DATETIME().
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Datetime
+//
+//////
+// Returns:
+//    Datetime		-- A conversion into the DATETIME() format.
+//////
+// Example:
+//    k = DATETIMEX()
+//    ? XTOT(k)
+//////
+	SVariable* function_xtot(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_DATETIME));
+	}

@@ -1153,6 +1153,38 @@
 
 //////////
 //
+// Function: DTOX()
+// Converts a DATE() into a DATETIMEX().
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Date
+//
+//////
+// Returns:
+//    DatetimeX		-- A conversion into the DATETIMEX() format.
+//////
+// Example:
+//    k = DATE()
+//    ? DTOX(k)
+//////
+	SVariable* function_dtox(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATE, _CONVERSION_FUNCTION_DATETIMEX));
+	}
+
+
+
+
+//////////
+//
 // Function: DTRANSFROM()
 //  It takes an input formatting string and one or more dates or datetimes and 
 //	creates an output character string which prepares date information as indicated, 

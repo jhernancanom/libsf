@@ -87,7 +87,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(OutputPath)bmps.lib;..\..\source\lib32\glew32.lib;..\..\source\lib32\glew32s.lib;..\..\source\lib32\freeglut.lib;..\..\source\sound\SDL-1.2.15\lib\x86\SDL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(OutputPath)bmps.lib;..\..\source\lib32\glew32.lib;..\..\source\lib32\glew32s.lib;..\..\source\lib32\freeglut.lib;..\..\source\sound\SDL-1.2.15\lib\x86\SDL.lib;..\..\source\3rd_party\mapm\mapm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>\libsf\source\vjr\source\lib32\use_these.bat</Command>
@@ -108,7 +108,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(OutputPath)bmps.lib;..\..\source\lib64\glew32.lib;..\..\source\lib64\glew32s.lib;..\..\source\lib64\freeglut.lib;..\..\source\sound\SDL-1.2.15\lib\amd64\SDL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(OutputPath)bmps.lib;..\..\source\lib64\glew32.lib;..\..\source\lib64\glew32s.lib;..\..\source\lib64\freeglut.lib;..\..\source\sound\SDL-1.2.15\lib\amd64\SDL.lib;..\..\source\3rd_party\mapm\mapm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>\libsf\source\vjr\source\lib64\use_these.bat</Command>
@@ -133,7 +133,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>$(OutputPath)bmps.lib;..\..\source\lib32\glew32.lib;..\..\source\lib32\glew32s.lib;..\..\source\lib32\freeglut.lib;..\..\source\sound\SDL-1.2.15\lib\x86\SDL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(OutputPath)bmps.lib;..\..\source\lib32\glew32.lib;..\..\source\lib32\glew32s.lib;..\..\source\lib32\freeglut.lib;..\..\source\sound\SDL-1.2.15\lib\x86\SDL.lib;..\..\source\3rd_party\mapm\mapm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>call \libsf\source\vjr\source\lib32\use_these.bat
@@ -160,7 +160,7 @@ copy $(OutputPath)$(ProjectName).exe \libsf_offline\source\vjr\bin\32-bit\vjr_ms
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>$(OutputPath)bmps.lib;..\..\source\lib64\glew32.lib;..\..\source\lib64\glew32s.lib;..\..\source\lib64\freeglut.lib;..\..\source\sound\SDL-1.2.15\lib\amd64\SDL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(OutputPath)bmps.lib;..\..\source\lib64\glew32.lib;..\..\source\lib64\glew32s.lib;..\..\source\lib64\freeglut.lib;..\..\source\sound\SDL-1.2.15\lib\amd64\SDL.lib;..\..\source\3rd_party\mapm\mapm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>call \libsf\source\vjr\source\lib64\use_these.bat

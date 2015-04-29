@@ -220,6 +220,138 @@
 
 //////////
 //
+// Function: SECONDSTOTIME()
+// Converts a SECONDS() into a TIME().
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    Character		-- Equivalent of SECONDS() as a TIME()
+//////
+// Example:
+//    k = SECONDS()
+//    ? SECONDSTOTIME(k)
+//////
+	SVariable* function_secondstotime(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDS, _CONVERSION_FUNCTION_TIME));
+	}
+
+
+
+
+//////////
+//
+// Function: SECONDSTOTIMEX()
+// Converts a SECONDS() into a TIMEX().
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    Character		-- Equivalent of SECONDS() as a TIMEX()
+//////
+// Example:
+//    k = SECONDS()
+//    ? SECONDSTOTIMEX(k)
+//////
+	SVariable* function_secondstotimex(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDS, _CONVERSION_FUNCTION_TIMEX));
+	}
+
+
+
+
+//////////
+//
+// Function: SECONDSTOT()
+// Converts a SECONDS() into a DATETIME().
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//     p2			-- (Optional) A date, datetime, or datetimex from which to extract the year,month,day
+//
+//////
+// Returns:
+//    Datetime		-- Equivalent of SECONDS() (and optionally the year,month,day input from p2) as a DATETIME()
+//////
+// Example:
+//    k = SECONDS()
+//    d = DATE()
+//    ? SECONDSTOT(k, d)
+//////
+	SVariable* function_secondstot(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDS, _CONVERSION_FUNCTION_DATETIME));
+	}
+
+
+
+
+//////////
+//
+// Function: SECONDSTOX()
+// Converts a SECONDS() into a DATETIMEX().
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//     p2			-- (Optional) A date, datetime, or datetimex from which to extract the year,month,day
+//
+//////
+// Returns:
+//    Datetime		-- Equivalent of SECONDS() (and optionally the year,month,day input from p2) as a DATETIMEX()
+//////
+// Example:
+//    k = SECONDS()
+//    d = DATE()
+//    ? SECONDSTOX(k, d)
+//////
+	SVariable* function_secondstox(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDS, _CONVERSION_FUNCTION_DATETIMEX));
+	}
+
+
+
+
+//////////
+//
 // Function: SECONDSX()
 // Returns the number of seconds that have elapsed since midnight in extended precision.
 //
@@ -241,6 +373,138 @@
 	SVariable* function_secondsx(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
 		return(ifunction_xseconds_common(thisCode, returnsParams, _XSECONDS_FUNCTION_SECONDSX));
+	}
+
+
+
+
+//////////
+//
+// Function: SECONDSXTOTIME()
+// Converts a SECONDSX() into a TIME().
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    Character		-- Equivalent of SECONDSX() as a TIME()
+//////
+// Example:
+//    k = SECONDSX()
+//    ? SECONDSXTOTIME(k)
+//////
+	SVariable* function_secondsxtotime(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDSX, _CONVERSION_FUNCTION_TIME));
+	}
+
+
+
+
+//////////
+//
+// Function: SECONDSXTOTIMEX()
+// Converts a SECONDSX() into a TIMEX().
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    Character		-- Equivalent of SECONDSX() as a TIMEX()
+//////
+// Example:
+//    k = SECONDSX()
+//    ? SECONDSXTOTIMEX(k)
+//////
+	SVariable* function_secondsxtotimex(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDSX, _CONVERSION_FUNCTION_TIMEX));
+	}
+
+
+
+
+//////////
+//
+// Function: SECONDSXTOT()
+// Converts a SECONDSX() into a DATETIMEX().
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//     p2			-- (Optional) A date, datetime, or datetimex from which to extract the year,month,day
+//
+//////
+// Returns:
+//    Datetime		-- Equivalent of SECONDSX() (and optionally the year,month,day input from p2) as a DATETIME()
+//////
+// Example:
+//    k = SECONDSX()
+//    d = DATE()
+//    ? SECONDSXTOt(k, d)
+//////
+	SVariable* function_secondsxtot(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDSX, _CONVERSION_FUNCTION_DATETIME));
+	}
+
+
+
+
+//////////
+//
+// Function: SECONDSXTOX()
+// Converts a SECONDSX() into a DATETIMEX().
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.26.2015
+//////
+// Change log:
+//     Apr.26.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//     p2			-- (Optional) A date, datetime, or datetimex from which to extract the year,month,day
+//
+//////
+// Returns:
+//    Datetime		-- Equivalent of SECONDSX() (and optionally the year,month,day input from p2) as a DATETIMEX()
+//////
+// Example:
+//    k = SECONDS()
+//    d = DATE()
+//    ? SECONDSXTOX(k, d)
+//////
+	SVariable* function_secondsxtox(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_SECONDSX, _CONVERSION_FUNCTION_DATETIMEX));
 	}
 
 

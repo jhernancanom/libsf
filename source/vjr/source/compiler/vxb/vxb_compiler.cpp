@@ -4868,7 +4868,7 @@ debug_break;
 						case _VAR_TYPE_NUMERIC:
 							// Allocate 10 bytes for 18 digits plus sign in BCD
 							varNew->isValueAllocated = true;
-							iDatum_duplicate(&varNew->value, cgc_defaultNumeric, sizeof(cgc_defaultNumeric));	// Include the trailing NULL
+							iDatum_duplicate(&varNew->value, cgc_defaultNumeric, sizeof(cgc_defaultNumeric) - 1);
 							break;
 
 						case _VAR_TYPE_S64:
@@ -5919,7 +5919,7 @@ if (!gsProps_master[lnI].varInit)
 // through its indirect chain
 //
 //////
-	void iVariable_setAs(SThisCode* thisCode, SVariable* var, s32 tnVarTypeNew)
+	void iVariable_setVarType(SThisCode* thisCode, SVariable* var, s32 tnVarTypeNew)
 	{
 		if (var)
 		{
@@ -5927,7 +5927,7 @@ if (!gsProps_master[lnI].varInit)
 			if (var->indirect)
 			{
 				// Do the indirect layer
-				iVariable_setAs(thisCode, var->indirect, tnVarTypeNew);
+				iVariable_setVarType(thisCode, var->indirect, tnVarTypeNew);
 
 				// Set this one
 				if (var->varType != tnVarTypeNew)
@@ -5941,17 +5941,10 @@ if (!gsProps_master[lnI].varInit)
 					iVariable_delete(thisCode, var, false);
 
 					// Populate the new one
-// TODO:  Need to refactor iVariable_create() so it calls an iiVariable_setAs() function to populate default values for the variable types
-debug_break;
-					iiVariable_setAs(thisCode, var, tnVarTypeNew);
+					iVariable_reset(thisCode, var, false);
 				}
 			}
 		}
-	}
-
-	void iiVariable_setAs(SThisCode* thisCode, SVariable* var, s32 tnVarTypeNew)
-	{
-// TODO:  The code which initializes variables in iVariable_create() needs to be moved here so it's accessible from iVariable_create() and iVariable_setAs()
 	}
 
 
@@ -7645,79 +7638,153 @@ debug_break;
 // Reset the variables to their default types
 //
 //////
-	void iVariable_reset(SThisCode* thisCode, SVariable* var)
+	void iVariable_reset(SThisCode* thisCode, SVariable* var, bool tlTerminateIndirect)
 	{
+		//////////
 		// De-reference the variable
-		var = iiVariable_terminateIndirect(thisCode, var);
+		//////
+			if (tlTerminateIndirect)
+				var = iiVariable_terminateIndirect(thisCode, var);
+			
 
-		// Are we still valid?
-		if (var)
-		{
-			switch (var->varType)
+		//////////
+		// Delete the old value (if any)
+		//////
+			if (var->isValueAllocated)
 			{
-				case _VAR_TYPE_NUMERIC:
-					iDatum_duplicate(&var->value, cgc_defaultNumeric, sizeof(cgc_defaultNumeric) - 1);
-					break;
-
-				case _VAR_TYPE_CHARACTER:
+				var->isValueAllocated = false;
+				if (var->value.data)
 					iDatum_delete(&var->value, false);
-					break;
+			}
 
-				case _VAR_TYPE_LOGICAL:
-					var->value.data_s8[0] = _LOGICAL_FALSE;
-					break;
 
-				case _VAR_TYPE_S8:
-				case _VAR_TYPE_U8:
-					var->value.data_s8[0] = 0;
-					break;
+		//////////
+		// Are we still valid?
+		//////
+			if (var)
+			{
+				switch (var->varType)
+				{
+					case _VAR_TYPE_NUMERIC:
+						var->isValueAllocated = true;
+						iDatum_duplicate(&var->value, cgc_defaultNumeric, sizeof(cgc_defaultNumeric));
+						break;
 
-				case _VAR_TYPE_S16:
-				case _VAR_TYPE_U16:
-					*(u16*)var->value.data = 0;
-					break;
+					case _VAR_TYPE_CHARACTER:
+						var->isValueAllocated = false;
+						iDatum_allocateSpace(&var->value, 1);
 
-				case _VAR_TYPE_F32:
-				case _VAR_TYPE_S32:
-				case _VAR_TYPE_U32:
-				case _VAR_TYPE_OBJECT:
-				case _VAR_TYPE_THISCODE:
-					*(u32*)var->value.data = (u32)0;
-					break;
+						if (var->value._data)
+							var->value.length = 0;
 
-				case _VAR_TYPE_F64:
-				case _VAR_TYPE_S64:
-				case _VAR_TYPE_U64:
-				case _VAR_TYPE_CURRENCY:
-					*(u64*)var->value.data = (u64)0;
-					break;
+						break;
 
-				case _VAR_TYPE_DATE:
-					iDatum_duplicate(&var->value, cgc_defaultDate, sizeof(cgc_defaultDate) - 1);
-					break;
+					case _VAR_TYPE_LOGICAL:
+						var->isValueAllocated = true;
+						iDatum_allocateSpace(&var->value, 1);
 
-				case _VAR_TYPE_DATETIME:
-					var->value.data_dt->julian	= _DATETIME_BLANK_DATETIME_JULIAN;
-					var->value.data_dt->seconds	= _DATETIME_BLANK_DATETIME_SECONDS;
-					break;
+						if (var->value._data)
+							var->value.data_s8[0] = _LOGICAL_FALSE;
 
-				case _VAR_TYPE_DATETIMEX:
-					var->value.data_dtx->jseconds = 0;
-					break;
+						break;
 
-				case _VAR_TYPE_BI:
-				case _VAR_TYPE_BFP:
-					m_apm_set_long(var->value.data_big, 0);
-					break;
+					case _VAR_TYPE_S8:
+					case _VAR_TYPE_U8:
+						var->isValueAllocated = true;
+						iDatum_allocateSpace(&var->value, 1);
 
-				case _VAR_TYPE_ARRAY:
-				case _VAR_TYPE_GUID8:
-				case _VAR_TYPE_GUID16:
-				case _VAR_TYPE_FIELD:
+						if (var->value._data)
+							var->value.data_s8[0] = 0;
+
+						break;
+
+					case _VAR_TYPE_S16:
+					case _VAR_TYPE_U16:
+						var->isValueAllocated = true;
+						iDatum_allocateSpace(&var->value, 2);
+
+						if (var->value._data)
+							*(u16*)var->value.data = 0;
+
+						break;
+
+					case _VAR_TYPE_F32:
+					case _VAR_TYPE_S32:
+					case _VAR_TYPE_U32:
+						var->isValueAllocated = true;
+						iDatum_allocateSpace(&var->value, 4);
+
+						if (var->value._data)
+							*(u32*)var->value.data = (u32)0;
+
+						break;
+
+					case _VAR_TYPE_F64:
+					case _VAR_TYPE_S64:
+					case _VAR_TYPE_U64:
+					case _VAR_TYPE_CURRENCY:
+						var->isValueAllocated = true;
+						iDatum_allocateSpace(&var->value, 8);
+
+						if (var->value._data)
+							*(u64*)var->value.data = (u64)0;
+
+						break;
+
+					case _VAR_TYPE_DATE:
+						var->isValueAllocated = true;
+						iDatum_duplicate(&var->value, cgc_defaultDate, sizeof(cgc_defaultDate) - 1);
+						break;
+
+					case _VAR_TYPE_DATETIME:
+						var->isValueAllocated = true;
+						iDatum_allocateSpace(&var->value, 8);
+
+						if (var->value._data)
+						{
+							var->value.data_dt->julian	= _DATETIME_BLANK_DATETIME_JULIAN;
+							var->value.data_dt->seconds	= _DATETIME_BLANK_DATETIME_SECONDS;
+						}
+						break;
+
+					case _VAR_TYPE_DATETIMEX:
+						var->isValueAllocated = true;
+						iDatum_allocateSpace(&var->value, 8);
+
+						if (var->value._data)
+							var->value.data_dtx->jseconds = 0;
+
+						break;
+
+					case _VAR_TYPE_BFP:
+						var->isValueAllocated = true;
+						var->value.data_big	= m_apm_init();
+						var->value.length	= propGet_settings_PrecisionBFP(_settings);
+						break;
+
+					case _VAR_TYPE_BI:
+						var->isValueAllocated = true;
+						var->value.data_big	= m_apm_init();
+						var->value.length	= propGet_settings_PrecisionBFP(_settings);
+						break;
+
+					case _VAR_TYPE_OBJECT:
+						var->obj = NULL;
+						break;
+
+					case _VAR_TYPE_THISCODE:
+						var->thisCode = NULL;
+						break;
+
+					case _VAR_TYPE_ARRAY:
+					case _VAR_TYPE_GUID8:
+					case _VAR_TYPE_GUID16:
+					case _VAR_TYPE_FIELD:
 // Not yet supported
 debug_break;
-					break;
-			}
+						break;
+				}
+
 		}
 	}
 
