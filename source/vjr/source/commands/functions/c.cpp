@@ -1155,7 +1155,7 @@ debug_break;
 			result = iVariable_create(thisCode, ((tlIncludeTime) ? _VAR_TYPE_DATETIME : _VAR_TYPE_DATE), NULL, false);
 			if (result)
 			{
-				if (!llTimeValid || lnYYYY < 1600 || lnYYYY > 9999 || lnMM < 1 || lnMM > 12 || !iDateMath_isDayValidForDate(lnYYYY, lnMM, lnDD))
+				if (!llTimeValid || lnYYYY < 1600 || lnYYYY > 9999 || lnMM < 1 || lnMM > 12 || !iDateMath_isValidDate(lnYYYY, lnMM, lnDD))
 				{
 					// Invalid, so make it blank
 					result->value.data_dt->julian	= _DATETIME_BLANK_DATETIME_JULIAN;

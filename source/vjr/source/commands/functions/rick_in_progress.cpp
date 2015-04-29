@@ -1500,6 +1500,15 @@
 		SVariable* varP2	= returnsParams->params[2];
 		SVariable* varP3	= returnsParams->params[3];
 
+		u32			lnYear, lnMonth, lnDay;
+		SYSTEMTIME	lst;
+		SVariable*	varResult;
+		bool		error;
+		u32			errorNum;
+
+// Temporarily disabled
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return(NULL);
 
 		//////////
 		// If it's ldDate = DBUNDLE(lnYear, lnMonth, lnDay), then it's the same as DATE()
@@ -1511,8 +1520,147 @@
 		//////////
 		// If we get here, they're bundling on-the-fly
 		//////
-			iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+			// Default to the current date
+			if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
+			else				GetLocalTime(&lst);
+
+
+		//////////
+		// If provided, p1 is the year
+		//////
+			if (varP1)
+			{
+				// The year must be numeric
+				if (!iVariable_isValid(varP1) || !iVariable_isTypeNumeric(varP1))
+				{
+					iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP1), false);
+					return(NULL);
+				}
+				// At this point, we know they've given us a number
+
+				// Grab it
+				lnYear = iiVariable_getAs_s32(thisCode, varP1, false, &error, &errorNum);
+				if (error)
+				{
+					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP1), false);
+					return(NULL);
+				}
+				// If we get here, we have the year.
+				
+				// It needs to be 1600 <= year <= 9999
+				if (lnYear < 1600 || lnYear > 9999)
+				{
+					iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varP1), false);
+					return(NULL);
+				}
+				// When we get here, the year is good
+				lst.wYear = (u16)lnYear;
+			}
+
+
+		//////////
+		// If provided, p2 is the month
+		//////
+			if (varP2)
+			{
+				// The month must be numeric
+				if (!iVariable_isValid(varP2) || !iVariable_isTypeNumeric(varP2))
+				{
+					iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP2), false);
+					return(NULL);
+				}
+				// At this point, we know they've given us a number
+
+				// Grab it
+				lnMonth = iiVariable_getAs_s32(thisCode, varP2, false, &error, &errorNum);
+				if (error)
+				{
+					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP2), false);
+					return(NULL);
+				}
+				// If we get here, we have the year.
+				
+				// It needs to be 1 <= month <= 12, and we'll test later the validity of the indicated date
+				if (lnMonth < 1 || lnMonth > 12)
+				{
+					iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varP2), false);
+					return(NULL);
+				}
+				// When we get here, the year is good
+				lst.wMonth = (u16)lnMonth;
+			}
+
+
+		//////////
+		// If provided, p3 is the day
+		//////
+			if (varP3)
+			{
+				// The day must be numeric
+				if (!iVariable_isValid(varP3) || !iVariable_isTypeNumeric(varP3))
+				{
+					iError_reportByNumber(thisCode, _ERROR_P3_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP3), false);
+					return(NULL);
+				}
+				// At this point, we know they've given us a number
+
+				// Grab it
+				lnDay = iiVariable_getAs_s32(thisCode, varP3, false, &error, &errorNum);
+				if (error)
+				{
+					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP3), false);
+					return(NULL);
+				}
+				// If we get here, we have the year.
+				
+				// It needs to be 1 <= day <= 31, and we'll test later the validity of the indicated date
+				if (lnMonth < 1 || lnMonth > 31)
+				{
+					iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varP3), false);
+					return(NULL);
+				}
+				// When we get here, the year is good
+				lst.wDay = (u16)lnDay;
+			}
+
+
+		//////////
+		// Validate the date is valid
+		//////
+			if (!iDateMath_isValidDate(lst.wYear, lst.wMonth, lst.wDay))
+			{
+				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varP1), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// The date is valid, so we can store it to the destination
+		//////
+			varResult = iiVariable_terminateIndirect(thisCode, varR1);
+			if (varResult->varType != _VAR_TYPE_DATE)
+			{
+				// Convert the chain to a date
+				iVariable_setAs(thisCode, varResult, _VAR_TYPE_DATE);
+				if (!varResult->value.data || varResult->value.length)
+				{
+					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varR1), false);
+					return(NULL);
+				}
+			}
+
+
+		//////////
+		// Store the value
+		//////
+			iiDateMath_get_YYYYMMDD_from_YyyyMmDd(varResult->value.data_s8, (u32)lst.wYear, (u32)lst.wMonth, (u32)lst.wDay);
+
+
+		//////////
+		// No return value in this function
+		//////
 			return(NULL);
+
 	}
 
 

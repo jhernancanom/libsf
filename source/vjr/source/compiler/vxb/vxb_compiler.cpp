@@ -5915,6 +5915,50 @@ if (!gsProps_master[lnI].varInit)
 
 //////////
 //
+// Sets the indicated variable to the indicated type, including all references
+// through its indirect chain
+//
+//////
+	void iVariable_setAs(SThisCode* thisCode, SVariable* var, s32 tnVarTypeNew)
+	{
+		if (var)
+		{
+			// If it's indirect, continue downward
+			if (var->indirect)
+			{
+				// Do the indirect layer
+				iVariable_setAs(thisCode, var->indirect, tnVarTypeNew);
+
+				// Set this one
+				if (var->varType != tnVarTypeNew)
+					var->varType = tnVarTypeNew;
+
+			} else {
+				// Do this one
+				if (var->varType != tnVarTypeNew)
+				{
+					// Delete the existing variable
+					iVariable_delete(thisCode, var, false);
+
+					// Populate the new one
+// TODO:  Need to refactor iVariable_create() so it calls an iiVariable_setAs() function to populate default values for the variable types
+debug_break;
+					iiVariable_setAs(thisCode, var, tnVarTypeNew);
+				}
+			}
+		}
+	}
+
+	void iiVariable_setAs(SThisCode* thisCode, SVariable* var, s32 tnVarTypeNew)
+	{
+// TODO:  The code which initializes variables in iVariable_create() needs to be moved here so it's accessible from iVariable_create() and iVariable_setAs()
+	}
+
+
+
+
+//////////
+//
 // Called to set the input variable of varying types to the output variable of existing type
 //
 //////
@@ -11694,7 +11738,7 @@ debug_break;
 // Called to calculate if the indicated day number is appropriate for the month.
 //
 //////
-	bool iDateMath_isDayValidForDate(u32 year, u32 month, u32 day)
+	bool iDateMath_isValidDate(u32 year, u32 month, u32 day)
 	{
 		// The only valid days are 1..31
 		if (day < 1 || day > 31)

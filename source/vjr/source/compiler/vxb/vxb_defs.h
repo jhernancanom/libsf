@@ -246,6 +246,8 @@ struct SThisCode;
 	bool					iVariable_copy								(SThisCode* thisCode, SVariable* varDst, SVariable* varSrc);
 	SVariable*				iVariable_copy								(SThisCode* thisCode, SVariable* varSrc, bool tlMakeReference);
 	bool					iVariable_set								(SThisCode* thisCode, SVariable* varDst, SVariable* varSrc);
+	void					iVariable_setAs								(SThisCode* thisCode, SVariable* var, s32 tnVarTypeNew);
+	void					iiVariable_setAs							(SThisCode* thisCode, SVariable* var, s32 tnVarTypeNew);
 	bool					iVariable_setNumeric_toNumericType			(SThisCode* thisCode, SVariable* varDst, f32* val_f32, f64* val_f64, s32* val_s32, u32* val_u32, s64* val_s64, u64* val_u64);
 	bool					iVariable_setNumeric_toDestinationType		(SThisCode* thisCode, SVariable* varDst, SVariable* varSrc);
 	bool					iVariable_set_f32_toExistingType			(SThisCode* thisCode, SVariable* var, f32 value);
@@ -311,7 +313,7 @@ struct SThisCode;
 	void					iiDateMath_get_YYYYMMDD_from_YyyyMmDd							(s8* YYYYMMDD, u32  year, u32  month, u32  day);
 	void					iiDateMath_get_SYSTEMTIME_from_SECONDS							(SYSTEMTIME* st, f32 tfSeconds);
 	void					iiDateMath_get_SYSTEMTIME_from_SECONDSX							(SYSTEMTIME* st, f64 tfSecondsx, s32* tnMicroseconds, s32* tnNanosecond);
-	bool					iDateMath_isDayValidForDate										(u32 year, u32 month, u32 day);
+	bool					iDateMath_isValidDate											(u32 year, u32 month, u32 day);
 	bool					iDateMath_isLeapYear											(u32 year);
 	u32						iDateMath_getDayNumberIntoYear									(u32 tnYear, u32 tnMonth, u32 tnDay);
 

@@ -188,7 +188,7 @@
 						return(NULL);
 					}
 					lst.wDay = (u16)iiVariable_getAs_s32(thisCode, varDay, false, &error, &errorNum);
-					if (!error && !iDateMath_isDayValidForDate(lst.wYear, lst.wMonth, lst.wDay))
+					if (!error && !iDateMath_isValidDate(lst.wYear, lst.wMonth, lst.wDay))
 					{
 						iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varDay), false);
 						return(NULL);
@@ -384,7 +384,7 @@
 						return(NULL);
 					}
 					lst.wDay = (u16)iiVariable_getAs_s32(thisCode, varDay, false, &error, &errorNum);
-					if (!error && !iDateMath_isDayValidForDate(lst.wYear, lst.wMonth, lst.wDay))
+					if (!error && !iDateMath_isValidDate(lst.wYear, lst.wMonth, lst.wDay))
 					{
 						iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varDay), false);
 						return(NULL);
