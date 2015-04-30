@@ -187,13 +187,15 @@ ENDIF
 		ELSE
 			IF ISNULL(toParent)
 				* Creating the initial instance
-				loNew		= CREATEOBJECT(&lcAlias..baseclass)
-				loNew.Name	= tcName
+				tlSubSubCreated	= .t.
+				loNew			= CREATEOBJECT(&lcAlias..baseclass)
+				loNew.Name		= tcName
 
 			ELSE
 				* Appending this class to the parent
+				tlSubSubCreated	= .t.
 				toParent.ADDOBJECT(tcName, &lcAlias..baseClass)
-				loNew = toParent.&tcName
+				loNew			= toParent.&tcName
 			ENDIF
 		ENDIF
 	
@@ -201,9 +203,6 @@ ENDIF
 	**********
 	* Append any parent classes
 	*****
-*IF "test1" $ LOWER(&lcAlias..parent)
-*	SET STEP ON
-*ENDIF
 *		lcObjParent = &lcAlias..parent
 *		SCAN FOR EMPTY(&lcAlias..reserved1) AND LOWER(&lcAlias..objName) = LOWER(lcObjParent) AND NOT EMPTY(&lcAlias..parent) AND NOT "." $ &lcAlias..parent
 *			IF RECNO() != lnFoundRecno AND NOT TRANSFORM(RECNO()) $ tcParentRecnos AND LOWER(tcClass) != &lcAlias..class

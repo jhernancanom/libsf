@@ -8439,6 +8439,8 @@ debug_break;
 // Note:  The types supported hre relate to the varTypes flagged in iVariable_areTypesCompatible()
 //
 //////
+	static SMapm* ljMinAs_bool = NULL;
+	static SMapm* ljMaxAs_bool = NULL;
 	bool iiVariable_getAs_bool(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
 		union {
@@ -8468,6 +8470,28 @@ debug_break;
 		*tlError	= false;
 		*tnErrorNum	= 0;
 
+
+		//////////
+		// For bfp() and bi(), initialize the test value
+		//////
+			if (var->varType >= _VAR_TYPE_BIG_NUMBER_START && var->varType <= _VAR_TYPE_BIG_NUMBER_END)
+			{
+				// Minimum value
+				if (!ljMinAs_bool)
+				{
+					ljMinAs_bool = m_apm_init();
+					m_apm_set_long(ljMinAs_bool, -1);
+				}
+
+				// Maximum value
+				if (!ljMaxAs_bool)
+				{
+					ljMaxAs_bool = m_apm_init();
+					m_apm_set_long(ljMaxAs_bool, 1);
+				}
+			}
+
+
 		// Based on the type of variable it is, return the value
 		switch (var->varType)
 		{
@@ -8486,12 +8510,8 @@ debug_break;
 			case _VAR_TYPE_U8:			return(!(*(u8*)var->value.data		== 0));
 			case _VAR_TYPE_F32:			return(!(*(f32*)var->value.data		== 0.0f));
 			case _VAR_TYPE_F64:			return(!(*(f64*)var->value.data		== 0.0));
-
-			case _VAR_TYPE_BI:			// TODO:  BI needs coded
-				break;
-
-			case _VAR_TYPE_BFP:			// TODO:  BFP needs coded
-				break;
+			case _VAR_TYPE_BI:			return(!(m_apm_compare(var->value.data_big, ljMinAs_bool) > 0) && (m_apm_compare(var->value.data_big, ljMaxAs_bool) < 0));
+			case _VAR_TYPE_BFP:			return(!(m_apm_compare(var->value.data_big, ljMinAs_bool) > 0) && (m_apm_compare(var->value.data_big, ljMaxAs_bool) < 0));
 
 			case _VAR_TYPE_CHARACTER:
 				// We can convert it to bool if auto-convert is on, or if it has been force converted
@@ -8535,6 +8555,8 @@ debug_break;
 // Uses:
 //		_set_autoConvert
 //////
+	static SMapm* ljMinAs_s8 = NULL;
+	static SMapm* ljMaxAs_s8 = NULL;
 	s8 iiVariable_getAs_s8(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
 		s8		buffer[16];
@@ -8565,6 +8587,29 @@ debug_break;
 		// Begin
 		*tlError	= false;
 		*tnErrorNum	= 0;
+
+
+		//////////
+		// For bfp() and bi(), initialize the test value
+		//////
+			if (var->varType >= _VAR_TYPE_BIG_NUMBER_START && var->varType <= _VAR_TYPE_BIG_NUMBER_END)
+			{
+				// Minimum value
+				if (!ljMinAs_s8)
+				{
+					ljMinAs_s8 = m_apm_init();
+					m_apm_set_long(ljMinAs_s8, _s8_min);
+				}
+
+				// Maximum value
+				if (!ljMaxAs_s8)
+				{
+					ljMaxAs_s8 = m_apm_init();
+					m_apm_set_long(ljMaxAs_s8, _s8_max);
+				}
+			}
+
+
 		// Based on the type of variable it is, return the value
 		switch (var->varType)
 		{
@@ -8747,12 +8792,42 @@ debug_break;
 
 
 			case _VAR_TYPE_BI:
-// TODO:  BI needs coded
+				// Make sure it's in range
+				if (m_apm_compare(var->value.data_big, ljMinAs_s8) >= 0 || m_apm_compare(var->value.data_big, ljMaxAs_s8) <= 0)
+				{
+					// In range
+					m_apm_to_integer_string(buffer, var->value.data_big);
+
+					// Get the value
+					return(atoi(buffer));
+
+				} else {
+					// Not in range
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+				}
 				break;
 
+
 			case _VAR_TYPE_BFP:
-// TODO:  BFP needs coded
+				// Make sure it's in range
+				if (m_apm_compare(var->value.data_big, ljMinAs_s8) >= 0 || m_apm_compare(var->value.data_big, ljMaxAs_s8) <= 0)
+				{
+					// In range
+					m_apm_to_integer_string(buffer, var->value.data_big);
+
+					// Get the value
+					return(atoi(buffer));
+
+				} else {
+					// Not in range
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+				}
 				break;
+
 
 			case _VAR_TYPE_CHARACTER:
 				// We can convert it to s32 if auto-convert is on, or if it has been force converted
@@ -8840,9 +8915,10 @@ debug_break;
 //		_set_autoConvert
 //
 //////
+	static SMapm* ljMinAs_s16 = NULL;
+	static SMapm* ljMaxAs_s16 = NULL;
 	s16 iiVariable_getAs_s16(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
-		s8		buffer[16];
 		union {
 			s8			lnValue_s8;
 			s16			lnValue_s16;
@@ -8856,6 +8932,7 @@ debug_break;
 			f64			lnValue_f64;
 			SDateTime	dt;
 		};
+		s8		buffer[64];
 		bool	llError;
 		u32		lnErrorNum;
 
@@ -8870,6 +8947,29 @@ debug_break;
 		// Begin
 		*tlError	= false;
 		*tnErrorNum	= 0;
+
+
+		//////////
+		// For bfp() and bi(), initialize the test value
+		//////
+			if (var->varType >= _VAR_TYPE_BIG_NUMBER_START && var->varType <= _VAR_TYPE_BIG_NUMBER_END)
+			{
+				// Minimum value
+				if (!ljMinAs_s16)
+				{
+					ljMinAs_s16 = m_apm_init();
+					m_apm_set_long(ljMinAs_s16, _s16_min);
+				}
+
+				// Maximum value
+				if (!ljMaxAs_s16)
+				{
+					ljMaxAs_s16 = m_apm_init();
+					m_apm_set_long(ljMaxAs_s16, _s16_max);
+				}
+			}
+
+
 		// Based on the type of variable it is, return the value
 		switch (var->varType)
 		{
@@ -9032,12 +9132,42 @@ debug_break;
 
 
 			case _VAR_TYPE_BI:
-// TODO:  BI needs coded
+				// Make sure it's in range
+				if (m_apm_compare(var->value.data_big, ljMinAs_s16) >= 0 || m_apm_compare(var->value.data_big, ljMaxAs_s16) <= 0)
+				{
+					// In range
+					m_apm_to_integer_string(buffer, var->value.data_big);
+
+					// Get the value
+					return(atoi(buffer));
+
+				} else {
+					// Not in range
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+				}
 				break;
 
+
 			case _VAR_TYPE_BFP:
-// TODO:  BFP needs coded
+				// Make sure it's in range
+				if (m_apm_compare(var->value.data_big, ljMinAs_s16) >= 0 || m_apm_compare(var->value.data_big, ljMaxAs_s16) <= 0)
+				{
+					// In range
+					m_apm_to_integer_string(buffer, var->value.data_big);
+
+					// Get the value
+					return(atoi(buffer));
+
+				} else {
+					// Not in range
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+				}
 				break;
+
 
 			case _VAR_TYPE_CHARACTER:
 				// We can convert it to s32 if auto-convert is on, or if it has been force converted
@@ -9146,9 +9276,10 @@ debug_break;
 //		_set_autoConvert
 //
 //////
+	static SMapm* ljMinAs_s32 = NULL;
+	static SMapm* ljMaxAs_s32 = NULL;
 	s32 iiVariable_getAs_s32(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
-		s8		buffer[16];
 		union {
 			s8			lnValue_s8;
 			s16			lnValue_s16;
@@ -9161,6 +9292,7 @@ debug_break;
 			f64			lnValue_f64;
 			SDateTime	dt;
 		};
+		s8		buffer[64];
 		bool	llError;
 		u32		lnErrorNum;
 
@@ -9175,6 +9307,29 @@ debug_break;
 		// Begin
 		*tlError	= false;
 		*tnErrorNum	= 0;
+
+
+		//////////
+		// For bfp() and bi(), initialize the test value
+		//////
+			if (var->varType >= _VAR_TYPE_BIG_NUMBER_START && var->varType <= _VAR_TYPE_BIG_NUMBER_END)
+			{
+				// Minimum value
+				if (!ljMinAs_s32)
+				{
+					ljMinAs_s32 = m_apm_init();
+					m_apm_set_long(ljMinAs_s32, _s32_min);
+				}
+
+				// Maximum value
+				if (!ljMaxAs_s32)
+				{
+					ljMaxAs_s32 = m_apm_init();
+					m_apm_set_long(ljMaxAs_s32, _s32_max);
+				}
+			}
+
+
 		// Based on the type of variable it is, return the value
 		switch (var->varType)
 		{
@@ -9317,12 +9472,42 @@ debug_break;
 
 
 			case _VAR_TYPE_BI:
-// TODO:  BI needs coded
+				// Make sure it's in range
+				if (m_apm_compare(var->value.data_big, ljMinAs_s32) >= 0 || m_apm_compare(var->value.data_big, ljMaxAs_s32) <= 0)
+				{
+					// In range
+					m_apm_to_integer_string(buffer, var->value.data_big);
+
+					// Get the value
+					return(atoi(buffer));
+
+				} else {
+					// Not in range
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+				}
 				break;
 
+
 			case _VAR_TYPE_BFP:
-// TODO:  BFP needs coded
+				// Make sure it's in range
+				if (m_apm_compare(var->value.data_big, ljMinAs_s32) >= 0 || m_apm_compare(var->value.data_big, ljMaxAs_s32) <= 0)
+				{
+					// In range
+					m_apm_to_integer_string(buffer, var->value.data_big);
+
+					// Get the value
+					return(atoi(buffer));
+
+				} else {
+					// Not in range
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+				}
 				break;
+
 
 			case _VAR_TYPE_CHARACTER:
 				// We can convert it to s32 if auto-convert is on, or if it has been force converted
@@ -9439,9 +9624,10 @@ debug_break;
 //		_set_autoConvert
 //
 //////
+	static SMapm* ljMinAs_u16 = NULL;
+	static SMapm* ljMaxAs_u16 = NULL;
 	u16 iiVariable_getAs_u16(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
-		s8		buffer[16];
 		union {
 			s8			lnValue_s8;
 			s16			lnValue_s16;
@@ -9455,6 +9641,7 @@ debug_break;
 			f64			lnValue_f64;
 			SDateTime	dt;
 		};
+		s8		buffer[64];
 		bool	llError;
 		u32		lnErrorNum;
 
@@ -9469,6 +9656,29 @@ debug_break;
 		// Begin
 		*tlError	= false;
 		*tnErrorNum	= 0;
+
+
+		//////////
+		// For bfp() and bi(), initialize the test value
+		//////
+			if (var->varType >= _VAR_TYPE_BIG_NUMBER_START && var->varType <= _VAR_TYPE_BIG_NUMBER_END)
+			{
+				// Minimum value
+				if (!ljMinAs_u16)
+				{
+					ljMinAs_u16 = m_apm_init();
+					m_apm_set_long(ljMinAs_u16, 0);
+				}
+
+				// Maximum value
+				if (!ljMaxAs_u16)
+				{
+					ljMaxAs_u16 = m_apm_init();
+					m_apm_set_long(ljMaxAs_u16, _u16_max);
+				}
+			}
+
+
 		// Based on the type of variable it is, return the value
 		switch (var->varType)
 		{
@@ -9592,12 +9802,42 @@ debug_break;
 
 
 			case _VAR_TYPE_BI:
-// TODO:  BI needs coded
+				// Make sure it's in range
+				if (m_apm_compare(var->value.data_big, ljMinAs_u16) >= 0 || m_apm_compare(var->value.data_big, ljMaxAs_u16) <= 0)
+				{
+					// In range
+					m_apm_to_integer_string(buffer, var->value.data_big);
+
+					// Get the value
+					return(atoi(buffer));
+
+				} else {
+					// Not in range
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+				}
 				break;
 
+
 			case _VAR_TYPE_BFP:
-// TODO:  BFP needs coded
+				// Make sure it's in range
+				if (m_apm_compare(var->value.data_big, ljMinAs_u16) >= 0 || m_apm_compare(var->value.data_big, ljMaxAs_u16) <= 0)
+				{
+					// In range
+					m_apm_to_integer_string(buffer, var->value.data_big);
+
+					// Get the value
+					return(atoi(buffer));
+
+				} else {
+					// Not in range
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+				}
 				break;
+
 
 			case _VAR_TYPE_CHARACTER:
 				// We can convert it to u32 if auto-convert is on, or if it has been force converted
@@ -9705,9 +9945,10 @@ debug_break;
 //		_set_autoConvert
 //
 //////
+	static SMapm* ljMinAs_u32 = NULL;
+	static SMapm* ljMaxAs_u32 = NULL;
 	u32 iiVariable_getAs_u32(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
-		s8		buffer[16];
 		union {
 			s8			lnValue_s8;
 			s16			lnValue_s16;
@@ -9720,6 +9961,7 @@ debug_break;
 			f64			lnValue_f64;
 			SDateTime	dt;
 		};
+		s8		buffer[64];
 		bool	llError;
 		u32		lnErrorNum;
 
@@ -9734,6 +9976,29 @@ debug_break;
 		// Begin
 		*tlError	= false;
 		*tnErrorNum	= 0;
+
+
+		//////////
+		// For bfp() and bi(), initialize the test value
+		//////
+			if (var->varType >= _VAR_TYPE_BIG_NUMBER_START && var->varType <= _VAR_TYPE_BIG_NUMBER_END)
+			{
+				// Minimum value
+				if (!ljMinAs_u32)
+				{
+					ljMinAs_u32 = m_apm_init();
+					m_apm_set_long(ljMinAs_u32, 0);
+				}
+
+				// Maximum value
+				if (!ljMaxAs_u32)
+				{
+					ljMaxAs_u32 = m_apm_init();
+					m_apm_set_long(ljMaxAs_u32, _u32_max);
+				}
+			}
+
+
 		// Based on the type of variable it is, return the value
 		switch (var->varType)
 		{
@@ -9857,12 +10122,42 @@ debug_break;
 
 
 			case _VAR_TYPE_BI:
-// TODO:  BI needs coded
+				// Make sure it's in range
+				if (m_apm_compare(var->value.data_big, ljMinAs_u32) >= 0 || m_apm_compare(var->value.data_big, ljMaxAs_u32) <= 0)
+				{
+					// In range
+					m_apm_to_integer_string(buffer, var->value.data_big);
+
+					// Get the value
+					return(atoi(buffer));
+
+				} else {
+					// Not in range
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+				}
 				break;
 
+
 			case _VAR_TYPE_BFP:
-// TODO:  BFP needs coded
+				// Make sure it's in range
+				if (m_apm_compare(var->value.data_big, ljMinAs_u32) >= 0 || m_apm_compare(var->value.data_big, ljMaxAs_u32) <= 0)
+				{
+					// In range
+					m_apm_to_integer_string(buffer, var->value.data_big);
+
+					// Get the value
+					return(atoi(buffer));
+
+				} else {
+					// Not in range
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+				}
 				break;
+
 
 			case _VAR_TYPE_CHARACTER:
 				// We can convert it to u32 if auto-convert is on, or if it has been force converted
@@ -9970,6 +10265,8 @@ debug_break;
 //		_set_autoConvert
 //
 //////
+	static SMapm* ljMinAs_s64 = NULL;
+	static SMapm* ljMaxAs_s64 = NULL;
 	s64 iiVariable_getAs_s64(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
 		union {
@@ -10001,6 +10298,29 @@ debug_break;
 		// Begin
 		*tlError	= false;
 		*tnErrorNum	= 0;
+
+
+		//////////
+		// For bfp() and bi(), initialize the test value
+		//////
+			if (var->varType >= _VAR_TYPE_BIG_NUMBER_START && var->varType <= _VAR_TYPE_BIG_NUMBER_END)
+			{
+				// Minimum value
+				if (!ljMinAs_s64)
+				{
+					ljMinAs_s64 = m_apm_init();
+					m_apm_set_double(ljMinAs_s64, (f64)_s64_min);
+				}
+
+				// Maximum value
+				if (!ljMaxAs_s64)
+				{
+					ljMaxAs_s64 = m_apm_init();
+					m_apm_set_double(ljMaxAs_s64, (f64)_s64_max);
+				}
+			}
+
+
 		// Based on the type of variable it is, return the value
 		switch (var->varType)
 		{
@@ -10067,12 +10387,42 @@ debug_break;
 
 
 			case _VAR_TYPE_BI:
-// TODO:  BI needs coded
+				// Make sure it's in range
+				if (m_apm_compare(var->value.data_big, ljMinAs_s64) >= 0 || m_apm_compare(var->value.data_big, ljMaxAs_s64) <= 0)
+				{
+					// In range
+					m_apm_to_integer_string(buffer, var->value.data_big);
+
+					// Get the value
+					return(atoi(buffer));
+
+				} else {
+					// Not in range
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+				}
 				break;
 
+
 			case _VAR_TYPE_BFP:
-// TODO:  BFP needs coded
+				// Make sure it's in range
+				if (m_apm_compare(var->value.data_big, ljMinAs_s64) >= 0 || m_apm_compare(var->value.data_big, ljMaxAs_s64) <= 0)
+				{
+					// In range
+					m_apm_to_integer_string(buffer, var->value.data_big);
+
+					// Get the value
+					return(atoi(buffer));
+
+				} else {
+					// Not in range
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+				}
 				break;
+
 
 			case _VAR_TYPE_CHARACTER:
 				// We can convert it to s32 if auto-convert is on, or if it has been force converted
@@ -10145,6 +10495,8 @@ debug_break;
 // Called to return the value of the indicated variable as an unsigned 64-bit integer
 //
 //////
+	static SMapm* ljMinAs_u64 = NULL;
+	static SMapm* ljMaxAs_u64 = NULL;
 	u64 iiVariable_getAs_u64(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
 		union {
@@ -10176,6 +10528,29 @@ debug_break;
 		// Begin
 		*tlError	= false;
 		*tnErrorNum	= 0;
+
+
+		//////////
+		// For bfp() and bi(), initialize the test value
+		//////
+			if (var->varType >= _VAR_TYPE_BIG_NUMBER_START && var->varType <= _VAR_TYPE_BIG_NUMBER_END)
+			{
+				// Minimum value
+				if (!ljMinAs_u64)
+				{
+					ljMinAs_u64 = m_apm_init();
+					m_apm_set_long(ljMinAs_u64, 0);
+				}
+
+				// Maximum value
+				if (!ljMaxAs_u64)
+				{
+					ljMaxAs_u64 = m_apm_init();
+					m_apm_set_double(ljMaxAs_u64, (f64)_u64_max);
+				}
+			}
+
+
 		// Based on the type of variable it is, return the value
 		switch (var->varType)
 		{
@@ -10232,12 +10607,42 @@ debug_break;
 
 
 			case _VAR_TYPE_BI:
-// TODO:  BI needs coded
+				// Make sure it's in range
+				if (m_apm_compare(var->value.data_big, ljMinAs_u64) >= 0 || m_apm_compare(var->value.data_big, ljMaxAs_u64) <= 0)
+				{
+					// In range
+					m_apm_to_integer_string(buffer, var->value.data_big);
+
+					// Get the value
+					return(atoi(buffer));
+
+				} else {
+					// Not in range
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+				}
 				break;
 
+
 			case _VAR_TYPE_BFP:
-// TODO:  BFP needs coded
+				// Make sure it's in range
+				if (m_apm_compare(var->value.data_big, ljMinAs_u64) >= 0 || m_apm_compare(var->value.data_big, ljMaxAs_u64) <= 0)
+				{
+					// In range
+					m_apm_to_integer_string(buffer, var->value.data_big);
+
+					// Get the value
+					return(atoi(buffer));
+
+				} else {
+					// Not in range
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+				}
 				break;
+
 
 			case _VAR_TYPE_CHARACTER:
 				// We can convert it to s32 if auto-convert is on, or if it has been force converted
@@ -10320,6 +10725,8 @@ debug_break;
 //		_set_autoConvert
 //
 //////
+	static SMapm* ljMinAs_f32 = NULL;
+	static SMapm* ljMaxAs_f32 = NULL;
 	f32 iiVariable_getAs_f32(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
 		union {
@@ -10337,7 +10744,9 @@ debug_break;
 		s64		lnDtx;
 		s32		lnMillisecond;
 		u32		lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond;
+		f32		lfVal32;
 		s8		buffer[64];
+		SDatum	bufferBig;
 		bool	llError;
 		u32		lnErrorNum;
 
@@ -10352,6 +10761,29 @@ debug_break;
 		// Begin
 		*tlError	= false;
 		*tnErrorNum	= 0;
+
+
+		//////////
+		// For bfp() and bi(), initialize the test value
+		//////
+			if (var->varType >= _VAR_TYPE_BIG_NUMBER_START && var->varType <= _VAR_TYPE_BIG_NUMBER_END)
+			{
+				// Minimum value
+				if (!ljMinAs_f32)
+				{
+					ljMinAs_f32 = m_apm_init();
+					m_apm_set_double(ljMinAs_f32, (f64)_f32_min);
+				}
+
+				// Maximum value
+				if (!ljMaxAs_f32)
+				{
+					ljMaxAs_f32 = m_apm_init();
+					m_apm_set_double(ljMaxAs_f32, (f64)_f32_max);
+				}
+			}
+
+
 		// Based on the type of variable it is, return the value
 		switch (var->varType)
 		{
@@ -10386,12 +10818,61 @@ debug_break;
 
 
 			case _VAR_TYPE_BI:
-// TODO:  BI needs coded
+				// Make sure it's in range
+				if (m_apm_compare(var->value.data_big, ljMinAs_f32) >= 0 || m_apm_compare(var->value.data_big, ljMaxAs_f32) <= 0)
+				{
+					// In range
+					bufferBig._data		= 0;
+					bufferBig.length	= 0;
+					iDatum_allocateSpace(&bufferBig, iiBi_calc_significantDigits_bySize(var) * 2);
+					m_apm_to_integer_string(bufferBig.data_s8, var->value.data_big);
+
+					// Get the value
+					lfVal32 = (f32)atof(bufferBig.data_s8);
+
+					// Clean house
+					iDatum_delete(&bufferBig, false);
+
+					// Signify the result
+					return(lfVal32);
+
+				} else {
+					// Not in range
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+				}
 				break;
 
+
 			case _VAR_TYPE_BFP:
-// TODO:  BFP needs coded
+				// Make sure it's in range
+				if (m_apm_compare(var->value.data_big, ljMinAs_f32) >= 0 || m_apm_compare(var->value.data_big, ljMaxAs_f32) <= 0)
+				{
+					// In range
+					bufferBig._data		= 0;
+					bufferBig.length	= 0;
+					iDatum_allocateSpace(&bufferBig, iiBfp_calc_significantDigits_bySize(var) * 2);
+					m_apm_to_string(bufferBig.data_s8, bufferBig.length / 2, var->value.data_big);
+					iiBfp_convertFrom_scientificNotation(thisCode, &bufferBig, var);
+
+					// Get the value
+					lfVal32 = (f32)atof(bufferBig.data_s8);
+
+					// Clean house
+					iDatum_delete(&bufferBig, false);
+
+					// Signify the result
+					return(lfVal32);
+
+				} else {
+					// Not in range
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+				}
 				break;
+
 
 			case _VAR_TYPE_CHARACTER:
 				// We can convert it to s32 if auto-convert is on, or if it has been force converted
@@ -10466,6 +10947,8 @@ debug_break;
 //		_set_autoConvert
 //
 //////
+	static SMapm* ljMinAs_f64 = NULL;
+	static SMapm* ljMaxAs_f64 = NULL;
 	f64 iiVariable_getAs_f64(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
 		union {
@@ -10483,7 +10966,9 @@ debug_break;
 		s64		lnDtx;
 		s32		lnMillisecond;
 		u32		lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond;
+		f64		lfVal64;
 		s8		buffer[64];
+		SDatum	bufferBig;
 		bool	llError;
 		u32		lnErrorNum;
 
@@ -10498,6 +10983,29 @@ debug_break;
 		// Begin
 		*tlError	= false;
 		*tnErrorNum	= 0;
+
+
+		//////////
+		// For bfp() and bi(), initialize the test value
+		//////
+			if (var->varType >= _VAR_TYPE_BIG_NUMBER_START && var->varType <= _VAR_TYPE_BIG_NUMBER_END)
+			{
+				// Minimum value
+				if (!ljMinAs_f64)
+				{
+					ljMinAs_f64 = m_apm_init();
+					m_apm_set_double(ljMinAs_f64, (f64)_f64_min);
+				}
+
+				// Maximum value
+				if (!ljMaxAs_f64)
+				{
+					ljMaxAs_f64 = m_apm_init();
+					m_apm_set_double(ljMaxAs_f64, (f64)_f64_max);
+				}
+			}
+
+
 		// Based on the type of variable it is, return the value
 		switch (var->varType)
 		{
@@ -10515,13 +11023,63 @@ debug_break;
 			case _VAR_TYPE_U64:				return((f64)*var->value.data_s64);
 			case _VAR_TYPE_CURRENCY:		return((f64)(*(s64*)var->value.data / 10000));
 
+
 			case _VAR_TYPE_BI:
-// TODO:  BI needs coded
+				// Make sure it's in range
+				if (m_apm_compare(var->value.data_big, ljMinAs_f64) >= 0 || m_apm_compare(var->value.data_big, ljMaxAs_f64) <= 0)
+				{
+					// In range
+					bufferBig._data		= 0;
+					bufferBig.length	= 0;
+					iDatum_allocateSpace(&bufferBig, iiBi_calc_significantDigits_bySize(var) * 2);
+					m_apm_to_integer_string(bufferBig.data_s8, var->value.data_big);
+
+					// Get the value
+					lfVal64 = atof(bufferBig.data_s8);
+
+					// Clean house
+					iDatum_delete(&bufferBig, false);
+
+					// Signify the result
+					return(lfVal64);
+
+				} else {
+					// Not in range
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+				}
 				break;
 
+
 			case _VAR_TYPE_BFP:
-// TODO:  BFP needs coded
+				// Make sure it's in range
+				if (m_apm_compare(var->value.data_big, ljMinAs_f64) >= 0 || m_apm_compare(var->value.data_big, ljMaxAs_f64) <= 0)
+				{
+					// In range
+					bufferBig._data		= 0;
+					bufferBig.length	= 0;
+					iDatum_allocateSpace(&bufferBig, iiBfp_calc_significantDigits_bySize(var) * 2);
+					m_apm_to_string(bufferBig.data_s8, bufferBig.length / 2, var->value.data_big);
+					iiBfp_convertFrom_scientificNotation(thisCode, &bufferBig, var);
+
+					// Get the value
+					lfVal64 = atof(bufferBig.data_s8);
+
+					// Clean house
+					iDatum_delete(&bufferBig, false);
+
+					// Signify the result
+					return(lfVal64);
+
+				} else {
+					// Not in range
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+				}
 				break;
+
 
 			case _VAR_TYPE_CHARACTER:
 				// We can convert it to s32 if auto-convert is on, or if it has been force converted
@@ -11916,12 +12474,12 @@ debug_break;
 		//////////
 		// Fixup
 		//////
-			iiBfp_convertFrom_scientificNotation(thisCode, varDisp, varVal);
+			iiBfp_convertFrom_scientificNotation(thisCode, &varDisp->value, varVal);
 
 	}
 
 	// This adjusts the display version of the value, which must be in sync (being just converted, for example)
-	void iiBfp_convertFrom_scientificNotation(SThisCode* thisCode, SVariable* varDisp, SVariable* varVal)
+	void iiBfp_convertFrom_scientificNotation(SThisCode* thisCode, SDatum* datum, SVariable* varVal)
 	{
 		s32 lnI, lnSigDigs;
 
@@ -11933,18 +12491,18 @@ debug_break;
 			for (lnI = 1; lnI < lnSigDigs && lnI < varVal->value.data_big->m_apm_exponent; lnI++)
 			{
 				// Copy the digit over
-				varDisp->value.data[lnI] = varDisp->value.data[lnI + 1];
+				datum->data[lnI] = datum->data[lnI + 1];
 			}
 
 			// Add the period back in
-			varDisp->value.data[lnI] = '.';
+			datum->data[lnI] = '.';
 
 
 		//////////
 		// Based on the decimals setting, terminate after that decimal
 		//////
-			varDisp->value.length						= min(lnI + propGet_settings_Decimals(_settings) + 1, varDisp->value.length);
-			varDisp->value.data[varDisp->value.length]	= 0;
+			datum->length				= min(lnI + propGet_settings_Decimals(_settings) + 1, datum->length);
+			datum->data[datum->length]	= 0;
 
 	}
 
@@ -11983,12 +12541,12 @@ debug_break;
 		//////////
 		// Fixup
 		//////
-			iiBi_convertFrom_scientificNotation(thisCode, varDisp, varVal);
+			iiBi_convertFrom_scientificNotation(thisCode, &varDisp->value, varVal);
 
 	}
 
 	// This adjusts the display version of the value, which must be in sync (being just converted, for example)
-	void iiBi_convertFrom_scientificNotation(SThisCode* thisCode, SVariable* varDisp, SVariable* varVal)
+	void iiBi_convertFrom_scientificNotation(SThisCode* thisCode, SDatum* datum, SVariable* varVal)
 	{
 		s32 lnSigDigs;
 
@@ -11996,9 +12554,9 @@ debug_break;
 		//////////
 		// Size and null-terminate
 		//////
-			lnSigDigs									= iiBi_calc_significantDigits_bySize(varVal);
-			varDisp->value.length						= min(min(lnSigDigs, varVal->value.data_big->m_apm_exponent), varDisp->value.length);
-			varDisp->value.data[varDisp->value.length]	= 0;
+			lnSigDigs					= iiBi_calc_significantDigits_bySize(varVal);
+			datum->length				= min(min(lnSigDigs, varVal->value.data_big->m_apm_exponent), datum->length);
+			datum->data[datum->length]	= 0;
 
 	}
 

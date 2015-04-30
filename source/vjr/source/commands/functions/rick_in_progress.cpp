@@ -241,8 +241,8 @@
 		u32			errorNum;
 
 // Temporarily disabled
-iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-return(NULL);
+// iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+// return(NULL);
 
 		//////////
 		// If it's ldDate = DBUNDLE(lnYear, lnMonth, lnDay), then it's the same as DATE()
