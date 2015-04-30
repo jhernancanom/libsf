@@ -510,6 +510,7 @@
 	const s32		_ICODE_DTOT                                     = 1141;
 	const s32		_ICODE_DTOX										= 1489;
 	const s32		_ICODE_DTRANSFORM                               = 1482;
+	const s32		_ICODE_DUNBUNDLE								= 1518;
 	const s32		_ICODE_EDITSOURCE                               = 1142;
 	const s32		_ICODE_EMPTY                                    = 1143;
 	const s32		_ICODE_ENDSWITH									= 1476;
@@ -911,7 +912,7 @@
 	// timextot			= 1511				timextox		= 1512
 	// secondstot		= 1513				secondstox		= 1514
 	// secondsxtot		= 1515				secondsxtox		= 1516
-	// dbundle			= 1517
+	// dbundle			= 1517				dunbundle		= 1518
 
 
 // Temporarily added until the processing engine is coded
@@ -1499,6 +1500,7 @@
 	const s8		cgc_dtot[]										= "dtot";
 	const s8		cgc_dtox[]										= "dtox";
 	const s8		cgc_dtransform[]								= "dtransform";
+	const s8		cgc_dunbundle[]									= "dunbundle";
 	const s8		cgc_editsource[]								= "editsource";
 	const s8		cgc_empty[]										= "empty";
 	const s8		cgc_endswith[]									= "endswith";

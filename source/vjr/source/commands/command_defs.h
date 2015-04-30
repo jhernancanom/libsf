@@ -516,7 +516,7 @@ struct SReturnsParams;
 		{	_ICODE_DATETIME,		1,			1,				(uptr)&function_datetime,		0,				7,				&gsSourceLight_datetime[0]		},
 		{	_ICODE_DATETIMEX,		1,			1,				(uptr)&function_datetimex,		0,				8,				&gsSourceLight_datetimex[0]		},
 		{	_ICODE_DAY,				1,			1,				(uptr)&function_day,			0,				1,				&gsSourceLight_day[0]			},	// DAY() by Stefano D'Amico, VJr 0.57, Apr.04.2015
-		{	_ICODE_DBUNDLE,			0,			1,				(uptr)&function_dbundle,		0,				2,				&gsSourceLight_dbundle[0]		},
+		{	_ICODE_DBUNDLE,			0,			1,				(uptr)&function_dbundle,		1,				4,				&gsSourceLight_dbundle[0]		},
 		{	_ICODE_DMY,				1,			1,				(uptr)&function_dmy,			0,				1,				&gsSourceLight_dmy[0]			},	// DMY() by Stefano D'Amico, VJr 0.57, Apr.07.2015
 		{	_ICODE_DOW,				1,			1,				(uptr)&function_dow,			0,				2,				&gsSourceLight_dow[0]			},	// DOW() by Hernan Cano, VJr 0.75, Apr.20.2015
 		{	_ICODE_DTOC,			1,			1,				(uptr)&function_dtoc,			0,				2,				&gsSourceLight_dtoc[0]			},	// DTOC() by Stefano D'Amico, VJr 0.57, Apr.07.2015
@@ -525,6 +525,7 @@ struct SReturnsParams;
 		{	_ICODE_DTOT,			1,			1,				(uptr)&function_dtot,			1,				2,				&gsSourceLight_dtot[0]			},	// DTOT() by Stefano D'Amico, VJr 0.57, Apr.07.2015
 		{	_ICODE_DTOX,			1,			1,				(uptr)&function_dtox,			1,				2,				&gsSourceLight_dtox[0]			},
 		{	_ICODE_DTRANSFORM,		1,			1,				(uptr)&function_dtransform,		1,				10,				&gsSourceLight_dtransform[0]	},	// DTRANSFORM() by Stefano D'Amico, VJr 0.57, Apr.16.2015
+		{	_ICODE_DUNBUNDLE,		0,			3,				(uptr)&function_dunbundle,		1,				4,				&gsSourceLight_dunbundle[0]		},
 		{	_ICODE_EMPTY,			1,			1,				(uptr)&function_empty,			1,				1,				&gsSourceLight_empty[0]			},	// EMPTY() by Stefano D'Amico, VJr 0.56, Mar.19.2015
 		{	_ICODE_ENDSWITH,		1,			1,				(uptr)&function_endswith,		2,				4,				&gsSourceLight_endswith[0]		},
 		{	_ICODE_ENDSWITHC,		1,			1,				(uptr)&function_endswith,		2,				4,				&gsSourceLight_endswithc[0]		},

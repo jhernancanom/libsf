@@ -372,6 +372,7 @@
 		{ cgc_dtos,					4,			false,		_ICODE_DTOS,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_dtot,					4,			false,		_ICODE_DTOT,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_dtox,					4,			false,		_ICODE_DTOX,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
+		{ cgc_dunbundle,			9,			false,		_ICODE_DUNBUNDLE,						false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_dtransform,			10,			false,		_ICODE_DTRANSFORM,						false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_editsource,			10,			false,		_ICODE_EDITSOURCE,						false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_empty,				5,			false,		_ICODE_EMPTY,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },

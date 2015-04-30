@@ -479,6 +479,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_dunbundle[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_empty[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
