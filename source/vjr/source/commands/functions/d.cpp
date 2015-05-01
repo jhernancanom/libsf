@@ -1869,7 +1869,7 @@
 									if (iDatum_compare(rightTextmergeDelim, tcFormatStr + lnJ, rightTextmergeDelim->length) == 0)
 									{
 										// We've found the range
-										varTextmerge = iEngine_get_variableName_fromText(thisCode, tcFormatStr + lnI + leftTextmergeDelim->length, lnJ - lnI - rightTextmergeDelim->length, NULL, &llManufactured);
+										varTextmerge = iEngine_get_variableName_fromText(thisCode, tcFormatStr + lnI + leftTextmergeDelim->length, lnJ - lnI - rightTextmergeDelim->length, NULL, &llManufactured, false);
 										break;
 									}
 								}

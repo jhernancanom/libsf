@@ -305,6 +305,8 @@ typedef SEM**		SEMpp;
 	#define propGet_settings_Time(obj)								iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_TIME)
 	#define propGet_settings_TimeLocal(obj)							(iObjProp_get_s32_direct		(thisCode, obj, _INDEX_SET_TIME)							== _TIME_LOCAL)
 	#define propGet_settings_TimeSystem(obj)						(iObjProp_get_s32_direct		(thisCode, obj, _INDEX_SET_TIME)							== _TIME_SYSTEM)
+	#define propGet_settings_UdfParamsReference(obj)				(iObjProp_get_s32_direct		(thisCode, obj, _INDEX_SET_UDFPARMS)						== _UDFPARMS_REFERENCE)
+	#define propGet_settings_UdfParamsValue(obj)					(iObjProp_get_s32_direct		(thisCode, obj, _INDEX_SET_UDFPARMS)						== _UDFPARMS_VALUE)
 	#define propGet_settings_VariablesFirst(obj)					(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_VARIABLES_FIRST)		!= _LOGICAL_FALSE)
 	#define propGet_settings_VecSeparator(obj)						iObjProp_get_character			(thisCode, obj, _INDEX_SET_VECSEPARATOR)
 
@@ -517,6 +519,13 @@ typedef SEM**		SEMpp;
 /////
 	const u32			_TIME_LOCAL							= 1;						// Local time is adjusted for timezone and daylight saving (if any)
 	const u32			_TIME_SYSTEM						= 2;						// Raw time
+
+
+//////////
+// User-defined-function parameter passing protocol
+//////
+	const u32			_UDFPARMS_REFERENCE					= 1;						// By reference
+	const u32			_UDFPARMS_VALUE						= 2;						// By value
 
 
 //////////

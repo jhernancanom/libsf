@@ -436,7 +436,7 @@ struct SBasePropMap;
 	const s8		cgc_vScrollSmallChange[]								= "vScrollSmallChange";
 	const s8		cgc_valueMaximum[]										= "valueMaximum";
 	const s8		cgc_valueMinimum[]										= "valueMinimum";
-	const s8		cgc_value[]												= "value";
+//	const s8		cgc_value[]												= "value";
 	const s8		cgc_viewPortHeight[]									= "viewPortHeight";
 	const s8		cgc_viewPortLeft[]										= "viewPortLeft";
 	const s8		cgc_viewPortTop[]										= "viewPortTop";
@@ -494,6 +494,7 @@ struct SBasePropMap;
 	const s8		cgc_setTableObjects[]									= "tableObjects";
 	const s8		cgc_setTalk[]											= "talk";
 	const s8		cgc_setTime[]											= "time";
+	const s8		cgc_setUdfParms[]										= "udfParms";
 	const s8		cgc_setVariablesFirst[]									= "variablesFirst";
 	const s8		cgc_setVecSeparator[]									= "vecseparator";
 	const s8		cgc_setUnloadReceivesParams[]							= "unloadReceivesParams";
@@ -898,9 +899,10 @@ struct SBasePropMap;
 	const u32		_INDEX_SET_TABLE_OBJECTS								= 391;
 	const u32		_INDEX_SET_TALK											= 392;
 	const u32		_INDEX_SET_TIME											= 393;
-	const u32		_INDEX_SET_UNLOAD_RECEIVES_PARAMS						= 394;
-	const u32		_INDEX_SET_VARIABLES_FIRST								= 395;
-	const u32		_INDEX_SET_VECSEPARATOR									= 396;
+	const u32		_INDEX_SET_UDFPARMS									= 394;
+	const u32		_INDEX_SET_UNLOAD_RECEIVES_PARAMS						= 395;
+	const u32		_INDEX_SET_VARIABLES_FIRST								= 396;
+	const u32		_INDEX_SET_VECSEPARATOR									= 397;
 
 
 
@@ -942,6 +944,7 @@ struct SBasePropMap;
 	bool					iObjProp_setLogicalX					(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
 	bool					iObjProp_setReprocess					(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
 	bool					iObjProp_setTime						(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
+	bool					iObjProp_setUdfParams					(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
 	bool					iObjProp_setCharacter1					(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
 
 	// Used for SET("xyz")
@@ -953,6 +956,7 @@ struct SBasePropMap;
 	SVariable* 				iObjProp_getLogicalX					(SThisCode* thisCode, SVariable* varSet, SComp* compIdentifier, bool tlDeleteVarSetBeforeReturning);
 	SVariable* 				iObjProp_getReprocess					(SThisCode* thisCode, SVariable* varSet, SComp* compIdentifier, bool tlDeleteVarSetBeforeReturning);
 	SVariable* 				iObjProp_getTime						(SThisCode* thisCode, SVariable* varSet, SComp* compIdentifier, bool tlDeleteVarSetBeforeReturning);
+	SVariable*				iObjProp_getUdfParams					(SThisCode* thisCode, SVariable* varSet, SComp* compIdentifier, bool tlDeleteVarSetBeforeReturning);
 
 	SVariable*				iObjProp_get							(SThisCode* thisCode, SObject* obj, s32 tnIndex);
 	s32						iObjProp_getVarAndType					(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable** varDst);
@@ -1448,6 +1452,7 @@ struct SBasePropMap;
 		{	_INDEX_SET_TABLE_OBJECTS,						_ICODE_TABLEOBJECTS,				cgc_setTableObjects,				sizeof(cgc_setTableObjects) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=allows tables to be accessed as array objects, .f.=tables are accessed normally
 		{	_INDEX_SET_TALK,								_ICODE_TALK,						cgc_setTalk,						sizeof(cgc_setTalk) - 1,							_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=TALK is on and content is output, .f.=TALK is off
 		{	_INDEX_SET_TIME,								_ICODE_TIME,						cgc_setTime,						sizeof(cgc_setTime) - 1,							_VAR_TYPE_S32,				0, 0, 0,		_TIME_LOCAL						,NULL	},	// Refer to _TIME_* constants, either uses local time (adjusted for timezone) or system time (raw time) for all time references.
+		{	_INDEX_SET_UDFPARMS,							_ICODE_UDFPARMS,					cgc_setUdfParms,					sizeof(cgc_setUdfParms) - 1,						_VAR_TYPE_S32,				0, 0, 0,		_UDFPARMS_VALUE					,NULL	},	// Refer to _UDFPARMS_* constants, either uses by reference or by value (default)
 		{	_INDEX_SET_UNLOAD_RECEIVES_PARAMS,				_ICODE_UNLOADRECEIVESPARAMS,		cgc_setUnloadReceivesParams,		sizeof(cgc_setUnloadReceivesParams) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=Unload() events receive the same parameters that were passed to init(), .f.=(default) Unload() does not receive any parameters
 		{	_INDEX_SET_VARIABLES_FIRST,						_ICODE_VARIABLESFIRST,				cgc_setVariablesFirst,				sizeof(cgc_setVariablesFirst) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=memory variables are searched first without m., .f.=the current alias is searched first, and then memory variables
 		{	_INDEX_SET_VECSEPARATOR,						_ICODE_VECSEPARATOR,				cgc_setVecSeparator,				sizeof(cgc_setVecSeparator) - 1,					_VAR_TYPE_CHARACTER,		0, 0, 0,		(uptr)&cgcComma[0]				,NULL	},	// One byte default separator for the vector values
@@ -3679,6 +3684,7 @@ struct SBasePropMap;
 		{	_INDEX_SET_TABLE_OBJECTS,					0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
 		{	_INDEX_SET_TALK,							0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
 		{	_INDEX_SET_TIME,							0, (uptr)&iObjProp_setTime,			(uptr)&iObjProp_getTime },		// s32
+		{	_INDEX_SET_UDFPARMS,						0, (uptr)&iObjProp_setUdfParams,	(uptr)&iObjProp_getUdfParams},	// s32
 		{	_INDEX_SET_UNLOAD_RECEIVES_PARAMS,			0, (uptr)&iObjProp_setLogical,		(uptr)&iObjProp_getLogical },	// bool
 		{	_INDEX_SET_VARIABLES_FIRST,					0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
 		{	_INDEX_SET_VECSEPARATOR,					0, (uptr)&iObjProp_setCharacter1,	0	},		// character

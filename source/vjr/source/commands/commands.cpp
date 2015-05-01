@@ -1363,7 +1363,7 @@
 				//////////
 				// CLEAR LAST nCount
 				//////
-					var = iEngine_get_variableName_fromComponent(thisCode, compLastCount, &llManufactured);
+					var = iEngine_get_variableName_fromComponent(thisCode, compLastCount, &llManufactured, false);
 					if (!var)
 					{
 						// Unknown parameter
@@ -1446,7 +1446,7 @@
 				//////////
 				// CLEAR KEEP nCount
 				//////
-					var = iEngine_get_variableName_fromComponent(thisCode, compKeepCount, &llManufactured);
+					var = iEngine_get_variableName_fromComponent(thisCode, compKeepCount, &llManufactured, false);
 					if (!var)
 					{
 						// Unknown parameter
@@ -1878,7 +1878,7 @@
 					if (varSet && objProp && baseProp)
 					{
 						// We found the setting and the default variable type
-						varSetNewValue = iEngine_get_variableName_fromComponent(thisCode, compSetValue, &llManufactured);
+						varSetNewValue = iEngine_get_variableName_fromComponent(thisCode, compSetValue, &llManufactured, false);
 //////////
 // Note:
 //		Settings are handled a little differently compared to other objects.
@@ -2129,11 +2129,11 @@
 					// Once we get here, we know we have SELECT(...something
 
 					// They've specified USE IN SELECT(something)
-					varInWorkArea = iEngine_get_variableName_fromComponent(thisCode, comp3, &llManufacturedAliasName);
+					varInWorkArea = iEngine_get_variableName_fromComponent(thisCode, comp3, &llManufacturedAliasName, false);
 
 				} else {
 					// They must've specified a number or alias name
-					varInWorkArea = iEngine_get_variableName_fromComponent(thisCode, compIn, &llManufacturedAliasName);
+					varInWorkArea = iEngine_get_variableName_fromComponent(thisCode, compIn, &llManufacturedAliasName, false);
 				}
 			}
 
@@ -2200,7 +2200,7 @@
 		// Get the table name
 		//////
 			// Note:  compUse is actually pointing to whatever was after USE by this point
-			if ((varTableName = iEngine_get_variableName_fromComponent(thisCode, compUse, &llManufacturedTableName))) {
+			if ((varTableName = iEngine_get_variableName_fromComponent(thisCode, compUse, &llManufacturedTableName, false))) {
 				// Placeholder, we were able to obtain a variable name
 				// Note:  The variable is checked for sanity below
 
@@ -2265,7 +2265,7 @@
 			if (compAlias)
 			{
 				// They've specified an alias
-				varAliasName	= iEngine_get_variableName_fromComponent(thisCode, compAlias->ll.nextComp, &llManufacturedTableName);
+				varAliasName	= iEngine_get_variableName_fromComponent(thisCode, compAlias->ll.nextComp, &llManufacturedTableName, false);
 				lnWorkAreaAlias	= iDbf_get_workArea_byAlias(thisCode, varAliasName, null);
 				if (lnWorkAreaAlias > 0)
 				{

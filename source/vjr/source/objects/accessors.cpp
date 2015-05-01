@@ -1441,6 +1441,47 @@ debug_break;
 
 //////////
 //
+// Called to set the user-defined parameter passing protocol to reference or value
+//
+//////
+	bool iObjProp_setUdfParams(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet)
+	{
+		bool llResult;
+
+
+		//////////
+		// Validate the component is a SYSTEM or LOCAL
+		//////
+			llResult = false;
+			if (compNew && (compNew->iCode == _ICODE_REFERENCE || compNew->iCode == _ICODE_VALUE))
+			{
+				// Set the value
+				iVariable_set_s32(thisCode, varSet, ((compNew->iCode == _ICODE_REFERENCE) ? _UDFPARMS_REFERENCE : _UDFPARMS_VALUE));
+
+				// Indicate success
+				llResult = true;
+			}
+
+
+		//////////
+		// Optionally clean house
+		//////
+			if (tlDeleteVarNewAfterSet)
+				iVariable_delete(thisCode, varNew, true);
+
+
+		//////////
+		// Indicate our status
+		//////
+			return(llResult);
+
+	}
+
+
+
+
+//////////
+//
 // Called to set the expression to the left-most character of the input character expression
 //
 //////
@@ -1723,7 +1764,7 @@ debug_break;
 			result = NULL;
 			if (iVariable_isValid(varSet) && iVariable_isTypeNumeric(varSet))
 			{
-				// Get the setting as an s32
+				// Get the setting
 				lnValue = iiVariable_getAs_s32(thisCode, varSet, false, &error, &errorNum);
 				if (!error)
 				{
@@ -1860,7 +1901,7 @@ debug_break;
 			result = NULL;
 			if (iVariable_isValid(varSet) && iVariable_isTypeNumeric(varSet))
 			{
-				// Get the ON/OFF setting as a logical
+				// Get the setting
 				lnValue = iiVariable_getAs_s32(thisCode, varSet, false, &error, &errorNum);
 				if (!error)
 				{
@@ -1891,6 +1932,62 @@ debug_break;
 		// Indicate our result
 		//////
 			return(result);
+	}
+
+
+
+
+//////////
+//
+// Returns reference or value
+//
+//////
+	SVariable* iObjProp_getUdfParams(SThisCode* thisCode, SVariable* varSet, SComp* compIdentifier, bool tlDeleteVarSetBeforeReturning)
+	{
+		s32			lnValue;
+		bool		error;
+		u32			errorNum;
+		SVariable*	result;
+
+
+		//////////
+		// Make sure our environment is sane
+		//////
+			result = NULL;
+			if (iVariable_isValid(varSet) && iVariable_isTypeNumeric(varSet))
+			{
+				// Get the setting
+				lnValue = iiVariable_getAs_s32(thisCode, varSet, false, &error, &errorNum);
+				if (!error)
+				{
+					// Okay... are we REFERENCE or VALUE?
+					switch (lnValue)
+					{
+						default:
+						case _UDFPARMS_VALUE:
+							result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgc_value, sizeof(cgc_value) - 1, false);
+							break;
+
+						case _UDFPARMS_REFERENCE:
+							result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgc_reference, sizeof(cgc_reference) - 1, false);
+							break;
+					}
+				}
+			}
+
+
+		//////////
+		// Optionally clean house
+		//////
+			if (tlDeleteVarSetBeforeReturning)
+				iVariable_delete(thisCode, varSet, true);
+
+
+		//////////
+		// Indicate our result
+		//////
+			return(result);
+
 	}
 
 

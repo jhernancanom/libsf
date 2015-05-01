@@ -1777,7 +1777,7 @@
 			compVarLookup->iCode	= _ICODE_ALPHANUMERIC;
 			compVarLookup->start	+= 1;		// Skip leading quote for start
 			compVarLookup->length	-= 2;		// Back off for both quotes for length
-			var = iEngine_get_variableName_fromComponent(thisCode, compVarLookup, &llManufactured);
+			var = iEngine_get_variableName_fromComponent(thisCode, compVarLookup, &llManufactured, false);
 			if (!var)
 			{
 				iError_reportByNumber(thisCode, _ERROR_VARIABLE_NOT_FOUND, iVariable_getRelatedComp(thisCode, varLookup), false);

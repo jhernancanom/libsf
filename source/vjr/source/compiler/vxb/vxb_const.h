@@ -720,6 +720,7 @@
 	const s32		_ICODE_RECNO                                    = 1326;
 	const s32		_ICODE_RECSIZE                                  = 1327;
 	const s32		_ICODE_RED										= 1456;
+	const s32		_ICODE_REFERENCE								= 1519;
 	const s32		_ICODE_REFRESH                                  = 1328;
 	const s32		_ICODE_RELATION                                 = 1329;
 	const s32		_ICODE_REPLICATE                                = 1330;
@@ -829,6 +830,7 @@
 	const s32		_ICODE_UPPER                                    = 1403;
 	const s32		_ICODE_USED                                     = 1404;
 	const s32		_ICODE_VAL                                      = 1405;
+	const s32		_ICODE_VALUE									= 1520;
 	const s32		_ICODE_VARREAD                                  = 1406;
 	const s32		_ICODE_VARTYPE                                  = 1407;
 	const s32		_ICODE_VEC										= 1461;
@@ -913,6 +915,7 @@
 	// secondstot		= 1513				secondstox		= 1514
 	// secondsxtot		= 1515				secondsxtox		= 1516
 	// dbundle			= 1517				dunbundle		= 1518
+	// reference		= 1519				value			= 1520
 
 
 // Temporarily added until the processing engine is coded
@@ -2114,6 +2117,7 @@
 	const s8		cgc_readerror[]									= "readerror";
 	const s8		cgc_recall[]									= "recall";
 	const s8		cgc_recover[]									= "recover";
+	const s8		cgc_reference[]									= "reference";
 //	const s8		cgc_refresh[]									= "refresh";
 	const s8		cgc_reindex[]									= "reindex";
 //	const s8		cgc_relation[]									= "relation";
@@ -2190,6 +2194,7 @@
 	const s8		cgc_usa[]										= "usa";
 	const s8		cgc_use[]										= "use";
 	const s8		cgc_validate[]									= "validate";
+	const s8		cgc_value[]										= "value";
 	const s8		cgc_views[]										= "views";
 	const s8		cgc_view[]										= "view";
 	const s8		cgc_visualize[]									= "visualize";

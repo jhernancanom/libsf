@@ -5749,7 +5749,7 @@ if (!gsProps_master[lnI].varInit)
 
 
 			//////////
-			// Are they being goofballs? LOL! :-)
+			// Is it an attempted copy of self?
 			//////
 				if (varDst == varSrc)
 					return(true);	// Yes
@@ -5940,7 +5940,7 @@ if (!gsProps_master[lnI].varInit)
 					// Delete the existing variable
 					iVariable_delete(thisCode, var, false);
 
-					// Populate the new one
+					// Populate to the new one
 					iVariable_reset(thisCode, var, false);
 				}
 			}
@@ -8225,16 +8225,13 @@ debug_break;
 //////
 	void iVariable_delete(SThisCode* thisCode, SVariable* var, bool tlDeleteSelf)
 	{
-		// De-reference the variable
-		var = iiVariable_terminateIndirect(thisCode, var);
-
 		// Make sure our environment is sane
 		if (var)
 		{
 			//////////
 			// Delete the name (if populated)
 			//////
-				if (tlDeleteSelf)
+				if (tlDeleteSelf && var->name._data)
 					iDatum_delete(&var->name, false);
 
 

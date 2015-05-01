@@ -164,7 +164,7 @@
 
 							} else if (compNext->iCat == _ICAT_GENERIC) {
 								// It is something like "? k" or "? 29"
-								var = iEngine_get_variableName_fromComponent(thisCode, compNext, &llManufactured);
+								var = iEngine_get_variableName_fromComponent(thisCode, compNext, &llManufactured, false);
 								if (!var)
 								{
 									// Unknown parameter
@@ -210,7 +210,7 @@
 
 							} else if (compThird->iCat == _ICAT_GENERIC) {
 								// It is something like "x = y" or "x = 29"
-								if (!(var = iEngine_get_variableName_fromComponent(thisCode, compThird, &llManufactured)))
+								if (!(var = iEngine_get_variableName_fromComponent(thisCode, compThird, &llManufactured, false)))
 								{
 									// Unknown parameter
 									iError_report(thisCode, cgcUnrecognizedParameter, false);
@@ -341,7 +341,7 @@
 // reference.
 //
 //////
-	SVariable* iEngine_get_variableName_fromComponent(SThisCode* thisCode, SComp* comp, bool* tlManufactured)
+	SVariable* iEngine_get_variableName_fromComponent(SThisCode* thisCode, SComp* comp, bool* tlManufactured, bool tlByRef)
 	{
 		s32			lnI;
 		s64			lnValue;
@@ -505,7 +505,7 @@
 				case _ICODE_ALPHANUMERIC:
 				case _ICODE_ALPHA:
 					// It's some kind of text, could be a field or variable
-					return(iEngine_get_variableName_fromText(thisCode, comp->line->sourceCode->data_cs8 + comp->start, comp->length, comp, tlManufactured));
+					return(iEngine_get_variableName_fromText(thisCode, comp->line->sourceCode->data_cs8 + comp->start, comp->length, comp, tlManufactured, tlByRef));
 
 
 				case _ICODE_SINGLE_QUOTED_TEXT:
@@ -544,7 +544,7 @@
 // Called to lookup the variable based on text
 //
 //////
-	SVariable* iEngine_get_variableName_fromText(SThisCode* thisCode, cs8* tcText, u32 tnTextLength, SComp* comp, bool* tlManufactured)
+	SVariable* iEngine_get_variableName_fromText(SThisCode* thisCode, cs8* tcText, u32 tnTextLength, SComp* comp, bool* tlManufactured, bool tlByRef)
 	{
 		SVariable* var;
 		SVariable* varCopy;
@@ -600,7 +600,7 @@
 
 				} else {
 					// It's a traditional variable
-					varCopy = iVariable_copy(NULL, var, false);
+					varCopy = iVariable_copy(NULL, var, tlByRef);
 				}
 				varCopy->compRelated = comp;
 				return(varCopy);
@@ -661,7 +661,7 @@
 	SVariable* iEngine_get_functionResult(SThisCode* thisCode, SComp* comp)
 	{
 		u32				lnI, lnParamsFound;
-		SFunctionData*	lfl;
+		SFunctionData*	funcData;
 		SReturnsParams	returnsParams;
 		SComp*			compLeftParen;
 		
@@ -685,16 +685,16 @@
 			//////////
 			// Iterate through each function for matches
 			//////
-				lfl = &gsKnownFunctions[0];
-				while (lfl && lfl->_func != 0)
+				funcData = &gsKnownFunctions[0];
+				while (funcData && funcData->_func != 0)
 				{
 					// Is this the named function?
-					if (lfl->iCode == comp->iCode)
+					if (funcData->iCode == comp->iCode)
 					{
 						//////////
 						// We need to find the minimum number of parameters between)
 						//////
-							if (!iiEngine_getParametersBetween(thisCode, compLeftParen, &lnParamsFound, lfl->req_pcount, lfl->max_pcount, &returnsParams.params[0]))
+							if (!iiEngine_getParametersBetween(thisCode, funcData, compLeftParen, &lnParamsFound, funcData->req_pcount, funcData->max_pcount, &returnsParams.params[0]))
 								return(NULL);
 
 
@@ -707,7 +707,7 @@
 						//////////
 						// Perform the function
 						//////
-							returnsParams.returns[0] = lfl->func(NULL, &returnsParams);
+							returnsParams.returns[0] = funcData->func(NULL, &returnsParams);
 
 
 						//////////
@@ -728,7 +728,7 @@
 					}
 
 					// Move to next function
-					++lfl;
+					++funcData;
 				}
 
 				// If we get here, not found
@@ -1059,17 +1059,18 @@
 // Called to obtain the parameters between the indicated parenthesis.
 //
 //////
-	bool iiEngine_getParametersBetween(SThisCode* thisCode, SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SVariable* params[])
+	bool iiEngine_getParametersBetween(SThisCode* thisCode, SFunctionData* funcData, SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SVariable* params[])
 	{
 		u32			lnI, lnParamCount;
-		bool		llManufactured;
+		bool		llManufactured, llByRef, llUdfParamsByRef;
 		SComp*		comp;
 		SComp*		compComma;
 
 
 		//////////
-		// Initialize the parameters to null
+		// Initialize
 		//////
+			llUdfParamsByRef = propGet_settings_UdfParamsReference(_settings);
 			for (lnI = 0; lnI < _MAX_PARAMETER_COUNT; lnI++)
 				params[lnI] = NULL;
 
@@ -1107,7 +1108,9 @@
 				//////////
 				// Derive whatever this is as a variable
 				//////
-					params[lnI] = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured);
+					if (!funcData || !funcData->paramMap)		llByRef = llUdfParamsByRef;
+					else										llByRef = llUdfParamsByRef | (funcData->paramMap[lnI] == '1');
+					params[lnI] = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured, llByRef);
 
 
 				// Move to next component

@@ -371,21 +371,23 @@
 		//////////
 		// The date is valid, so we can store it to the destination
 		//////
+			if (varR1->varType != _VAR_TYPE_DATE)
+				iVariable_setVarType(thisCode, varR1, _VAR_TYPE_DATE);
+
+
+		//////////
+		// Terminate any indirect variable to its source for the update
+		//////
 			varResult = iiVariable_terminateIndirect(thisCode, varR1);
-			if (varResult->varType != _VAR_TYPE_DATE)
+			if (!varResult->value.data || varResult->value.length == 0)
 			{
-				// Convert the chain to a date
-				iVariable_setVarType(thisCode, varResult, _VAR_TYPE_DATE);
-				if (!varResult->value.data || varResult->value.length)
-				{
-					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varR1), false);
-					return(NULL);
-				}
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varR1), false);
+				return(NULL);
 			}
 
 
 		//////////
-		// Store the value
+		// Set the date as indicated
 		//////
 			iiDateMath_get_YYYYMMDD_from_YyyyMmDd(varResult->value.data_s8, (u32)lst.wYear, (u32)lst.wMonth, (u32)lst.wDay);
 
