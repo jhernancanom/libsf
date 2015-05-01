@@ -12033,6 +12033,10 @@ debug_break;
 	{
 		u32 a, b, c, d, e, m;
 
+		// Validate the range
+		tnJulianDayNumber = min(max(tnJulianDayNumber, 2299161/*Oct.15.1582*/), 5373484/*Dec.31.9999*/);
+
+		// Compute
 		a		= tnJulianDayNumber + 32044;
 		b		= ((4 * a) + 3) / 146097;
 		c		= a - ((b * 146097) / 4);

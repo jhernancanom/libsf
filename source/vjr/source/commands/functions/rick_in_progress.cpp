@@ -234,7 +234,7 @@
 		SVariable* varP2	= returnsParams->params[2];
 		SVariable* varP3	= returnsParams->params[3];
 
-		u32			lnYear, lnMonth, lnDay;
+		u32			lnJulian, lnYear, lnMonth, lnDay;
 		SYSTEMTIME	lst;
 		SVariable*	varResult;
 		bool		error;
@@ -264,31 +264,80 @@
 		//////
 			if (varP1)
 			{
-				// The year must be numeric
-				if (!iVariable_isValid(varP1) || !iVariable_isTypeNumeric(varP1))
+				if (!iVariable_isValid(varP1))
 				{
 					iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP1), false);
 					return(NULL);
 				}
-				// At this point, we know they've given us a number
 
-				// Grab it
-				lnYear = iiVariable_getAs_s32(thisCode, varP1, false, &error, &errorNum);
-				if (error)
+				// If they only provided one parameter, we process it differently
+				if (returnsParams->pcount == 2)
 				{
-					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP1), false);
-					return(NULL);
+					// It must be a julian, datetime, or datetimex
+					if (iVariable_isTypeDatetimeX(varP1))
+					{
+						// DatetimeX
+						iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_jseconds(varP1->value.data_dtx->jseconds, NULL, &lnYear, &lnMonth, &lnDay, NULL, NULL, NULL, NULL, NULL);
+						lst.wYear	= (u16)lnYear;
+						lst.wMonth	= (u16)lnMonth;
+						lst.wDay	= (u16)lnDay;
+
+					} else if (iVariable_isTypeDatetime(varP1)) {
+						// Datetime
+						iiDateMath_get_YyyyMmDd_from_julian(varP1->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+						lst.wYear	= (u16)lnYear;
+						lst.wMonth	= (u16)lnMonth;
+						lst.wDay	= (u16)lnDay;
+
+					} else if (iVariable_isTypeNumeric(varP1)) {
+						// Julian
+						lnJulian = iiVariable_getAs_s32(thisCode, varP1, false, &error, &errorNum);
+						if (error)
+						{
+							iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP1), false);
+							return(NULL);
+						}
+						// If we get here, we have the julian
+
+						// When we get here, the year is good
+						iiDateMath_get_YyyyMmDd_from_julian(lnJulian, &lnYear, &lnMonth, &lnDay);
+						lst.wYear	= (u16)lnYear;
+						lst.wMonth	= (u16)lnMonth;
+						lst.wDay	= (u16)lnDay;
+
+					} else {
+						// Invalid
+						iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP1), false);
+						return(NULL);
+					}
+
+				} else {
+					// The year must be numeric
+					if (!iVariable_isTypeNumeric(varP1))
+					{
+						iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP1), false);
+						return(NULL);
+					}
+					// At this point, we know they've given us a number
+
+					// Grab it
+					lnYear = iiVariable_getAs_s32(thisCode, varP1, false, &error, &errorNum);
+					if (error)
+					{
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP1), false);
+						return(NULL);
+					}
+					// If we get here, we have the year.
+					
+					// It needs to be 1600 <= year <= 9999
+					if (lnYear < 1600 || lnYear > 9999)
+					{
+						iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varP1), false);
+						return(NULL);
+					}
+					// When we get here, the year is good
+					lst.wYear = (u16)lnYear;
 				}
-				// If we get here, we have the year.
-				
-				// It needs to be 1600 <= year <= 9999
-				if (lnYear < 1600 || lnYear > 9999)
-				{
-					iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varP1), false);
-					return(NULL);
-				}
-				// When we get here, the year is good
-				lst.wYear = (u16)lnYear;
 			}
 
 
