@@ -112,10 +112,10 @@
 //   ? malp(lnColor, .t.)     && Returns integer
 //   ? malp(lnColor, .f.)     && Returns floating point
 //////
-	SVariable* function_malp(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_malp(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varColor		= returnsParams->params[0];
-		SVariable*	varAsInteger	= returnsParams->params[1];
+		SVariable*	varColor		= rpar->params[0];
+		SVariable*	varAsInteger	= rpar->params[1];
 		u32			lnColor;
 		f32			lfMalp;
 		bool		llAsInteger;
@@ -223,10 +223,10 @@
 //    If they're equal, a copy of pLeft is returned.
 //
 //////
-	SVariable* function_max(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_max(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varLeft		= returnsParams->params[0];
-		SVariable*	varRight	= returnsParams->params[1];
+		SVariable*	varLeft		= rpar->params[0];
+		SVariable*	varRight	= rpar->params[1];
 		bool		llLeft;
 		s32			lnLeft32, lnRight32;
 		s64			lnLeft64, lnRight64;
@@ -438,9 +438,9 @@
 //    Character - If SET CENTURY is OFF, the character expression is returned in a month dd, yy format. 
 //	  If SET CENTURY is ON, the format is month dd, yyyy.
 //////
-	SVariable* function_mdy(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_mdy(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varParam = returnsParams->params[0];
+		SVariable* varParam = rpar->params[0];
 
 
 		// Return mdy
@@ -470,9 +470,9 @@
 // Returns:
 //    f64		-- A floating point value containing the number of one millionths of a second which have gone by this second
 //////
-	SVariable* function_microsecond(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_microsecond(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_xseconds_common(thisCode, returnsParams, _XSECONDS_FUNCTION_MICROSECOND));
+		return(ifunction_xseconds_common(thisCode, rpar, _XSECONDS_FUNCTION_MICROSECOND));
 	}
 
 
@@ -501,10 +501,10 @@
 //    If they're equal, a copy of pLeft is returned.
 //
 //////
-	SVariable* function_min(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_min(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varLeft		= returnsParams->params[0];
-		SVariable*	varRight	= returnsParams->params[1];
+		SVariable*	varLeft		= rpar->params[0];
+		SVariable*	varRight	= rpar->params[1];
 		bool		llLeft;
 		s32			lnLeft32, lnRight32;
 		s64			lnLeft64, lnRight64;
@@ -715,9 +715,9 @@
 // Returns:
 //    MINUTE( ) returns a numeric value.
 //////
-	SVariable* function_minute(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_minute(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varParam = returnsParams->params[0];
+		SVariable*	varParam = rpar->params[0];
 
 
 		// Return minute
@@ -757,14 +757,14 @@
 //    ? MOD(5.3, 2)    && 1.3
 //    ? MOD(5.3, -2)   && -0.7
 //////
-	SVariable* function_mod(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_mod(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varDividend	= returnsParams->params[0];
-		SVariable*	varDivisor	= returnsParams->params[1];
+		SVariable*	varDividend	= rpar->params[0];
+		SVariable*	varDivisor	= rpar->params[1];
 
 
 		// Return mod
-		return(ifunction_numbers_common(thisCode, varDividend, varDivisor, NULL, _FP_COMMON_MOD, _VAR_TYPE_F64, true, false, returnsParams));
+		ifunction_numbers_common(thisCode, rpar, varDividend, varDivisor, NULL, _FP_COMMON_MOD, _VAR_TYPE_F64, true, false, rpar);
 	}
 
 
@@ -795,9 +795,9 @@
 //    ? MONTH(dt)		&& Displays 4
 //    ? MONTH()			&& Displays current date's month number
 //////
-	SVariable* function_month(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_month(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varParam = returnsParams->params[0];
+		SVariable* varParam = rpar->params[0];
 
 		// Return month
 		return(ifunction_day_month_year_common(thisCode, varParam, _DMY_COMMON_MONTH));

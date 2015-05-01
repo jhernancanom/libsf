@@ -651,14 +651,14 @@
 	{
 		s8				lnVal_s8;
 		s32				lnVal_s32;
-		SReturnsParams	lsReturnsParams;
+		SFunctionParms	lsrpar;
 
 
 		//////////
 		// _startupTime
 		//////
-			memset(&lsReturnsParams, 0, sizeof(lsReturnsParams));
-			varStartupTime = function_datetime(NULL, &lsReturnsParams);
+			memset(&lsrpar, 0, sizeof(lsrpar));
+			varStartupTime = function_datetime(NULL, &lsrpar);
 			iDatum_duplicate(&varStartupTime->name, cgcName_startupTime, -1);
 			iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)varStartupTime);
 

@@ -109,10 +109,10 @@
 //						Leading blanks are ignored.
 //						VAL( ) returns 0 if the first character of the character expression is not a number, a dollar sign ($), a plus sign (+), or minus sign (-).
 //////
-	SVariable* function_val(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_val(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varExpr			= returnsParams->params[0];
-		SVariable*	varIgnoreChars	= returnsParams->params[1];
+		SVariable*	varExpr			= rpar->params[0];
+		SVariable*	varIgnoreChars	= rpar->params[1];
 		s8			c, cCurrency, cPoint, cSeparator;
 		s32			lnI, lnJ, lnBuffOffset;
 		s64			lnValue;
@@ -386,10 +386,10 @@
 // Returns:
 //    Character		-- A one-digit value indicating the type
 //////
-	SVariable* function_vartype(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_vartype(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* var		= returnsParams->params[0];
-		SVariable* varNull	= returnsParams->params[1];
+		SVariable* var		= rpar->params[0];
+		SVariable* varNull	= rpar->params[1];
 
 		bool	llNullIsType;
 		bool	error;
@@ -472,9 +472,9 @@
 // Returns:
 //    Vector		-- The concatenated value, assumes the current SET VECSEPARATOR symbol
 //////
-	SVariable* function_vec(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_vec(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varV1 = returnsParams->params[0];
+		SVariable* varV1 = rpar->params[0];
 
 
 		// Not yet completed
@@ -505,9 +505,9 @@
 // Returns:
 //     Numeric, the number of elements in the vector.
 //////
-	SVariable* function_veccount(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_veccount(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varVec = returnsParams->params[0];
+		SVariable* varVec = rpar->params[0];
 
 
 		// Not yet completed
@@ -541,11 +541,11 @@
 //    if varNewValue was specified, returns the new vector
 //    else                          returns the value of that element
 //////
-	SVariable* function_vecel(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_vecel(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varVec		= returnsParams->params[0];
-		SVariable* varEl		= returnsParams->params[1];
-		SVariable* varNewValue	= returnsParams->params[2];
+		SVariable* varVec		= rpar->params[0];
+		SVariable* varEl		= rpar->params[1];
+		SVariable* varNewValue	= rpar->params[2];
 
 
 		// Not yet completed
@@ -578,11 +578,11 @@
 // Returns:
 //     The extracted element or elements as a vector.
 //////
-	SVariable* function_vecslice(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_vecslice(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varVec		= returnsParams->params[0];
-		SVariable* varStartEl	= returnsParams->params[1];
-		SVariable* varEndEl		= returnsParams->params[2];
+		SVariable* varVec		= rpar->params[0];
+		SVariable* varStartEl	= rpar->params[1];
+		SVariable* varEndEl		= rpar->params[2];
 
 
 		// Not yet completed
@@ -614,10 +614,10 @@
 // Returns:
 //     A character string containing the vector values interspersed with symbol space, or the varSymbolOverride
 //////
-	SVariable* function_vecstr(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_vecstr(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varVec				= returnsParams->params[0];
-		SVariable* varSymbolOverride	= returnsParams->params[1];
+		SVariable* varVec				= rpar->params[0];
+		SVariable* varSymbolOverride	= rpar->params[1];
 
 
 		// Not yet completed
@@ -652,12 +652,12 @@
 //    if varNewValue was specified, returns the new vector
 //    else                          returns the value of that element
 //////
-	SVariable* function_vecstuff(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_vecstuff(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varVec			= returnsParams->params[0];
-		SVariable* varStartEl		= returnsParams->params[1];
-		SVariable* varRemoveCount	= returnsParams->params[2];
-		SVariable* varVecStuff		= returnsParams->params[3];
+		SVariable* varVec			= rpar->params[0];
+		SVariable* varStartEl		= rpar->params[1];
+		SVariable* varRemoveCount	= rpar->params[2];
+		SVariable* varVecStuff		= rpar->params[3];
 
 
 		// Not yet completed
@@ -691,11 +691,11 @@
 //    if varNewSymbol was specified, returns the old symbol
 //    else                           returns the current symbol
 //////
-	SVariable* function_vecsymbol(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_vecsymbol(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varVec		= returnsParams->params[0];
-		SVariable* varEl		= returnsParams->params[1];
-		SVariable* varNewSymbol	= returnsParams->params[2];
+		SVariable* varVec		= rpar->params[0];
+		SVariable* varEl		= rpar->params[1];
+		SVariable* varNewSymbol	= rpar->params[2];
 
 
 		// Not yet completed
@@ -726,9 +726,9 @@
 // Returns:
 //    Numeric or Character	-- Depending on index, various values are returned
 //////
-    SVariable* function_version(SThisCode* thisCode, SReturnsParams* returnsParams)
+    SVariable* function_version(SThisCode* thisCode, SFunctionParms* rpar)
     {
-		SVariable*	varIndex = returnsParams->params[0];
+		SVariable*	varIndex = rpar->params[0];
         s32			index;
 		u32			errorNum;
         bool		error;

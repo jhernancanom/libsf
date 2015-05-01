@@ -662,7 +662,7 @@
 	{
 		u32				lnI, lnParamsFound;
 		SFunctionData*	funcData;
-		SReturnsParams	returnsParams;
+		SFunctionParms	rpar;
 		SComp*			compLeftParen;
 		
 		
@@ -676,10 +676,10 @@
 			// Initialize our parameters and return variables
 			//////
 				for (lnI = 0; lnI < _MAX_RETURN_COUNT; lnI++)
-					returnsParams.returns[lnI] = NULL;
+					rpar.returns[lnI] = NULL;
 
 				for (lnI = 0; lnI < _MAX_PARAMETER_COUNT; lnI++)
-					returnsParams.params[lnI] = NULL;
+					rpar.params[lnI] = NULL;
 
 
 			//////////
@@ -694,20 +694,21 @@
 						//////////
 						// We need to find the minimum number of parameters between)
 						//////
-							if (!iiEngine_getParametersBetween(thisCode, funcData, compLeftParen, &lnParamsFound, funcData->req_pcount, funcData->max_pcount, &returnsParams.params[0]))
+							if (!iiEngine_getParametersBetween(thisCode, funcData, compLeftParen, &lnParamsFound, funcData->req_pcount, funcData->max_pcount, &rpar.params[0]))
 								return(NULL);
 
 
 						//////////
-						// Update the pcount
+						// Update rcount and pcount
 						//////
-							returnsParams.pcount = lnParamsFound;
+							rpar.rcount = 1;
+							rpar.pcount = lnParamsFound;
 
 
 						//////////
 						// Perform the function
 						//////
-							returnsParams.returns[0] = funcData->func(NULL, &returnsParams);
+							rpar.returns[0] = funcData->func(NULL, &rpar);
 
 
 						//////////
@@ -716,15 +717,15 @@
 							for (lnI = 0; lnI < _MAX_PARAMETER_COUNT; lnI++)
 							{
 								// Delete if populated
-								if (returnsParams.params[lnI])
-									iVariable_delete(thisCode, returnsParams.params[lnI], true);
+								if (rpar.params[lnI])
+									iVariable_delete(thisCode, rpar.params[lnI], true);
 							}
 
 
 						//////////
 						// Indicate our return value
 						//////
-							return(returnsParams.returns[0]);
+							return(rpar.returns[0]);
 					}
 
 					// Move to next function

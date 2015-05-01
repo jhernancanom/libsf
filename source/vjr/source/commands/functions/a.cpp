@@ -110,13 +110,13 @@
 // Example:
 //    ? ABS(-10)		&& Display 10
 //////
-    SVariable* function_abs(SThisCode* thisCode, SReturnsParams* returnsParams)
+    void function_abs(SThisCode* thisCode, SFunctionParms* rpar)
     {
-		SVariable* varNumber = returnsParams->params[0];
+		SVariable* varNumber = rpar->params[0];
 
 
 		// Return abs
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_ABS, _VAR_TYPE_F64, true, false, returnsParams));
+		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_ABS, _VAR_TYPE_F64, true, false, rpar);
 	}
 
 
@@ -145,13 +145,13 @@
 // Example:
 //    ? ACOS(0)		&& Display 1.57
 //////
-    SVariable* function_acos(SThisCode* thisCode, SReturnsParams* returnsParams)
+    void function_acos(SThisCode* thisCode, SFunctionParms* rpar)
     {
-		SVariable* varNumber = returnsParams->params[0];
+		SVariable* varNumber = rpar->params[0];
 
 
 		// Return acos
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_ACOS, _VAR_TYPE_F64, false, false, returnsParams));
+		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_ACOS, _VAR_TYPE_F64, false, false, rpar);
 	}
 
 
@@ -176,19 +176,20 @@
 // Returns:
 //     Character		-- The string with a trailing backspace added if need be
 //////
-	SVariable* function_addbs(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_addbs(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varString = returnsParams->params[0];
+		SVariable*	varString = rpar->params[0];
         SVariable*	result;
 
 
 		//////////
 		// Parameter 1 must be character
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varString), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -199,7 +200,7 @@
 			if (!result)
 			{
 				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
+				return;
 			}
 
 			if (varString->value.length >= 1)
@@ -226,7 +227,7 @@
 		//////////
         // Return our converted result
 		//////
-	        return(result);
+	        rpar->returns[0] = result;
 	}
 
 
@@ -255,16 +256,16 @@
 // Returns:
 //    Character		-- The string with any leading and trailing spaces removed
 //////
-	SVariable* function_alltrim(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_alltrim(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varString			= returnsParams->params[0];
-		SVariable* varCaseInsensitive	= returnsParams->params[1];
-		SVariable* varTrimChars1		= returnsParams->params[2];
-		SVariable* varTrimChars2		= returnsParams->params[3];
+		SVariable* varString			= rpar->params[0];
+		SVariable* varCaseInsensitive	= rpar->params[1];
+		SVariable* varTrimChars1		= rpar->params[2];
+		SVariable* varTrimChars2		= rpar->params[3];
 
 
 		// Return alltrim
-		return(ifunction_trim_common(thisCode, varString, varCaseInsensitive, varTrimChars1, varTrimChars2, true, true, returnsParams));
+		ifunction_trim_common(thisCode, rpar, varString, varCaseInsensitive, varTrimChars1, varTrimChars2, true, true);
 	}
 
 
@@ -280,7 +281,7 @@
 //	    (2)  *TRIM(cString[, nCaseSensitive|lCaseSensitive[, cTrimChar1[, cTrimChar2]]])
 //
 //////
-	SVariable* ifunction_trim_common(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2, bool tlTrimTheStart, bool tlTrimTheEnd, SReturnsParams* returnsParams)
+	void ifunction_trim_common(SThisCode* thisCode, SFunctionParms* rpar, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2, bool tlTrimTheStart, bool tlTrimTheEnd)
 	{
 		s32			lnI, lnClipStartPos, lnClipEndPos;
 		s8			lc;
@@ -296,10 +297,11 @@
 		//////////
 		// Parameter 1 must be character
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varString), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -323,7 +325,7 @@
 				if (!iVariable_isValid(varCaseInsensitive))
 				{
 					iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varCaseInsensitive), false);
-					return(NULL);
+					return;
 
 				} else if (iVariable_isTypeNumeric(varCaseInsensitive)) {
 					// They are indicating case sensitivity by an integer, should be 1 for case-insensitive, otherwise case-sensitive
@@ -347,7 +349,7 @@
 
 				} else {
 					iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varCaseInsensitive), false);
-					return(NULL);
+					return;
 				}
 			}
 
@@ -361,7 +363,7 @@
 				if (llSyntaxForm1)
 				{
 					iError_reportByNumber(thisCode, _ERROR_TOO_MANY_PARAMETERS, iVariable_getRelatedComp(thisCode, varTrimChars1), false);
-					return(NULL);
+					return;
 
 				} else if (iVariable_isTypeCharacter(varTrimChars1)) {
 					// They specified characters to scan
@@ -370,7 +372,7 @@
 
 				} else {
 					iError_reportByNumber(thisCode, _ERROR_P3_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varTrimChars1), false);
-					return(NULL);
+					return;
 				}
 			}
 
@@ -394,7 +396,7 @@
 
 				} else {
 					iError_reportByNumber(thisCode, _ERROR_P4_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varTrimChars2), false);
-					return(NULL);
+					return;
 				}
 			}
 
@@ -406,7 +408,7 @@
 			if (!result)
 			{
 				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
+				return;
 			}
 
 
@@ -629,7 +631,7 @@
 		//////////
         // Return our converted result
 		//////
-	        return(result);
+	        rpar->returns[0] = result;
 	}
 
 
@@ -655,13 +657,13 @@
 // Returns:
 //    Numeric	-- Input number converted to ASCII value number
 //////
-	SVariable* function_alp(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_alp(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varColor = returnsParams->params[0];
+		SVariable* varColor = rpar->params[0];
 
 
 		// Return alp
-		return(ifunction_color_common(thisCode, varColor, 0xff000000, 24, returnsParams));
+		ifunction_color_common(thisCode, rpar, varColor, 0xff000000, 24, rpar);
 	}
 
 
@@ -687,9 +689,9 @@
 // Returns:
 //    Numeric	-- Input number converted to ASCII value number
 //////
-    SVariable* function_asc(SThisCode* thisCode, SReturnsParams* returnsParams)
+    void function_asc(SThisCode* thisCode, SFunctionParms* rpar)
     {
-		SVariable*	varString = returnsParams->params[0];
+		SVariable*	varString = rpar->params[0];
         u8 			value;
         SVariable*	result;
 
@@ -697,10 +699,11 @@
 		//////////
 		// Parameter 1 must be character
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varString), false);
-				return(NULL);
+				return
 			}
 
 
@@ -724,7 +727,7 @@
 			if (!result)
 			{
 				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
+				return;
 			}
 
 
@@ -737,7 +740,7 @@
 		//////////
         // Return our converted result
 		//////
-	        return(result);
+	        rpar->returns[0] = result;
     }
 
 
@@ -766,13 +769,13 @@
 // Example:
 //    ? ASIN(1)		&& Display 1.57
 //////
-    SVariable* function_asin(SThisCode* thisCode, SReturnsParams* returnsParams)
+    void function_asin(SThisCode* thisCode, SFunctionParms* rpar)
     {
-		SVariable* varNumber = returnsParams->params[0];
+		SVariable* varNumber = rpar->params[0];
 
 
 		// Return asin
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_ASIN, _VAR_TYPE_F64, false, false, returnsParams));
+		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_ASIN, _VAR_TYPE_F64, false, false, rpar);
 	}
 
 
@@ -801,13 +804,13 @@
 // Example:
 //    ? ATAN(1.57)		&& Display 1.00
 //////
-    SVariable* function_atan(SThisCode* thisCode, SReturnsParams* returnsParams)
+    void function_atan(SThisCode* thisCode, SFunctionParms* rpar)
     {
-		SVariable* varNumber = returnsParams->params[0];
+		SVariable* varNumber = rpar->params[0];
 
 
 		// Return atan
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_ATAN, _VAR_TYPE_F64, false, false, returnsParams));
+		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_ATAN, _VAR_TYPE_F64, false, false, rpar);
 	}
 
 
@@ -840,51 +843,51 @@
 // Returns:
 //    u32			-- Location of the find, or 0 if not found
 //////
-	SVariable* function_at(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_at(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varNeedle		= returnsParams->params[0];
-		SVariable* varHaystack		= returnsParams->params[1];
-		SVariable* varOccurrence	= returnsParams->params[2];
+		SVariable* varNeedle		= rpar->params[0];
+		SVariable* varHaystack		= rpar->params[1];
+		SVariable* varOccurrence	= rpar->params[2];
 
 
 		// Return at
-		return(ifunction_at_occurs_common(thisCode, varNeedle, varHaystack, varOccurrence, true, false, NULL, returnsParams));
+		ifunction_at_occurs_common(thisCode, rpar, varNeedle, varHaystack, varOccurrence, true, false, NULL);
 	}
 
-	SVariable* function_atc(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_atc(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varNeedle		= returnsParams->params[0];
-		SVariable* varHaystack		= returnsParams->params[1];
-		SVariable* varOccurrence	= returnsParams->params[2];
+		SVariable* varNeedle		= rpar->params[0];
+		SVariable* varHaystack		= rpar->params[1];
+		SVariable* varOccurrence	= rpar->params[2];
 
 
 		// Return atc
-		return(ifunction_at_occurs_common(thisCode, varNeedle, varHaystack, varOccurrence, false, false, NULL, returnsParams));
+		ifunction_at_occurs_common(thisCode, rpar, varNeedle, varHaystack, varOccurrence, false, false, NULL);
 	}
 
-	SVariable* function_rat(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_rat(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varNeedle		= returnsParams->params[0];
-		SVariable* varHaystack		= returnsParams->params[1];
-		SVariable* varOccurrence	= returnsParams->params[2];
+		SVariable* varNeedle		= rpar->params[0];
+		SVariable* varHaystack		= rpar->params[1];
+		SVariable* varOccurrence	= rpar->params[2];
 
 
 		// Return rat
-		return(ifunction_at_occurs_common(thisCode, varNeedle, varHaystack, varOccurrence, true, true, NULL, returnsParams));
+		ifunction_at_occurs_common(thisCode, rpar, varNeedle, varHaystack, varOccurrence, true, true, NULL);
 	}
 
-	SVariable* function_ratc(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_ratc(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varNeedle		= returnsParams->params[0];
-		SVariable* varHaystack		= returnsParams->params[1];
-		SVariable* varOccurrence	= returnsParams->params[2];
+		SVariable* varNeedle		= rpar->params[0];
+		SVariable* varHaystack		= rpar->params[1];
+		SVariable* varOccurrence	= rpar->params[2];
 
 
 		// Return ratc
-		return(ifunction_at_occurs_common(thisCode, varNeedle, varHaystack, varOccurrence, false, true, NULL, returnsParams));
+		ifunction_at_occurs_common(thisCode, rpar, varNeedle, varHaystack, varOccurrence, false, true, NULL);
 	}
 
-	SVariable* ifunction_at_occurs_common(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence, bool tlCaseSensitive, bool tlScanBackward, u32* tnFoundCount, SReturnsParams* returnsParams)
+	void ifunction_at_occurs_common(SThisCode* thisCode, SFunctionParms* rpar, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence, bool tlCaseSensitive, bool tlScanBackward, u32* tnFoundCount)
 	{
 		u32			errorNum;
 		s32			lnI, lnStart, lnInc, lnStopper, lnFoundCount, lnOccurrence;
@@ -895,6 +898,7 @@
 		//////////
 		// Parameter 1 must be character
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varNeedle) || !iVariable_isTypeCharacter(varNeedle))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNeedle), false);
@@ -1059,12 +1063,12 @@
 // Example:
 //    ? ATN2(5,3)		&& Display 1.03
 //////
-	SVariable* function_atn2(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_atn2(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varY = returnsParams->params[0];
-		SVariable* varX = returnsParams->params[1];
+		SVariable* varY = rpar->params[0];
+		SVariable* varX = rpar->params[1];
 
 
 		// Return atn2
-		return(ifunction_numbers_common(thisCode, varY, varX, NULL, _FP_COMMON_ATN2, _VAR_TYPE_F64, false, false, returnsParams));
+		ifunction_numbers_common(thisCode, rpar, varY, varX, NULL, _FP_COMMON_ATN2, _VAR_TYPE_F64, false, false, rpar);
 	}

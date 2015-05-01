@@ -109,13 +109,13 @@
 // Example:
 //    ? FLOOR(2.2)		&& Display 2
 //////
-    SVariable* function_floor(SThisCode* thisCode, SReturnsParams* returnsParams)
+    void function_floor(SThisCode* thisCode, SFunctionParms* rpar)
     {
-		SVariable* varNumber = returnsParams->params[0];
+		SVariable* varNumber = rpar->params[0];
 
 
         // Return floor
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_FLOOR, _VAR_TYPE_S64, propGet_settings_ncset_ceilingFloor(_settings), false, returnsParams));
+		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_FLOOR, _VAR_TYPE_S64, propGet_settings_ncset_ceilingFloor(_settings), false, rpar);
 	}
 
 
@@ -150,10 +150,10 @@
 //    ? FORCEEXT("c:\mydir.mydir\foo",	"prg")		&& Displays "c:\mydir.mydir\fred.prg"
 //    ? FORCEEXT("c:\mydir\fred.txt",	"")			&& Displays "c:\mydir\fred"
 //////
-	SVariable* function_forceext(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_forceext(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varPathname		= returnsParams->params[0];
-		SVariable* varNewExtension	= returnsParams->params[1];
+		SVariable* varPathname		= rpar->params[0];
+		SVariable* varNewExtension	= rpar->params[1];
 
 		s32			lnFNameOffset, lnExtOffset, lnLength;
 		s8			newFilename[_MAX_PATH + 1];
@@ -368,10 +368,10 @@
 // Returns:
 //    The input pathname with the filename.
 //////
-	SVariable* function_forcefname(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_forcefname(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varPathname		= returnsParams->params[0];
-		SVariable* varNewFilename	= returnsParams->params[1];
+		SVariable* varPathname		= rpar->params[0];
+		SVariable* varNewFilename	= rpar->params[1];
 
 		s32			lnFNameOffset, lnExtOffset, lnLength;
 		s8			newFilename[_MAX_PATH + 1];
@@ -492,10 +492,10 @@
 // Returns:
 //    The input pathname with the new path.
 //////
-	SVariable* function_forcepath(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_forcepath(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varPathname		= returnsParams->params[0];
-		SVariable* varNewPathname	= returnsParams->params[1];
+		SVariable* varPathname		= rpar->params[0];
+		SVariable* varNewPathname	= rpar->params[1];
 
 		s32			lnFNameOffset, lnExtOffset, lnFNameLength, lnLength;
 		s8			newFilename[_MAX_PATH + 1];
@@ -642,10 +642,10 @@
 // Returns:
 //    The input pathname with the new stem.
 //////
-	SVariable* function_forcestem(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_forcestem(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varPathname	= returnsParams->params[0];
-		SVariable* varNewStem	= returnsParams->params[1];
+		SVariable* varPathname	= rpar->params[0];
+		SVariable* varNewStem	= rpar->params[1];
 
 		s32			lnFNameOffset, lnExtOffset, lnLengthStem, lnLengthExt, lnLength;
 		s8			newFilename[_MAX_PATH + 1];
@@ -777,13 +777,13 @@
 // Example:
 //   ? FV(500, 0.006, 48)	&& Displays 27717.50
 //////
-	SVariable* function_fv(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_fv(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varPayment		= returnsParams->params[0];
-		SVariable* varInterestRate	= returnsParams->params[1];
-		SVariable* varPeriods		= returnsParams->params[2];
+		SVariable* varPayment		= rpar->params[0];
+		SVariable* varInterestRate	= rpar->params[1];
+		SVariable* varPeriods		= rpar->params[2];
 
 
 		// Return fv
-		return(ifunction_numbers_common(thisCode, varPayment, varInterestRate, varPeriods, _FP_COMMON_FV, _VAR_TYPE_F64, false, true, returnsParams));
+		ifunction_numbers_common(thisCode, rpar, varPayment, varInterestRate, varPeriods, _FP_COMMON_FV, _VAR_TYPE_F64, false, true, rpar);
 	}

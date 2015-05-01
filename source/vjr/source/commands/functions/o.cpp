@@ -108,44 +108,40 @@
 // Returns:
 //    s32			-- The number of times
 //////
-	SVariable* function_occurs(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_occurs(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varNeedle	= returnsParams->params[0];
-		SVariable*	varHaystack	= returnsParams->params[1];
+		SVariable*	varNeedle	= rpar->params[0];
+		SVariable*	varHaystack	= rpar->params[1];
 		u32			lnFoundCount;
 		SVariable*	result;
 
 
 		// Compute the found count
-		result = ifunction_at_occurs_common(thisCode, varNeedle, varHaystack, NULL, true, false, &lnFoundCount, returnsParams);
+		ifunction_at_occurs_common(thisCode, rpar, varNeedle, varHaystack, NULL, true, false, &lnFoundCount);
+		result = rpar->returns[0];
 		if (result)
 		{
 			// Update the return variable
 			*(s32*)result->value.data_s32 = lnFoundCount;
 		}
-
-		// Return our result
-		return(result);
 	}
 
-	SVariable* function_occursc(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_occursc(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varNeedle	= returnsParams->params[0];
-		SVariable*	varHaystack	= returnsParams->params[1];
+		SVariable*	varNeedle	= rpar->params[0];
+		SVariable*	varHaystack	= rpar->params[1];
 		u32			lnFoundCount;
 		SVariable*	result;
 
 
 		// Compute the found count
-		result = ifunction_at_occurs_common(thisCode, varNeedle, varHaystack, NULL, false, false, &lnFoundCount, returnsParams);
+		ifunction_at_occurs_common(thisCode, varNeedle, varHaystack, NULL, false, false, &lnFoundCount);
+		result = rpar->returns[0];
 		if (result)
 		{
 			// Update the return variable
 			*(s32*)result->value.data_s32 = lnFoundCount;
 		}
-
-		// Return our result
-		return(result);
 	}
 
 	
@@ -174,7 +170,7 @@
 // Returns:
 //    Logical		-- .t. if the item is not inclusively between the values of two expressions of the same type, .f. if between
 //////
-	SVariable* function_outside(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_outside(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* result;
 
@@ -182,7 +178,7 @@
 		//////////
 		// Invoke BETWEEN()
 		//////
-			result = function_between(thisCode, returnsParams);
+			result = function_between(thisCode, rpar);
 
 
 		//////////

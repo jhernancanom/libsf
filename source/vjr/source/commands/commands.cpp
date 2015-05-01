@@ -699,10 +699,10 @@
 //    The sum of p1 + p2
 //
 //////
-	SVariable* function_concatenate(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_concatenate(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varString1	= returnsParams->params[0];
-		SVariable*	varString2	= returnsParams->params[1];
+		SVariable*	varString1	= rpar->params[0];
+		SVariable*	varString2	= rpar->params[1];
 		SVariable*	result;
 
 
@@ -776,10 +776,10 @@
 //    The sum of p1 + p2
 //
 //////
-	SVariable* function_add(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_add(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varNum1	= returnsParams->params[0];
-		SVariable*	varNum2	= returnsParams->params[1];
+		SVariable*	varNum1	= rpar->params[0];
+		SVariable*	varNum2	= rpar->params[1];
 		s64			lnValue1, lnValue2;
 		f64			lfValue1, lfValue2;
 		bool		error;
@@ -909,10 +909,10 @@
 //    The sum of p1 - p2
 //
 //////
-	SVariable* function_sub(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_sub(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varNum1	= returnsParams->params[0];
-		SVariable*	varNum2	= returnsParams->params[1];
+		SVariable*	varNum1	= rpar->params[0];
+		SVariable*	varNum2	= rpar->params[1];
 		s64			lnValue1, lnValue2;
 		f64			lfValue1, lfValue2;
 		bool		error;
@@ -1042,10 +1042,10 @@
 //    The sum of p1 * p2
 //
 //////
-	SVariable* function_mul(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_mul(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varNum1	= returnsParams->params[0];
-		SVariable*	varNum2	= returnsParams->params[1];
+		SVariable*	varNum1	= rpar->params[0];
+		SVariable*	varNum2	= rpar->params[1];
 		s64			lnValue1, lnValue2;
 		f64			lfValue1, lfValue2;
 		bool		error;
@@ -1175,10 +1175,10 @@
 //    The sum of p1 / p2
 //
 //////
-	SVariable* function_div(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_div(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varNum1	= returnsParams->params[0];
-		SVariable*	varNum2	= returnsParams->params[1];
+		SVariable*	varNum1	= rpar->params[0];
+		SVariable*	varNum2	= rpar->params[1];
 		s64			lnValue1, lnValue2;
 		f64			lfValue1, lfValue2;
 		bool		error;
@@ -1316,7 +1316,7 @@
 // Returns:
 //		Nothing, but whatever it is that's being modified may be open for modifying.
 //////
-	void command_clear(SThisCode* thisCode, SComp* compCommand, SReturnsParams* returnsParams)
+	void command_clear(SThisCode* thisCode, SComp* compCommand, SFunctionParms* rpar)
 	{
 		SComp*			compClear = compCommand;
 		s32				lnClearLines, lnSaveLines;
@@ -1559,7 +1559,7 @@
 // Returns:
 //		Nothing, but whatever it is that's being modified may be open for modifying.
 //////
-	void command_modify(SThisCode* thisCode, SComp* compCommand, SReturnsParams* returnsParams)
+	void command_modify(SThisCode* thisCode, SComp* compCommand, SFunctionParms* rpar)
 	{
 		SComp*	compModify = compCommand;
 		SComp*	compType;
@@ -1682,7 +1682,7 @@
 // Returns:
 //		Nothing, but the environment may be changed.
 //////
-	void command_open(SThisCode* thisCode, SComp* compCommand, SReturnsParams* returnsParams)
+	void command_open(SThisCode* thisCode, SComp* compCommand, SFunctionParms* rpar)
 	{
 		SComp*	compOpen = compCommand;
 		s32		lnLength;
@@ -1815,7 +1815,7 @@
 // Returns:
 //    Nothing, but the environment may be changed.
 //////
-	void command_set(SThisCode* thisCode, SComp* compCommand, SReturnsParams* returnsParams)
+	void command_set(SThisCode* thisCode, SComp* compCommand, SFunctionParms* rpar)
 	{
 		SComp*			compSet = compCommand;
 		s32				lnIndex;
@@ -1939,7 +1939,7 @@
 // Returns:
 //    Nothing, but the environment may be changed.
 //////
-	void command_use(SThisCode* thisCode, SComp* compCommand, SReturnsParams* returnsParams)
+	void command_use(SThisCode* thisCode, SComp* compCommand, SFunctionParms* rpar)
 	{
 		SComp*		compUse = compCommand;
 		sptr		lnWorkArea, lnWorkAreaAlias;

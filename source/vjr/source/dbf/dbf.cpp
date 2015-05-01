@@ -1862,7 +1862,7 @@
 		u32				lnI_max, lnAppendValue;
 		bool			llAppendedSix;
 		SVariable*		varAlias;
-		SReturnsParams	returnsParams;
+		SFunctionParms	rpar;
 
 
 		//////////
@@ -1872,9 +1872,9 @@
 			if (varPathname)
 			{
 				// Grab the stem part of the name
-				returnsParams.params[0] = varPathname;
-				returnsParams.params[1] = cvarSix;
-				varAlias = function_juststem(thisCode, &returnsParams);
+				rpar.params[0] = varPathname;
+				rpar.params[1] = cvarSix;
+				varAlias = function_juststem(thisCode, &rpar);
 
 				// If it's invalid, or unreachable, then just use a default alias name
 				if (!iVariable_isTypeCharacter(varAlias) || iVariable_isEmpty(varAlias))

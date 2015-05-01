@@ -111,9 +111,9 @@
 //    ? CDOW(dt)		&& Displays Monday
 //    ? CDOW()          && Displays current date's character day of week
 //////
-	SVariable* function_cdow(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_cdow(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varParam = returnsParams->params[0];
+		SVariable* varParam = rpar->params[0];
 		
 		u32			lnYear, lnMonth, lnDay;
 		s8			lnDow;
@@ -124,13 +124,14 @@
 		//////////
 		// If provided, parameter 1 must be date or datetime
 		//////
+			rpar->returns[0] = NULL;
 			if (varParam)
 			{
 // TODO:  Must also support DATETIMEX at some point
 				if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
 				{
 					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
-					return(NULL);
+					return;
 				}
 
 			//////////
@@ -166,7 +167,7 @@
 		//////////
 		// Indicate our result
 		//////
-			return(result);
+			rpar->returns[0] = result;
 
 	}
 
@@ -230,13 +231,13 @@
 // Example:
 //    ? CEILING(2.2)		&& Display 3
 //////
-    SVariable* function_ceiling(SThisCode* thisCode, SReturnsParams* returnsParams)
+    void function_ceiling(SThisCode* thisCode, SFunctionParms* rpar)
     {
-		SVariable* varNumber = returnsParams->params[0];
+		SVariable* varNumber = rpar->params[0];
 
 
         // Return ceiling
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_CEILING, _VAR_TYPE_S64, propGet_settings_ncset_ceilingFloor(_settings), false, returnsParams));
+		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_CEILING, _VAR_TYPE_S64, propGet_settings_ncset_ceilingFloor(_settings), false, rpar);
 	}
 
 
@@ -261,9 +262,9 @@
 // Returns:
 //    Character		-- Input number converted to character
 //////
-    SVariable* function_chr(SThisCode* thisCode, SReturnsParams* returnsParams)
+    void function_chr(SThisCode* thisCode, SFunctionParms* rpar)
     {
-		SVariable*	varNumber = returnsParams->params[0];
+		SVariable*	varNumber = rpar->params[0];
         s32			value;
 		u32			errorNum;
         bool		error;
@@ -274,10 +275,11 @@
 		//////////
 		// Parameter 1 must be numeric
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varNumber) || !iVariable_isTypeNumeric(varNumber))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNumber), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -290,12 +292,12 @@
 				// The iVariable_getAs_s32() function reported an error.
 				// This means the user is trying to obtain an integer value from a logical, or something similar.
 				iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNumber), false);
-				return(NULL);
+				return;
 
 			} else if (value > 255 || value < 0) {
 				// We report our own error
 				iError_report(thisCode, (u8*)"Parameter must be in the range 0..255", false);
-				return(NULL);
+				return;
 			}
 
 
@@ -306,7 +308,7 @@
 			if (!result)
 			{
 				iError_report(thisCode, (u8*)"Internal error.", false);
-				return(NULL);
+				return;
 			}
 
 
@@ -321,7 +323,7 @@
 		//////////
         // Return our converted result
 		//////
-	        return(result);
+	        rpar->returns[0] = result;
     }
 
 
@@ -350,29 +352,29 @@
 //    A copy of the pOriginalString with everything converted.
 //
 //////
-	SVariable* function_chrtran(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_chrtran(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varString	= returnsParams->params[0];
-		SVariable* varSearch	= returnsParams->params[1];
-		SVariable* varReplace	= returnsParams->params[2];
+		SVariable* varString	= rpar->params[0];
+		SVariable* varSearch	= rpar->params[1];
+		SVariable* varReplace	= rpar->params[2];
 
 
 		// Return chrtran
-		return(ifunction_chrtran_common(thisCode, varString, varSearch, varReplace, true, returnsParams));
+		ifunction_chrtran_common(thisCode, rpar, varString, varSearch, varReplace, true);
 	}
 
-	SVariable* function_chrtranc(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_chrtranc(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varString	= returnsParams->params[0];
-		SVariable* varSearch	= returnsParams->params[1];
-		SVariable* varReplace	= returnsParams->params[2];
+		SVariable* varString	= rpar->params[0];
+		SVariable* varSearch	= rpar->params[1];
+		SVariable* varReplace	= rpar->params[2];
 
 
 		// Return chrtranc
-		return(ifunction_chrtran_common(thisCode, varString, varSearch, varReplace, false, returnsParams));
+		ifunction_chrtran_common(thisCode, rpar, varString, varSearch, varReplace, false);
 	}
 
-	SVariable* ifunction_chrtran_common(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, bool tlCaseSensitive, SReturnsParams* returnsParams)
+	void ifunction_chrtran_common(SThisCode* thisCode, SFunctionParms* rpar, SVariable* varString, SVariable* varSearch, SVariable* varReplace, bool tlCaseSensitive)
 	{
 		s8			c1, c2;
 		s32			lnSrc, lnDst, lnSearch;
@@ -383,10 +385,11 @@
 		//////////
 		// Parameter 1 must be character
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varString), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -396,7 +399,7 @@
 			if (!iVariable_isValid(varSearch) || !iVariable_isTypeCharacter(varSearch))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varSearch), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -411,7 +414,7 @@
 			} else if (!iVariable_isTypeCharacter(varReplace)) {
 				// It is invalid
 				iError_reportByNumber(thisCode, _ERROR_P3_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varReplace), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -499,7 +502,7 @@
 		//////////
 		// Return our final string
 		/////
-			return(result);
+			rpar->returns[0] = result;
 	}
 
 
@@ -530,9 +533,9 @@
 //    ? CMONTH(dt)		&& Displays April
 //    ? CMONTH()        && Displays current date's character month
 //////
-	SVariable* function_cmonth(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_cmonth(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varParam = returnsParams->params[0];
+		SVariable* varParam = rpar->params[0];
 
 		u32			lnYear, lnMonth, lnDay;
 		s8			lnMonthIdx;
@@ -617,18 +620,18 @@
 //    Numeric			-- The resulting colorized color
 //
 //////
-	SVariable* function_colorize(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_colorize(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varColor			= returnsParams->params[0];
-		SVariable* varColorTarget	= returnsParams->params[1];
-		SVariable* varPercentage	= returnsParams->params[2];
+		SVariable* varColor			= rpar->params[0];
+		SVariable* varColorTarget	= rpar->params[1];
+		SVariable* varPercentage	= rpar->params[2];
 
 
 		// Return colorize
-		return(ifunction_colorize_common(thisCode, varColor, varColorTarget, varPercentage, true, returnsParams));
+		return(ifunction_colorize_common(thisCode, varColor, varColorTarget, varPercentage, true, rpar));
 	}
 
-	SVariable* ifunction_colorize_common(SThisCode* thisCode, SVariable* varColor, SVariable* varColorTarget, SVariable* varPercentage, bool tlApplyColorTarget, SReturnsParams* returnsParams)
+	SVariable* ifunction_colorize_common(SThisCode* thisCode, SVariable* varColor, SVariable* varColorTarget, SVariable* varPercentage, bool tlApplyColorTarget, SFunctionParms* rpar)
 	{
 		u32			lnColor, lnColorTarget, lnColorNew;
 		f32			lfRedC, lfGrnC, lfBluC, lfAlpC;		// varColor
@@ -797,13 +800,13 @@
 // Example:
 //    ? COS(0)		&& Display 1.00
 //////
-    SVariable* function_cos(SThisCode* thisCode, SReturnsParams* returnsParams)
+    void function_cos(SThisCode* thisCode, SFunctionParms* rpar)
     {
-		SVariable* varNumber = returnsParams->params[0];
+		SVariable* varNumber = rpar->params[0];
 
 
 		// Return cos
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_COS, _VAR_TYPE_F64, false, false, returnsParams));
+		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_COS, _VAR_TYPE_F64, false, false, rpar);
 	}
 
 
@@ -831,9 +834,9 @@
 //    Object		-- The class instance object is returned
 //
 //////
-	SVariable* function_createobject(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_createobject(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varClass = returnsParams->params[0];
+		SVariable*	varClass = rpar->params[0];
 		s32			lnObjType;
 		SObject*	obj;
         SVariable*	result;
@@ -929,9 +932,9 @@
 //    ?CTOD("12-25-15 12:33:44.555") &&Displays 12-25-2015
 //
 //////
-	SVariable* function_ctod(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_ctod(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varString = returnsParams->params[0];
+		SVariable* varString = rpar->params[0];
 
 		//Return date
 		return(ifunction_ctox_common(thisCode, varString, true));
@@ -1220,9 +1223,9 @@ debug_break;
 //    ?CTOD("12-25-15 12:33:44.555") &&Displays 12-25-2015 12:33:44
 //
 //////
-	SVariable* function_ctot(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_ctot(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varString = returnsParams->params[0];
+		SVariable* varString = rpar->params[0];
 
 		//Return datetime
 		return(ifunction_ctox_common(thisCode, varString, false));
@@ -1250,7 +1253,7 @@ debug_break;
 // Returns:
 //		Character		-- Current directory
 //////
-	SVariable* function_curdir(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_curdir(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		u8			curdir[_MAX_PATH];
 		SVariable*	result;

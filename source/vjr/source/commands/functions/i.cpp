@@ -108,11 +108,11 @@
 // Returns:
 //    A copy of either varTrue or varFalse.
 //////
-	SVariable* function_iif(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_iif(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varTest		= returnsParams->params[0];
-		SVariable*	varTrue		= returnsParams->params[1];
-		SVariable*	varFalse	= returnsParams->params[2];
+		SVariable*	varTest		= rpar->params[0];
+		SVariable*	varTrue		= rpar->params[1];
+		SVariable*	varFalse	= rpar->params[2];
 		bool		llTest;
 		SVariable*	result;
 		u32			errorNum;
@@ -194,10 +194,10 @@
 // Returns:
 //    Logical		-- .t. if the item is found in the list, .f. otherwise
 //////
-	SVariable* function_inlist(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_inlist(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varValue = returnsParams->params[0];
-		SVariable*	varList1 = returnsParams->params[1];
+		SVariable*	varValue = rpar->params[0];
+		SVariable*	varList1 = rpar->params[1];
 		bool		llResult;
 		s32			lnI, lnType;
 		SVariable*	result;
@@ -223,16 +223,16 @@
 		//////////
 		// Each type must be fundamentally the same type
 		//////
-			for (lnI = 1, lnType = iVariable_fundamentalType(thisCode, varValue); lnI < _MAX_PARAMETER_COUNT && returnsParams->params[lnI]; lnI++)
+			for (lnI = 1, lnType = iVariable_fundamentalType(thisCode, varValue); lnI < _MAX_PARAMETER_COUNT && rpar->params[lnI]; lnI++)
 			{
 
 				//////////
 				// Make sure this variable type matches the test value
 				//////
-					if (iVariable_fundamentalType(thisCode, returnsParams->params[lnI]) != lnType)
+					if (iVariable_fundamentalType(thisCode, rpar->params[lnI]) != lnType)
 					{
 						// The types do not match
-						iError_reportByNumber(thisCode, _ERROR_DATA_TYPE_MISMATCH, iVariable_getRelatedComp(thisCode, returnsParams->params[lnI]), false);
+						iError_reportByNumber(thisCode, _ERROR_DATA_TYPE_MISMATCH, iVariable_getRelatedComp(thisCode, rpar->params[lnI]), false);
 						return(NULL);
 					}
 
@@ -242,13 +242,13 @@
 		//////////
 		// Iterate through to see if the parameters are equal
 		//////
-			for (lnI = 1, llResult = false; lnI < _MAX_PARAMETER_COUNT && returnsParams->params[lnI]; lnI++)
+			for (lnI = 1, llResult = false; lnI < _MAX_PARAMETER_COUNT && rpar->params[lnI]; lnI++)
 			{
 
 				//////////
 				// Compare the value with each list item
 				//////
-					if (iVariable_compare(thisCode, varValue, returnsParams->params[lnI], false, &error, &errorNum) == 0 && !error)
+					if (iVariable_compare(thisCode, varValue, rpar->params[lnI], false, &error, &errorNum) == 0 && !error)
 					{
 						// We found a match
 						llResult = true;
@@ -261,7 +261,7 @@
 				//////
 					if (error)
 					{
-						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, returnsParams->params[lnI]), false);
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, rpar->params[lnI]), false);
 						return(NULL);
 					}
 
@@ -306,9 +306,9 @@
 // Returns:
 //    INT(n) of the value in p1
 //////
-    SVariable* function_int(SThisCode* thisCode, SReturnsParams* returnsParams)
+    SVariable* function_int(SThisCode* thisCode, SFunctionParms* rpar)
     {
-		SVariable*	varNumber = returnsParams->params[0];
+		SVariable*	varNumber = rpar->params[0];
 		f64			fValue;
 		u32			errorNum;
         bool		error;
@@ -390,9 +390,9 @@
 //    ? ISNULL(0.0)  	&& Display .F.
 //    ? ISNULL(.null.)  && Display .T.
 //////
-	SVariable* function_isnull(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_isnull(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varExpr = returnsParams->params[0];
+		SVariable*	varExpr = rpar->params[0];
 
 		bool		llIsNull;
 		SVariable*	result;

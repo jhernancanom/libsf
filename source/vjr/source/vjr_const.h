@@ -197,27 +197,34 @@ typedef SEM**		SEMpp;
 	#define iVariable_isValidType(var)					(var && var->varType >= _VAR_TYPE_START && var->varType <= _VAR_TYPE_END)
 	#define iVariable_isEmpty(var)						(!var->value.data || var->value.length <= 0)
 
-	#define iVariable_validate(var, error)				if (!iVariable_isValid(var)) \
+	#define validateVariable(var, error)				if (!iVariable_isValid(var)) \
 														{ \
 															iError_reportByNumber(thisCode, error, iVariable_getRelatedComp(thisCode, var), false); \
 															return(NULL); \
 														}
 
-	#define iVariable_validateNumeric(var, error)		if (!iVariable_isTypeNumeric(var)) \
+	#define validateNumeric(var, error)					if (!iVariable_isTypeNumeric(var)) \
 														{ \
 															iError_reportByNumber(thisCode, error, iVariable_getRelatedComp(thisCode, var), false); \
 															return(NULL); \
 														}
 
-	#define iVariable_validateCharacter(var, error)		if (!iVariable_isTypeCharacter(var)) \
+	#define validateCharacter(var, error)				if (!iVariable_isTypeCharacter(var)) \
 														{ \
 															iError_reportByNumber(thisCode, error, iVariable_getRelatedComp(thisCode, var), false); \
 															return(NULL); \
 														}
 
-	#define iVariable_validateFloatingPoint(var, error)	if (!iVariable_isTypeFloatingPoint(var)) \
+	#define validateFloatingPoint(var, error)			if (!iVariable_isTypeFloatingPoint(var)) \
 														{ \
 															iError_reportByNumber(thisCode, error, iVariable_getRelatedComp(thisCode, var), false); \
+															return(NULL); \
+														}
+
+	#define getAs_s32(local, var)						local = iiVariable_getAs_s32(thisCode, var, false, &error, &errorNum); \
+														if (error) \
+														{ \
+															iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, var), false); \
 															return(NULL); \
 														}
 

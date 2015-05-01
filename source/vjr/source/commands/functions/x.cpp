@@ -110,9 +110,9 @@
 //    k = DATETIMEX()
 //    ? XTOD(k)
 //////
-	SVariable* function_xtod(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_xtod(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_DATE));
+		return(ifunction_timesAndDatesConversion_common(thisCode, rpar, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_DATE));
 	}
 
 
@@ -142,9 +142,9 @@
 //    k = DATETIMEX()
 //    ? XTOSECONDS(k)
 //////
-	SVariable* function_xtoseconds(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_xtoseconds(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_SECONDS));
+		return(ifunction_timesAndDatesConversion_common(thisCode, rpar, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_SECONDS));
 	}
 
 
@@ -174,9 +174,9 @@
 //    k = DATETIMEX()
 //    ? XTOSECONDSX(k)
 //////
-	SVariable* function_xtosecondsx(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_xtosecondsx(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_SECONDSX));
+		return(ifunction_timesAndDatesConversion_common(thisCode, rpar, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_SECONDSX));
 	}
 
 
@@ -206,9 +206,9 @@
 //    k = DATETIMEX()
 //    ? XTOTIME(k)
 //////
-	SVariable* function_xtotime(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_xtotime(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_TIME));
+		return(ifunction_timesAndDatesConversion_common(thisCode, rpar, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_TIME));
 	}
 
 
@@ -238,9 +238,9 @@
 //    k = DATETIMEX()
 //    ? XTOTIMEX(k)
 //////
-	SVariable* function_xtotimex(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_xtotimex(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_TIMEX));
+		return(ifunction_timesAndDatesConversion_common(thisCode, rpar, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_TIMEX));
 	}
 
 
@@ -270,7 +270,7 @@
 //    k = DATETIMEX()
 //    ? XTOT(k)
 //////
-	SVariable* function_xtot(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_xtot(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_DATETIME));
+		return(ifunction_timesAndDatesConversion_common(thisCode, rpar, _CONVERSION_FUNCTION_DATETIMEX, _CONVERSION_FUNCTION_DATETIME));
 	}

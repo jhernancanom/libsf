@@ -105,9 +105,9 @@
 // Returns:
 //		Character		-- The drive component of the pathname, or the current drive if it wasn't specified, ("c:" of "c:\path\to\sample.txt")
 //////
-	SVariable* function_justdrive(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_justdrive(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varString = returnsParams->params[0];
+		SVariable*	varString = rpar->params[0];
 		u8*			ptr;
         SVariable*	result;
 
@@ -183,9 +183,9 @@
 // Returns:
 //		Character		-- The file extension component, or an empty string if one was not specified, ("txt" of "c:\path\to\sample.txt")
 //////
-	SVariable* function_justext(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_justext(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varString = returnsParams->params[0];
+		SVariable*	varString = rpar->params[0];
 		s32			lnI, lnLength;
 		u8*			ptr;
         SVariable*	result;
@@ -273,9 +273,9 @@
 // Returns:
 //		Character		-- The file name portion of the pathname ("sample.txt" of "c:\path\to\sample.txt")
 //////
-	SVariable* function_justfname(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_justfname(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varString = returnsParams->params[0];
+		SVariable*	varString = rpar->params[0];
 		s32			lnI, lnLength;
 		u8*			ptr;
         SVariable*	result;
@@ -367,9 +367,9 @@
 // Returns:
 //		Character		-- The file path of the pathname ("c:\path\to" of "c:\path\to\sample.txt")
 //////
-	SVariable* function_justpath(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_justpath(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varString = returnsParams->params[0];
+		SVariable*	varString = rpar->params[0];
 		s32			lnLength;
 		u8*			ptr;
         SVariable*	result;
@@ -460,10 +460,10 @@
 // Returns:
 //		Character		-- The file name portion of the pathname ("sample" of "c:\path\to\sample.txt")
 //////
-	SVariable* function_juststem(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_juststem(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varString		= returnsParams->params[0];
-		SVariable*	varPostfixWidth	= returnsParams->params[1];
+		SVariable*	varString		= rpar->params[0];
+		SVariable*	varPostfixWidth	= rpar->params[1];
 		s32			lnI, lnLength, lnPostfixWidth;
 		u8*			ptr;
 		bool		error;

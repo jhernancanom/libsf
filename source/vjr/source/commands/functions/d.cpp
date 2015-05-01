@@ -108,11 +108,11 @@
 // Returns:
 //    Date			-- Current date(), or input converted to date
 //////
-	SVariable* function_date(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_date(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varYear			= returnsParams->params[0];
-		SVariable*	varMonth		= returnsParams->params[1];
-		SVariable*	varDay			= returnsParams->params[2];
+		SVariable*	varYear			= rpar->params[0];
+		SVariable*	varMonth		= rpar->params[1];
+		SVariable*	varDay			= rpar->params[2];
 
 		SVariable*	result;
 		u32			errorNum;
@@ -245,10 +245,10 @@
 //    Datetime		-- Current datetime(), or input converted to datetime
 //
 //////
-	SVariable* function_datetime(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_datetime(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		// Return the datetime
-		return(ifunction_datetimex_common(thisCode, returnsParams, false));
+		return(ifunction_datetimex_common(thisCode, rpar, false));
 	}
 
 
@@ -282,22 +282,22 @@
 //    Datetimex		-- Current datetimex(), or input converted to datetimex
 //
 //////
-	SVariable* function_datetimex(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_datetimex(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		// Return the datetimex
-		return(ifunction_datetimex_common(thisCode, returnsParams, true));
+		return(ifunction_datetimex_common(thisCode, rpar, true));
 	}
 
-	SVariable* ifunction_datetimex_common(SThisCode* thisCode, SReturnsParams* returnsParams, bool tlIsDatetimeX)
+	SVariable* ifunction_datetimex_common(SThisCode* thisCode, SFunctionParms* rpar, bool tlIsDatetimeX)
 	{
-		SVariable*	varYear			= returnsParams->params[0];
-		SVariable*	varMonth		= returnsParams->params[1];
-		SVariable*	varDay			= returnsParams->params[2];
-		SVariable*	varHour			= returnsParams->params[3];
-		SVariable*	varMinute		= returnsParams->params[4];
-		SVariable*	varSecond		= returnsParams->params[5];
-		SVariable*	varMillisecond	= returnsParams->params[6];
-		SVariable*	varNanosecond	= returnsParams->params[7];		// Only if tlIsDatetimeX
+		SVariable*	varYear			= rpar->params[0];
+		SVariable*	varMonth		= rpar->params[1];
+		SVariable*	varDay			= rpar->params[2];
+		SVariable*	varHour			= rpar->params[3];
+		SVariable*	varMinute		= rpar->params[4];
+		SVariable*	varSecond		= rpar->params[5];
+		SVariable*	varMillisecond	= rpar->params[6];
+		SVariable*	varNanosecond	= rpar->params[7];		// Only if tlIsDatetimeX
 
 		s32				lnMicrosecond;
 		SVariable*		result;
@@ -565,9 +565,9 @@
 //    ? DAY(dt)		&& Displays 6
 //    ? DAY()       && Displays current date's day of month
 //////
-	SVariable* function_day(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_day(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varParam = returnsParams->params[0];
+		SVariable* varParam = rpar->params[0];
 
 		// Return day
 		return(ifunction_day_month_year_common(thisCode, varParam, _DMY_COMMON_DAY));
@@ -665,9 +665,9 @@
 // Returns:
 //    Character - If SET CENTURY is OFF, DMY( ) returns a character string in a dd-Month-yy format (for example, 16 February 98). 
 //////
-	SVariable* function_dmy(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_dmy(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varParam = returnsParams->params[0];
+		SVariable* varParam = rpar->params[0];
 
 		return(ifunction_dtoc_common(thisCode, varParam, _DMY_COMMON_DMY));
 	}
@@ -787,10 +787,10 @@
 //    ? DOW()           && Displays current date's number day of week
 //
 //////
-	SVariable* function_dow(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_dow(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varDateOrDatetime	= returnsParams->params[0];
-		SVariable* varFirstDow			= returnsParams->params[1];
+		SVariable* varDateOrDatetime	= rpar->params[0];
+		SVariable* varFirstDow			= rpar->params[1];
 		
 		u32			lnYear, lnMonth, lnDay;
 		s32			lnDow, lnFirstDow;
@@ -936,10 +936,10 @@
 //	  The date format is determined by SET CENTURY and SET DATE. 
 //
 //////
-	SVariable* function_dtoc(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_dtoc(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varParam	= returnsParams->params[0];
-		SVariable* varFlag	= returnsParams->params[1];
+		SVariable* varParam	= rpar->params[0];
+		SVariable* varFlag	= rpar->params[1];
 
 		s32			lnFlag;
 		u32			lnYear, lnMonth, lnDay;
@@ -1075,13 +1075,13 @@
 // Example:
 //    ? DTOR(180)		&& Display 3.14
 //////
-    SVariable* function_dtor(SThisCode* thisCode, SReturnsParams* returnsParams)
+    void function_dtor(SThisCode* thisCode, SFunctionParms* rpar)
     {
-		SVariable* varNumber = returnsParams->params[0];
+		SVariable* varNumber = rpar->params[0];
 
 
 		// Return dtor
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_DTOR, _VAR_TYPE_F64, false, false, returnsParams));
+		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_DTOR, _VAR_TYPE_F64, false, false, rpar);
 	}
 
 
@@ -1109,9 +1109,9 @@
 //	  It is equivalent to DTOC( ) when its optional 1 argument is included. 
 //
 //////
-	SVariable* function_dtos(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_dtos(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varParam = returnsParams->params[0];
+		SVariable* varParam = rpar->params[0];
 
 
 		// Return dtos
@@ -1143,9 +1143,9 @@
 //    Datetime	-- DTOT( ) adds a default time of 12:00:00 AM (if SET HOURS is 12) or 00:00:00 (if SET HOURS is 24) to the date to produce a valid DateTime value.
 //                 If the second parameter is provided and is valid, it will override the default midnight time.
 //////
-	SVariable* function_dtot(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_dtot(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATE, _CONVERSION_FUNCTION_DATETIME));
+		return(ifunction_timesAndDatesConversion_common(thisCode, rpar, _CONVERSION_FUNCTION_DATE, _CONVERSION_FUNCTION_DATETIME));
 	}
 
 
@@ -1175,9 +1175,9 @@
 //    k = DATE()
 //    ? DTOX(k)
 //////
-	SVariable* function_dtox(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_dtox(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATE, _CONVERSION_FUNCTION_DATETIMEX));
+		return(ifunction_timesAndDatesConversion_common(thisCode, rpar, _CONVERSION_FUNCTION_DATE, _CONVERSION_FUNCTION_DATETIMEX));
 	}
 
 
@@ -1241,9 +1241,9 @@
 // Returns:
 //    Formatted string.
 //////
-	SVariable* function_dtransform(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_dtransform(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varFormatStr = returnsParams->params[0];
+		SVariable* varFormatStr = rpar->params[0];
 
 		s32			lnI, lnResultLength;
 		s8*			lcResult;
@@ -1264,13 +1264,13 @@
 		//////////
 		// All parameter 2 and later must be date/datetime type, and are translated locally into datetime types
 		//////
-			for (lnI = 1; lnI < returnsParams->pcount; lnI++)
+			for (lnI = 1; lnI < rpar->pcount; lnI++)
 			{
 
 				//////////
 				// Make sure this variable type matches the test value
 				//////
-					param = returnsParams->params[lnI];
+					param = rpar->params[lnI];
 					if (!iVariable_isValid(param) || !(iVariable_isTypeDate(param) || iVariable_isTypeDatetime(param)))
 					{
 						// The types do not match
@@ -1285,7 +1285,7 @@
 		// Call the common function
 		//////
 			lcResult		= NULL;
-			lnResultLength	= ifunction_dtransform_textmerge_common(thisCode, &lcResult, varFormatStr->value.data_cs8, varFormatStr->value.length, NULL, NULL, &returnsParams->params[1], true, true);
+			lnResultLength	= ifunction_dtransform_textmerge_common(thisCode, &lcResult, varFormatStr->value.data_cs8, varFormatStr->value.length, NULL, NULL, &rpar->params[1], true, true);
 
 
 		//////////

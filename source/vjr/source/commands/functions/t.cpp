@@ -109,13 +109,13 @@
 // Example:
 //    ? TAN(0)		&& Display 0.00
 //////
-    SVariable* function_tan(SThisCode* thisCode, SReturnsParams* returnsParams)
+    void function_tan(SThisCode* thisCode, SFunctionParms* rpar)
     {
-		SVariable* varNumber = returnsParams->params[0];
+		SVariable* varNumber = rpar->params[0];
 
 
 		// Return sin
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_TAN, _VAR_TYPE_F64, false, false, returnsParams));
+		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_TAN, _VAR_TYPE_F64, false, false, rpar);
 	}
 
 
@@ -123,9 +123,9 @@
 //////////
 // Rick's test code functionality using the _test() function
 //////
-	SVariable* function__test(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function__test(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varIndex = returnsParams->params[0];
+		SVariable*	varIndex = rpar->params[0];
 		s32			lnIndex;
 		bool		llValid;
 		SVariable*	result;
@@ -149,7 +149,7 @@
 			switch (lnIndex)
 			{
 				case 1:
-					iTest1(thisCode, returnsParams);
+					iTest1(thisCode, rpar);
 					break;
 
 				default:
@@ -191,12 +191,12 @@
 // Returns:
 //    Character		-- The string after text merging
 //////
-	SVariable* function_textmerge(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_textmerge(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varFormatStr		= returnsParams->params[0];
-		SVariable* varRecursive		= returnsParams->params[1];
-		SVariable* varLeftDelim		= returnsParams->params[2];
-		SVariable* varRightDelim	= returnsParams->params[3];
+		SVariable* varFormatStr		= rpar->params[0];
+		SVariable* varRecursive		= rpar->params[1];
+		SVariable* varLeftDelim		= rpar->params[2];
+		SVariable* varRightDelim	= rpar->params[3];
 
 		s32			lnResultLength;
 		bool		llRecursive;
@@ -290,7 +290,7 @@
 		// Call the common function
 		//////
 			lcResult		= NULL;
-			lnResultLength	= ifunction_dtransform_textmerge_common(thisCode, &lcResult, varFormatStr->value.data_cs8, varFormatStr->value.length, &leftDelim, &rightDelim, &returnsParams->params[1], false, true);
+			lnResultLength	= ifunction_dtransform_textmerge_common(thisCode, &lcResult, varFormatStr->value.data_cs8, varFormatStr->value.length, &leftDelim, &rightDelim, &rpar->params[1], false, true);
 
 
 		//////////
@@ -341,15 +341,15 @@
 //                                    as HH:MM:SS     if we don't want milliseconds
 //
 //////
-	SVariable* function_time(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_time(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timex_common(thisCode, returnsParams, false));
+		return(ifunction_timex_common(thisCode, rpar, false));
 	}
 
-	SVariable* ifunction_timex_common(SThisCode* thisCode, SReturnsParams* returnsParams, bool tlIsTimeX)
+	SVariable* ifunction_timex_common(SThisCode* thisCode, SFunctionParms* rpar, bool tlIsTimeX)
 	{
-		SVariable*	varP1	= returnsParams->params[0];
-		SVariable*	varP2	= returnsParams->params[1];
+		SVariable*	varP1	= rpar->params[0];
+		SVariable*	varP2	= rpar->params[1];
 
 		s32			lnMillisecond, lnMicrosecond, lnNanosecond;
 		u32			lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond;
@@ -373,7 +373,7 @@
 		llExtractDatetimeX	= false;
 		lnMillisecond		= 0;
 		lnNanosecond		= 0;
-		switch (returnsParams->pcount)
+		switch (rpar->pcount)
 		{
 			case 0:
 				// Grab the current time
@@ -595,17 +595,17 @@
 //    k = TIME()
 //    ? TIMETOSECONDS(k)
 //////
-	SVariable* function_timetoseconds(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_timetoseconds(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIME, _CONVERSION_FUNCTION_SECONDS));
+		return(ifunction_timesAndDatesConversion_common(thisCode, rpar, _CONVERSION_FUNCTION_TIME, _CONVERSION_FUNCTION_SECONDS));
 	}
 
 	// Note: Functions that use this must guarantee that at least one parameter is provided
 	// Note: Two parameters are only valid if the output is a datetime or datetimex, the second parameter is used to obtain the missing information
-	SVariable* ifunction_timesAndDatesConversion_common(SThisCode* thisCode, SReturnsParams* returnsParams, s32 tnIn, s32 tnOut)
+	SVariable* ifunction_timesAndDatesConversion_common(SThisCode* thisCode, SFunctionParms* rpar, s32 tnIn, s32 tnOut)
 	{
-		SVariable* varP1 = returnsParams->params[0];
-		SVariable* varP2 = returnsParams->params[1];
+		SVariable* varP1 = rpar->params[0];
+		SVariable* varP2 = rpar->params[1];
 
 		SAllDatetime	adt;
 		f32				lfVal32;
@@ -981,9 +981,9 @@
 //    k = TIME()
 //    ? TIMETOSECONDSX(k)
 //////
-	SVariable* function_timetosecondsx(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_timetosecondsx(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIME, _CONVERSION_FUNCTION_SECONDSX));
+		return(ifunction_timesAndDatesConversion_common(thisCode, rpar, _CONVERSION_FUNCTION_TIME, _CONVERSION_FUNCTION_SECONDSX));
 	}
 
 
@@ -1015,9 +1015,9 @@
 //    t = DATE()
 //    ? TIMETOT(k, t)
 //////
-	SVariable* function_timetot(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_timetot(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIME, _CONVERSION_FUNCTION_DATETIME));
+		return(ifunction_timesAndDatesConversion_common(thisCode, rpar, _CONVERSION_FUNCTION_TIME, _CONVERSION_FUNCTION_DATETIME));
 	}
 
 
@@ -1049,9 +1049,9 @@
 //    t = DATE()
 //    ? TIMETOX(k, t)
 //////
-	SVariable* function_timetox(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_timetox(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIME, _CONVERSION_FUNCTION_DATETIMEX));
+		return(ifunction_timesAndDatesConversion_common(thisCode, rpar, _CONVERSION_FUNCTION_TIME, _CONVERSION_FUNCTION_DATETIMEX));
 	}
 
 
@@ -1079,9 +1079,9 @@
 //    Character		-- Current time() as HH:MM:SS.Micsss
 //
 //////
-	SVariable* function_timex(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_timex(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timex_common(thisCode, returnsParams, true));
+		return(ifunction_timex_common(thisCode, rpar, true));
 	}
 
 
@@ -1111,9 +1111,9 @@
 //    k = TIMEX()
 //    ? TIMEXTOSECONDS(k)
 //////
-	SVariable* function_timextoseconds(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_timextoseconds(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIMEX, _CONVERSION_FUNCTION_SECONDS));
+		return(ifunction_timesAndDatesConversion_common(thisCode, rpar, _CONVERSION_FUNCTION_TIMEX, _CONVERSION_FUNCTION_SECONDS));
 	}
 
 
@@ -1143,9 +1143,9 @@
 //    k = TIMEX()
 //    ? TIMEXTOSECONDSX(k)
 //////
-	SVariable* function_timextosecondsx(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_timextosecondsx(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIMEX, _CONVERSION_FUNCTION_SECONDSX));
+		return(ifunction_timesAndDatesConversion_common(thisCode, rpar, _CONVERSION_FUNCTION_TIMEX, _CONVERSION_FUNCTION_SECONDSX));
 	}
 
 
@@ -1177,9 +1177,9 @@
 //    t = DATE()
 //    ? TIMEXTOT(k, t)
 //////
-	SVariable* function_timextot(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_timextot(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIMEX, _CONVERSION_FUNCTION_DATETIME));
+		return(ifunction_timesAndDatesConversion_common(thisCode, rpar, _CONVERSION_FUNCTION_TIMEX, _CONVERSION_FUNCTION_DATETIME));
 	}
 
 
@@ -1211,9 +1211,9 @@
 //    t = DATE()
 //    ? TIMEXTOX(k, t)
 //////
-	SVariable* function_timextox(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_timextox(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_TIMEX, _CONVERSION_FUNCTION_DATETIMEX));
+		return(ifunction_timesAndDatesConversion_common(thisCode, rpar, _CONVERSION_FUNCTION_TIMEX, _CONVERSION_FUNCTION_DATETIMEX));
 	}
 
 
@@ -1240,10 +1240,10 @@
 // Returns:
 //    Character		-- The string after the variable was converted and formatted
 //////
-	SVariable* function_transform(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_transform(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varVariable	= returnsParams->params[0];
-		SVariable* varFormat	= returnsParams->params[1];
+		SVariable* varVariable	= rpar->params[0];
+		SVariable* varFormat	= rpar->params[1];
 		SVariable* result;
 
 
@@ -1337,10 +1337,10 @@
 // Returns:
 //    Character. TTOC( ) returns a DateTime expression as a character string.
 //////
-	SVariable* function_ttoc(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_ttoc(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varParam = returnsParams->params[0];
-		SVariable* varFlag	= returnsParams->params[1];
+		SVariable* varParam = rpar->params[0];
+		SVariable* varFlag	= rpar->params[1];
 
 		s32			lnMillisecond;
 		u32			lnYear, lnMonth, lnDay, lnFlag;
@@ -1508,9 +1508,9 @@
 // Returns:
 //    Datetime	-- DTOT( ) adds a default time of 12:00:00 AM (if SET HOURS is 12) or 00:00:00 (if SET HOURS is 24) to the date to produce a valid DateTime value.
 //////
-	SVariable* function_ttod(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_ttod(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_DATE));
+		return(ifunction_timesAndDatesConversion_common(thisCode, rpar, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_DATE));
 	}
 
 
@@ -1540,9 +1540,9 @@
 //    k = DATETIME()
 //    ? TTOSECONDS(k)
 //////
-	SVariable* function_ttoseconds(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_ttoseconds(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_SECONDS));
+		return(ifunction_timesAndDatesConversion_common(thisCode, rpar, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_SECONDS));
 	}
 
 
@@ -1572,9 +1572,9 @@
 //    k = DATETIME()
 //    ? TTOSECONDSX(k)
 //////
-	SVariable* function_ttosecondsx(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_ttosecondsx(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_SECONDSX));
+		return(ifunction_timesAndDatesConversion_common(thisCode, rpar, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_SECONDSX));
 	}
 
 
@@ -1604,9 +1604,9 @@
 //    k = DATETIME()
 //    ? TTOTIME(k)
 //////
-	SVariable* function_ttotime(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_ttotime(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_TIME));
+		return(ifunction_timesAndDatesConversion_common(thisCode, rpar, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_TIME));
 	}
 
 
@@ -1636,9 +1636,9 @@
 //    k = DATETIME()
 //    ? TTOTIMEX(k)
 //////
-	SVariable* function_ttotimex(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_ttotimex(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_TIMEX));
+		return(ifunction_timesAndDatesConversion_common(thisCode, rpar, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_TIMEX));
 	}
 
 
@@ -1668,9 +1668,9 @@
 //    k = DATETIME()
 //    ? TTOX(k)
 //////
-	SVariable* function_ttox(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_ttox(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_DATETIMEX));
+		return(ifunction_timesAndDatesConversion_common(thisCode, rpar, _CONVERSION_FUNCTION_DATETIME, _CONVERSION_FUNCTION_DATETIMEX));
 	}
 
 
@@ -1697,10 +1697,10 @@
 // Returns:
 //    Character		-- A one-digit code indicating the type
 //////
-	SVariable* function_type(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_type(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varLookup	= returnsParams->params[0];
-		SVariable* varExtraInfo	= returnsParams->params[1];
+		SVariable* varLookup	= rpar->params[0];
+		SVariable* varExtraInfo	= rpar->params[1];
 
 		s32				lnExtraInfo;
 		bool			llExtraInfo, llManufactured;
@@ -1983,9 +1983,9 @@
 // Returns:
 //    Character		-- The expanded detail type string
 //////
-	SVariable* function_typedetail(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_typedetail(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* var = returnsParams->params[0];
+		SVariable* var = rpar->params[0];
 
 
 		// Return the typedetail

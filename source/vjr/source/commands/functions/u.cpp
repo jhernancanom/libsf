@@ -106,9 +106,9 @@
 // Returns:
 //    Character		-- The string with all lowercase characters converted to uppercase
 //////
-	SVariable* function_upper(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_upper(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varString = returnsParams->params[0];
+		SVariable*	varString = rpar->params[0];
 		s32			lnI;
         SVariable*	result;
 

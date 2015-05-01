@@ -106,9 +106,9 @@
 // Returns:
 //    HOUR( ) returns a numeric value based on a 24 hour format.
 //////
-	SVariable* function_hour(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_hour(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varParam	= returnsParams->params[0];
+		SVariable*	varParam	= rpar->params[0];
 
 		// Return hour
 		return(ifunction_hhmmss_common(thisCode, varParam, _HMS_COMMON_HOUR));

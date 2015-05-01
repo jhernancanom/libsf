@@ -110,10 +110,10 @@
 //////
 	static cs8 cgGoMonthData[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
-	SVariable* function_gomonth(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_gomonth(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varParam = returnsParams->params[0];
-		SVariable* varMonth = returnsParams->params[1];
+		SVariable* varParam = rpar->params[0];
+		SVariable* varMonth = rpar->params[1];
 
 		s32			lnNumOfMonths, lnYear, lnMonth;
 		u32			lnDay, lnLastDay, lnHour, lnMinute, lnSecond;
@@ -297,14 +297,14 @@
 // Returns:
 //    The input pathname with the new stem.
 //////
-	SVariable* function_grayscale(SThisCode* thisCode, SReturnsParams* returnsParams)
+	SVariable* function_grayscale(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varColor			= returnsParams->params[0];
-		SVariable* varPercentage	= returnsParams->params[1];
+		SVariable* varColor			= rpar->params[0];
+		SVariable* varPercentage	= rpar->params[1];
 
 
 		// Return grayscale
-		return(ifunction_colorize_common(thisCode, varColor, NULL, varPercentage, false, returnsParams));
+		return(ifunction_colorize_common(thisCode, varColor, NULL, varPercentage, false, rpar));
 	}
 
 
@@ -330,11 +330,11 @@
 // Returns:
 //    Numeric	-- Input number converted to ASCII value number
 //////
-	SVariable* function_grn(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_grn(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varColor = returnsParams->params[0];
+		SVariable* varColor = rpar->params[0];
 
 
 		// Return grn
-		return(ifunction_color_common(thisCode, varColor, 0x0000ff00, 8, returnsParams));
+		ifunction_color_common(thisCode, rpar, varColor, 0x0000ff00, 8, rpar);
 	}
