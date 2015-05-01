@@ -202,7 +202,7 @@
 //////
 // Format 1 parameters (identical to DATE()):
 //     r1			-- Output DATE() variable
-//     p1			-- (Optional) YEAR() to use.
+//     p1			-- (Optional) YEAR(), nJulian, tDatetime, or sDatetimex to use.
 //     p2			-- (Optional) MONTH() to use.
 //     p3			-- (Optional) DAY() to use.
 //
@@ -210,7 +210,7 @@
 // Format 2 parameters:
 //     no return
 //     p1			-- Output DATE() variable
-//     p2			-- (Optional) YEAR() to use.
+//     p2			-- (Optional) YEAR(), nJulian, tDatetime, or sDatetimex to use.
 //     p3			-- (Optional) MONTH() to use.
 //     p4			-- (Optional) DAY() to use.
 //
@@ -223,32 +223,59 @@
 //    Nothing		-- The source contents of p1 are updated as though it had been passed by reference.
 //
 //////
-// Example:
+// Examples:
 //    DBUNDLE(ldDate, 2015, 4, 26)
+//    DBUNDLE(ldDate, nJulian)
+//    DBUNDLE(ldDate, tDatetime)
+//    DBUNDLE(ldDate, sDatetimex)
+//
 //    ldDate = DBUNDLE(2015, 4, 26)		&& Identical to DATE()
+//    ldDate = DBUNDLE(nJulian)
+//    ldDate = DBUNDLE(tDatetime)
+//    ldDate = DBUNDLE(sDatetimex)
 //////
 	SVariable* function_dbundle(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		SVariable* varR1	= returnsParams->params[0];
-		SVariable* varP1	= returnsParams->params[1];
-		SVariable* varP2	= returnsParams->params[2];
-		SVariable* varP3	= returnsParams->params[3];
+		SVariable*	varR1;
+		SVariable*	varP1;
+		SVariable*	varP2;
+		SVariable*	varP3;
 
-		u32			lnJulian, lnYear, lnMonth, lnDay;
+		bool		llCreateResult;
+		u32			lnJulian, lnYear, lnMonth, lnDay, lnP1Error, lnP2Error, lnP3Error;
 		SYSTEMTIME	lst;
 		SVariable*	varResult;
 		bool		error;
 		u32			errorNum;
 
-// Temporarily disabled
-// iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-// return(NULL);
 
 		//////////
-		// If it's ldDate = DBUNDLE(lnYear, lnMonth, lnDay), then it's the same as DATE()
+		// What format are we?
 		//////
+// TODO:  Need to set the return parameter count so we know what's happening
+debug_break;
 			if (returnsParams->rcount == 1)
-				return(function_date(thisCode, returnsParams));
+			{
+				// ldDate = DBUNDLE(p1[, p2][, p3])
+				llCreateResult	= true;
+				varP1			= returnsParams->params[0];		// p1
+				varP2			= returnsParams->params[1];		// p2
+				varP3			= returnsParams->params[2];		// p3
+				lnP1Error		= _ERROR_P1_IS_INCORRECT;
+				lnP2Error		= _ERROR_P2_IS_INCORRECT;
+				lnP3Error		= _ERROR_P3_IS_INCORRECT;
+
+			} else {
+				// DBUNDLE(r, p1, p2, p3)
+				llCreateResult	= false;
+				varR1			= returnsParams->params[0];		// p1
+				varP1			= returnsParams->params[1];		// p2
+				varP2			= returnsParams->params[2];		// p3
+				varP3			= returnsParams->params[3];		// p4
+				lnP1Error		= _ERROR_P2_IS_INCORRECT;
+				lnP2Error		= _ERROR_P3_IS_INCORRECT;
+				lnP3Error		= _ERROR_P4_IS_INCORRECT;
+			}
 
 
 		//////////
@@ -264,11 +291,8 @@
 		//////
 			if (varP1)
 			{
-				if (!iVariable_isValid(varP1))
-				{
-					iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP1), false);
-					return(NULL);
-				}
+				// Validate P1
+				iVariable_validate(varP1, lnP1Error);
 
 				// If they only provided one parameter, we process it differently
 				if (returnsParams->pcount == 2)
@@ -307,19 +331,15 @@
 
 					} else {
 						// Invalid
-						iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP1), false);
+						iError_reportByNumber(thisCode, lnP1Error, iVariable_getRelatedComp(thisCode, varP1), false);
 						return(NULL);
 					}
 
 				} else {
 					// The year must be numeric
-					if (!iVariable_isTypeNumeric(varP1))
-					{
-						iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP1), false);
-						return(NULL);
-					}
-					// At this point, we know they've given us a number
+					iVariable_validateNumeric(varP1, lnP1Error);
 
+					// At this point, we know they've given us a number
 					// Grab it
 					lnYear = iiVariable_getAs_s32(thisCode, varP1, false, &error, &errorNum);
 					if (error)
@@ -347,13 +367,10 @@
 			if (varP2)
 			{
 				// The month must be numeric
-				if (!iVariable_isValid(varP2) || !iVariable_isTypeNumeric(varP2))
-				{
-					iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP2), false);
-					return(NULL);
-				}
-				// At this point, we know they've given us a number
+				iVariable_validate(varP2, lnP2Error);
+				iVariable_validateNumeric(varP2, lnP2Error);
 
+				// At this point, we know they've given us a number
 				// Grab it
 				lnMonth = iiVariable_getAs_s32(thisCode, varP2, false, &error, &errorNum);
 				if (error)
@@ -380,13 +397,10 @@
 			if (varP3)
 			{
 				// The day must be numeric
-				if (!iVariable_isValid(varP3) || !iVariable_isTypeNumeric(varP3))
-				{
-					iError_reportByNumber(thisCode, _ERROR_P3_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP3), false);
-					return(NULL);
-				}
-				// At this point, we know they've given us a number
+				iVariable_validate(varP3, lnP3Error);
+				iVariable_validateNumeric(varP3, lnP3Error);
 
+				// At this point, we know they've given us a number
 				// Grab it
 				lnDay = iiVariable_getAs_s32(thisCode, varP3, false, &error, &errorNum);
 				if (error)
@@ -420,8 +434,21 @@
 		//////////
 		// The date is valid, so we can store it to the destination
 		//////
-			if (varR1->varType != _VAR_TYPE_DATE)
-				iVariable_setVarType(thisCode, varR1, _VAR_TYPE_DATE);
+			if (llCreateResult)
+			{
+				// Create our result
+				varR1 = iVariable_create(thisCode, _VAR_TYPE_DATE, NULL, true);
+				if (!varR1)
+				{
+					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
+					return(NULL);
+				}
+
+			} else {
+				// Use whatever's there, and force it into a date type
+				if (varR1->varType != _VAR_TYPE_DATE)
+					iVariable_setVarType(thisCode, varR1, _VAR_TYPE_DATE);
+			}
 
 
 		//////////
