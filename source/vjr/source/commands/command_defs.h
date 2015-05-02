@@ -368,6 +368,8 @@ struct SReturnsParams;
 	SVariable*			function_vecstuff							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_vecsymbol							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_version							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_week		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
+	s32					ifunction_week_common						(u32 tnYear, u32 tnMonth, u32 tnDay, s32 tnMinDaysInWeek, s32 tnFirstDayOfWeek);
 	SVariable*			function_xtod								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_xtoseconds							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_xtosecondsx						(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -652,6 +654,7 @@ struct SReturnsParams;
 		{	_ICODE_VECSTUFF,		1,			1,				false,		(uptr)&function_vecstuff,		3,				4,				NULL,			&gsSourceLight_vecstuff[0]		},
 		{	_ICODE_VECSYMBOL,		1,			1,				false,		(uptr)&function_vecsymbol,		1,				3,				NULL,			&gsSourceLight_vecsymbol[0]		},
 		{	_ICODE_VERSION,			1,			1,				false,		(uptr)&function_version,		0,				1,				NULL,			&gsSourceLight_version[0]		},
+		{	_ICODE_WEEK,			1,			1,				false,		(uptr)&function_week,			0,				3,				NULL,			&gsSourceLight_week[0]			},	// WEEK() by Stefano D'Amico, VJr 0.57, May.01.2015
 		{	_ICODE_XTOD,			1,			1,				false,		(uptr)&function_xtod,			1,				1,				NULL,			&gsSourceLight_xtod[0]			},
 		{	_ICODE_XTOSECONDS,		1,			1,				false,		(uptr)&function_xtoseconds,		1,				1,				NULL,			&gsSourceLight_xtoseconds[0]	},
 		{	_ICODE_XTOSECONDSX,		1,			1,				false,		(uptr)&function_xtosecondsx,	1,				1,				NULL,			&gsSourceLight_xtosecondsx[0]	},
