@@ -290,7 +290,7 @@
 		// Call the common function
 		//////
 			lcResult		= NULL;
-			lnResultLength	= ifunction_dtransform_textmerge_common(thisCode, &lcResult, varFormatStr->value.data_cs8, varFormatStr->value.length, &leftDelim, &rightDelim, &rpar->params[1], false, true);
+			lnResultLength	= ifunction_dtransform_textmerge_common(thisCode, rpar, &lcResult, varFormatStr->value.data_cs8, varFormatStr->value.length, &leftDelim, &rightDelim, &rpar->params[1], false, true);
 
 
 		//////////

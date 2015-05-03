@@ -843,7 +843,7 @@
 		//////////
 		// Grab day of week
 		//////
-			lnDow = (s32)ifunction_dow_common(lnYear, lnMonth, lnDay);
+			lnDow = (s32)ifunction_dow_common(thisCode, rpar, lnYear, lnMonth, lnDay);
 
 
 		//////////
@@ -1309,7 +1309,7 @@
 		// Call the common function
 		//////
 			lcResult		= NULL;
-			lnResultLength	= ifunction_dtransform_textmerge_common(thisCode, &lcResult, varFormatStr->value.data_cs8, varFormatStr->value.length, NULL, NULL, &rpar->params[1], true, true);
+			lnResultLength	= ifunction_dtransform_textmerge_common(thisCode, rpar, &lcResult, varFormatStr->value.data_cs8, varFormatStr->value.length, NULL, NULL, &rpar->params[1], true, true);
 
 
 		//////////
@@ -1378,7 +1378,7 @@
 	// %o	-- Day of month Jan, Feb, etc...
 	// %L	-- Local or System time based on SET("TIME") setting
 	//
-	u32 ifunction_dtransform_textmerge_common(SThisCode* thisCode, s8** tcResult, cs8* tcFormatStr, s32 tnFormatStrLength, SDatum* leftTextmergeDelim, SDatum* rightTextmergeDelim, SVariable* varDatesOrDatetimes[9], bool tlDateCodes, bool tlTextMerge)
+	u32 ifunction_dtransform_textmerge_common(SThisCode* thisCode, SFunctionParms* rpar, s8** tcResult, cs8* tcFormatStr, s32 tnFormatStrLength, SDatum* leftTextmergeDelim, SDatum* rightTextmergeDelim, SVariable* varDatesOrDatetimes[9], bool tlDateCodes, bool tlTextMerge)
 	{
 		s8				c, cMark;
 		s32				lnI, lnJ, lnPass, lnAllocationLength, lnOffset, lnMillisecond, lnNanosecond;
@@ -1451,7 +1451,7 @@
 						dtInfo[lnI].wMinute			= lnMinute;
 						dtInfo[lnI].wSecond			= lnSecond;
 						dtInfo[lnI].wMilliseconds	= lnMillisecond;
-						dtInfo[lnI].wDayOfWeek		= ifunction_dow_common(lnYear, lnMonth, lnDay);
+						dtInfo[lnI].wDayOfWeek		= ifunction_dow_common(thisCode, rpar, lnYear, lnMonth, lnDay);
 				}
 
 

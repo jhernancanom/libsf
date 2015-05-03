@@ -153,7 +153,7 @@
 		//////////
 		// Compute the day of week
 		//////
-			lnDow	= ifunction_dow_common(lnYear, lnMonth, lnDay);
+			lnDow	= ifunction_dow_common(thisCode, rpar, lnYear, lnMonth, lnDay);
 
 
 		//////////
@@ -171,7 +171,7 @@
 
 	}
 
-	u32	ifunction_dow_common(u32 tnYear, u32 tnMonth, u32 tnDay)
+	u32	ifunction_dow_common(SThisCode* thisCode, SFunctionParms* rpar, u32 tnYear, u32 tnMonth, u32 tnDay)
 	{
 		u32			lnYear, lnDow;
 		static cs8	cgCdowData[] = { 0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4 };
