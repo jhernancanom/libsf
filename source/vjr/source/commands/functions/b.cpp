@@ -109,11 +109,11 @@
 // Returns:
 //    Logical		-- .t. if the item is inclusively between the values of two expressions of the same type, .f. otherwise
 //////
-	SVariable* function_between(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_between(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varValue		= returnsParams->params[0];
-		SVariable*	varLowValue		= returnsParams->params[1];
-		SVariable*	varHighValue	= returnsParams->params[2];
+		SVariable*	varValue		= rpar->params[0];
+		SVariable*	varLowValue		= rpar->params[1];
+		SVariable*	varHighValue	= rpar->params[2];
 		s32			lnI, lnType, lnComp;
 		bool		llInRange;
 		SVariable*	result;
@@ -124,36 +124,37 @@
 		//////////
 		// Parameters 1, 2 and 3 must be present
 		//////
+			rpar->returns[0];
 			if (!iVariable_isValid(varValue))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varValue), false);
-				return(NULL);
+				return;
 			}
 			if (!iVariable_isValid(varLowValue))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varLowValue), false);
-				return(NULL);
+				return;
 			}
 			if (!iVariable_isValid(varHighValue))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P3_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varHighValue), false);
-				return(NULL);
+				return;
 			}
 
 
 		//////////
 		// Each type must be fundamentally the same type
 		//////
-			for (lnI = 1, lnType = iVariable_fundamentalType(thisCode, varValue); lnI <= 3 && returnsParams->params[lnI]; lnI++)
+			for (lnI = 1, lnType = iVariable_fundamentalType(thisCode, varValue); lnI <= 3 && rpar->params[lnI]; lnI++)
 			{
 				//////////
 				// Make sure this variable type matches the test value
 				//////
-					if (iVariable_fundamentalType(thisCode, returnsParams->params[lnI]) != lnType)
+					if (iVariable_fundamentalType(thisCode, rpar->params[lnI]) != lnType)
 					{
 						// The types do not match
-						iError_reportByNumber(thisCode, _ERROR_DATA_TYPE_MISMATCH, iVariable_getRelatedComp(thisCode, returnsParams->params[lnI]), false);
-						return(NULL);
+						iError_reportByNumber(thisCode, _ERROR_DATA_TYPE_MISMATCH, iVariable_getRelatedComp(thisCode, rpar->params[lnI]), false);
+						return;
 					}
 
 			}
@@ -166,7 +167,7 @@
 			if (error)
 			{
 				iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varLowValue), false);
-				return(NULL);
+				return;
 			}
 
 			// If the value is greater than or equal to the low value, we're good
@@ -184,7 +185,7 @@
 				if (error)
 				{
 					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varHighValue), false);
-					return(NULL);
+					return;
 				}		
 
 				// If value is less than or equal to high, we're good
@@ -203,7 +204,7 @@
 		//////////
 		// Indicate our result
 		//////
-			return(result);
+			rpar->returns[0] = result;
 	}
 
 
@@ -231,10 +232,10 @@
 // Returns:
 //    Numeric		-- The input is populated into the big floating point
 //////
-	SVariable* function_bfp(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_bfp(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varP1	= returnsParams->params[0];
-		SVariable* varP2	= returnsParams->params[1];
+		SVariable* varP1	= rpar->params[0];
+		SVariable* varP2	= rpar->params[1];
 
 		s32			lnBits;
 		s64			lnVal64;
@@ -248,7 +249,8 @@
 		//////////
 		// Determine our size and initialization value
 		//////
-			switch (returnsParams->pcount)
+			rpar->returns[0] = NULL;
+			switch (rpar->pcount)
 			{
 				case 0:
 					lnBits = propGet_settings_PrecisionBFP(_settings);
@@ -261,7 +263,7 @@
 						if (!iVariable_isValid(varP1) || (!iVariable_isTypeNumeric(varP1) && !iVariable_isTypeCharacter(varP1)))
 						{
 							iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP1), false);
-							return(NULL);
+							return;
 						}
 
 
@@ -278,12 +280,12 @@
 						if (!iVariable_isValid(varP1) || (!iVariable_isTypeNumeric(varP1) && !iVariable_isTypeCharacter(varP1)))
 						{
 							iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP1), false);
-							return(NULL);
+							return;
 						}
 						if (!iVariable_isValid(varP2) || !iVariable_isTypeNumeric(varP2))
 						{
 							iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP2), false);
-							return(NULL);
+							return;
 						}
 
 
@@ -294,7 +296,7 @@
 						if (error)
 						{
 							iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP2), false);
-							return(NULL);
+							return;
 						}
 						break;
 
@@ -305,7 +307,7 @@
 		// Construct the appropriate variable
 		//////
 			result = iVariable_create(thisCode, _VAR_TYPE_BFP, NULL, true, lnBits);
-			if (result && returnsParams->pcount >= 1)
+			if (result && rpar->pcount >= 1)
 			{
 				// Initialize
 				if (iVariable_isTypeCharacter(varP1))
@@ -365,7 +367,7 @@
 		//////////
 		// Indicate our result
 		//////
-			return(result);
+			rpar->returns[0] = result;
 
 	}
 
@@ -394,10 +396,10 @@
 // Returns:
 //    Numeric		-- The input is populated into the big integer
 //////
-	SVariable* function_bi(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_bi(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varP1	= returnsParams->params[0];
-		SVariable* varP2	= returnsParams->params[1];
+		SVariable* varP1	= rpar->params[0];
+		SVariable* varP2	= rpar->params[1];
 
 		s32			lnBits;
 		s64			lnVal64;
@@ -411,7 +413,8 @@
 		//////////
 		// Determine our size and initialization value
 		//////
-			switch (returnsParams->pcount)
+			rpar->returns[0] = NULL;
+			switch (rpar->pcount)
 			{
 				case 0:
 					lnBits = propGet_settings_PrecisionBI(_settings);
@@ -424,7 +427,7 @@
 						if (!iVariable_isValid(varP1) || (!iVariable_isTypeNumeric(varP1) && !iVariable_isTypeCharacter(varP1)))
 						{
 							iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP1), false);
-							return(NULL);
+							return;
 						}
 
 
@@ -441,12 +444,12 @@
 						if (!iVariable_isValid(varP1) || (!iVariable_isTypeNumeric(varP1) && !iVariable_isTypeCharacter(varP1)))
 						{
 							iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP1), false);
-							return(NULL);
+							return;
 						}
 						if (!iVariable_isValid(varP2) || !iVariable_isTypeNumeric(varP2))
 						{
 							iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP2), false);
-							return(NULL);
+							return;
 						}
 
 
@@ -457,7 +460,7 @@
 						if (error)
 						{
 							iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP2), false);
-							return(NULL);
+							return;
 						}
 						break;
 
@@ -468,7 +471,7 @@
 		// Construct the appropriate variable
 		//////
 			result = iVariable_create(thisCode, _VAR_TYPE_BI, NULL, true, lnBits);
-			if (result && returnsParams->pcount >= 1)
+			if (result && rpar->pcount >= 1)
 			{
 				// Initialize
 				if (iVariable_isTypeCharacter(varP1))
@@ -528,7 +531,7 @@
 		//////////
 		// Indicate our result
 		//////
-			return(result);
+			rpar->returns[0] = result;
 
 	}
 
@@ -555,17 +558,17 @@
 // Returns:
 //    Numeric		-- Input bits converted to an unsigned integer of the appropriate size (up to 64-bits)
 //////
-	SVariable* function_bits(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_bits(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varBits		= returnsParams->params[0];
-		SVariable* varBitWidth	= returnsParams->params[1];
+		SVariable* varBits		= rpar->params[0];
+		SVariable* varBitWidth	= rpar->params[1];
 
 
 		// Return bits
-		return(ifunction_bits_common(thisCode, varBits, varBitWidth, returnsParams));
+		ifunction_bits_common(thisCode, rpar, varBits, varBitWidth);
 	}
 
-	SVariable* ifunction_bits_common(SThisCode* thisCode, SVariable* varBits, SVariable* varBitWidth, SReturnsParams* returnsParams)
+	void ifunction_bits_common(SThisCode* thisCode, SFunctionParms* rpar, SVariable* varBits, SVariable* varBitWidth)
 	{
 		s8			c;
 		u8			lnOrValue;
@@ -578,10 +581,11 @@
 		//////////
 		// varBits must be character
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varBits) || !iVariable_isTypeCharacter(varBits) || varBits->value.length > 64)
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varBits), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -593,7 +597,7 @@
 				if (!iVariable_isValid(varBitWidth) || !iVariable_isTypeNumeric(varBitWidth))
 				{
 					iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varBitWidth), false);
-					return(NULL);
+					return;
 				}
 
 				// Grab the width
@@ -601,14 +605,14 @@
 				if (error)
 				{
 					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varBitWidth), false);
-					return(NULL);
+					return;
 				}
 
 				// Must be 8, 16, 32, or 64
 				if (lnWidth != 8 && lnWidth != 16 && lnWidth != 32 && lnWidth != 64)
 				{
 					iError_reportByNumber(thisCode, _ERROR_PARAMETER_MUST_BE_8_16_32_64, iVariable_getRelatedComp(thisCode, varBitWidth), false);
-					return(NULL);
+					return;
 				}
 
 			} else {
@@ -629,7 +633,7 @@
 				if (c != '0' && c != '1')
 				{
 					iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varBits), false);
-					return(NULL);
+					return;
 				}
 			}
 			// When we get here, we know how wide it is maximum
@@ -647,7 +651,7 @@
 			if (lnBit > lnWidth)
 			{
 				iError_reportByNumber(thisCode, _ERROR_TOO_BIG_FOR_TARGET, iVariable_getRelatedComp(thisCode, varBits), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -670,7 +674,7 @@
 					break;
 				default:
 					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varBits), false);
-					return(NULL);
+					return;
 			}
 		
 
@@ -729,7 +733,7 @@
 		//////////
 		// Return our result
 		//////
-			return(result);
+			rpar->returns[0] = result;
 	}
 
 
@@ -755,13 +759,13 @@
 // Returns:
 //    Numeric		-- Input bits converted to an 8-bit unsigned integer
 //////
-	SVariable* function_bits8(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_bits8(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varBits = returnsParams->params[0];
+		SVariable* varBits = rpar->params[0];
 
 
 		// Return bits8()
-		return(ifunction_bits_common(thisCode, varBits, cvarEight, returnsParams));
+		ifunction_bits_common(thisCode, rpar, varBits, cvarEight);
 	}
 
 
@@ -787,13 +791,13 @@
 // Returns:
 //    Numeric		-- Input bits converted to an 16-bit unsigned integer
 //////
-	SVariable* function_bits16(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_bits16(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varBits = returnsParams->params[0];
+		SVariable* varBits = rpar->params[0];
 
 
 		// Return bits16()
-		return(ifunction_bits_common(thisCode, varBits, cvarSixteen, returnsParams));
+		ifunction_bits_common(thisCode, rpar, varBits, cvarSixteen);
 	}
 
 
@@ -819,13 +823,13 @@
 // Returns:
 //    Numeric		-- Input bits converted to an 32-bit unsigned integer
 //////
-	SVariable* function_bits32(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_bits32(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varBits = returnsParams->params[0];
+		SVariable* varBits = rpar->params[0];
 
 
 		// Return bits32()
-		return(ifunction_bits_common(thisCode, varBits, cvarThirtyTwo, returnsParams));
+		ifunction_bits_common(thisCode, rpar, varBits, cvarThirtyTwo);
 	}
 
 
@@ -851,13 +855,13 @@
 // Returns:
 //    Numeric		-- Input bits converted to an 64-bit unsigned integer
 //////
-	SVariable* function_bits64(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_bits64(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varBits = returnsParams->params[0];
+		SVariable* varBits = rpar->params[0];
 
 
 		// Return bits64()
-		return(ifunction_bits_common(thisCode, varBits, cvarSixtyFour, returnsParams));
+		ifunction_bits_common(thisCode, rpar, varBits, cvarSixtyFour);
 	}
 
 
@@ -885,16 +889,15 @@
 // Returns:
 //    Numeric		-- The extracted bits as a numeric unsigned integer of the same size as the original.
 //////
-	SVariable* function_bitslice(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_bitslice(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varValue		= returnsParams->params[0];
-		SVariable* varBitStart	= returnsParams->params[1];
-		SVariable* varBitEnd	= returnsParams->params[2];
+		SVariable* varValue		= rpar->params[0];
+		SVariable* varBitStart	= rpar->params[1];
+		SVariable* varBitEnd	= rpar->params[2];
 
 
 		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
 	}
 
 
@@ -921,15 +924,14 @@
 // Returns:
 //    Character		-- The extracted bits as a character string
 //////
-	SVariable* function_bitstr(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_bitstr(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varValue		= returnsParams->params[0];
-		SVariable* varLength	= returnsParams->params[1];
+		SVariable* varValue		= rpar->params[0];
+		SVariable* varLength	= rpar->params[1];
 
 
 		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
 	}
 
 
@@ -955,13 +957,13 @@
 // Returns:
 //    Numeric	-- Input number converted to ASCII value number
 //////
-	SVariable* function_blu(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_blu(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varColor = returnsParams->params[0];
+		SVariable* varColor = rpar->params[0];
 
 
 		// Return blu
-		return(ifunction_color_common(thisCode, varColor, 0x00ff0000, 16, returnsParams));
+		ifunction_color_common(thisCode, rpar, varColor, 0x00ff0000, 16);
 	}
 
 
@@ -990,15 +992,15 @@
 //    Numeric		-- Constructed system-wide RGBA() integer
 //
 //////
-	SVariable* function_bgr(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_bgr(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varBlu = returnsParams->params[0];
-		SVariable* varGrn = returnsParams->params[1];
-		SVariable* varRed = returnsParams->params[2];
+		SVariable* varBlu = rpar->params[0];
+		SVariable* varGrn = rpar->params[1];
+		SVariable* varRed = rpar->params[2];
 
 
 		// Return bgr
-		return(ifunction_rgba_common(thisCode, varRed, varGrn, varBlu, NULL, returnsParams));
+		ifunction_rgba_common(thisCode, rpar, varRed, varGrn, varBlu, NULL);
 	}
 
 
@@ -1028,14 +1030,14 @@
 //    Numeric		-- Constructed system-wide RGBA() integer
 //
 //////
-	SVariable* function_bgra(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_bgra(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varBlu = returnsParams->params[0];
-		SVariable* varGrn = returnsParams->params[1];
-		SVariable* varRed = returnsParams->params[2];
-		SVariable* varAlp = returnsParams->params[3];
+		SVariable* varBlu = rpar->params[0];
+		SVariable* varGrn = rpar->params[1];
+		SVariable* varRed = rpar->params[2];
+		SVariable* varAlp = rpar->params[3];
 
 
 		// Return bgra
-		return(ifunction_rgba_common(thisCode, varRed, varGrn, varBlu, varAlp, returnsParams));
+		ifunction_rgba_common(thisCode, rpar, varRed, varGrn, varBlu, varAlp);
 	}

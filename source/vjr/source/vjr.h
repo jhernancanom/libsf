@@ -210,7 +210,7 @@
 	//////////
 	// Added for test purposes
 	//////
-		void iTest1(SThisCode* thisCode, SReturnsParams* returnsParams);
+		void iTest1(SThisCode* thisCode, SFunctionParms* rpar);
 		#include "test\test.cpp"
 
 
@@ -371,7 +371,7 @@
 	//////////
 	// Added for test purposes
 	//////
-		void iTest1(SThisCode* thisCode, SReturnsParams* returnsParams);
+		void iTest1(SThisCode* thisCode, SFunctionParms* rpar);
 		#include "test/test.cpp"
 
 

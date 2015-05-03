@@ -106,15 +106,16 @@
 // Returns:
 //    HOUR( ) returns a numeric value based on a 24 hour format.
 //////
-	SVariable* function_hour(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_hour(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varParam	= returnsParams->params[0];
+		SVariable*	varParam	= rpar->params[0];
+
 
 		// Return hour
-		return(ifunction_hhmmss_common(thisCode, varParam, _HMS_COMMON_HOUR));
+		ifunction_hhmmss_common(thisCode, rpar, varParam, _HMS_COMMON_HOUR);
 	}
 
-	SVariable* ifunction_hhmmss_common(SThisCode* thisCode, SVariable* varParam, u32 tnFunctionType)
+	void ifunction_hhmmss_common(SThisCode* thisCode, SFunctionParms* rpar, SVariable* varParam, u32 tnFunctionType)
 	{
 
 		s32			lnMillisecond, lnMicrosecond;
@@ -126,12 +127,13 @@
 		//////////
 		// If Parameter 1 is provided, it must be datetime or datetimex
 		//////
+			rpar->returns[0] = NULL;
 			if (varParam)
 			{
 				if (!iVariable_isValid(varParam))
 				{
 					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
-					return(NULL);
+					return;
 
 				} else if (!iVariable_isTypeDatetime(varParam)) {
 					// Grab hour, minute, second, millisecond from datetime
@@ -144,13 +146,14 @@
 
 				} else {
 					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
-					return(NULL);
+					return;
 				}
 
 			} else {
 				// Use the current datetimex
 				if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
 				else				GetLocalTime(&lst);
+
 				lnHour			= lst.wHour;
 				lnMinute		= lst.wMinute;
 				lnSecond		= lst.wSecond;
@@ -173,7 +176,7 @@
 				// Should never happen
 				default:
 					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
-					return(NULL);
+					return;
 			}
 
 
@@ -188,5 +191,6 @@
 		//////////
 		// Return the result
 		//////
-			return(result);
+			rpar->returns[0] = result;
+
 	}

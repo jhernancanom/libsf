@@ -109,10 +109,10 @@
 //	  QUARTER( ) returns the quarter of the year in which a date occurs, and the values can be 1, 2, 3, or 4.
 //
 //////
-	SVariable* function_quarter(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_quarter(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varParam = returnsParams->params[0];
-		SVariable* varMonth = returnsParams->params[1];
+		SVariable* varParam = rpar->params[0];
+		SVariable* varMonth = rpar->params[1];
 
 		u32			lnYear, lnMonth, lnDay, lnStartingMonth, lnQuarter;
 		u32			errorNum;
@@ -124,26 +124,28 @@
 		//////////
 		// If provided, parameter 1 must be date or datetime
 		//////
+			rpar->returns[0] = NULL;
 			if (varParam)
 			{
-// TODO:  Must also support DATETIMEX at some point
-				if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
+				if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam) || iVariable_isTypeDatetime(varParam)))
 				{
 					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
-					return(NULL);
+					return;
 				}
 
 				//////////
 				// Grab year, month, day from datetime or date
 				//////
-					if (iVariable_isTypeDatetime(varParam))			iiDateMath_get_YyyyMmDd_from_julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-					else /* date */									iiDateMath_get_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+					     if (iVariable_isTypeDatetime(varParam))		iiDateMath_get_YyyyMmDd_from_julian					(varParam->value.data_dt->julian,			&lnYear, &lnMonth, &lnDay);
+					else if (iVariable_isTypeDatetimeX(varParam))		iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_jseconds	(varParam->value.data_dtx->jseconds, NULL,	&lnYear, &lnMonth, &lnDay, NULL, NULL, NULL, NULL, NULL);
+					else /* date */										iiDateMath_get_YyyyMmDd_from_YYYYMMDD				(varParam->value.data_u8,					&lnYear, &lnMonth, &lnDay);
 
 
 			} else {
 				// Use the current date
 				if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
 				else				GetLocalTime(&lst);
+
 				lnYear	= lst.wYear;
 				lnMonth	= lst.wMonth;
 				lnDay	= lst.wDay;
@@ -163,20 +165,20 @@
 					if (error)
 					{
 						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varMonth), false);
-						return(NULL);
+						return;
 					}
 
 					// Make sure it's 1..12
 					if (lnStartingMonth < 1 || lnStartingMonth > 12)
 					{
 						iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varMonth), false);
-						return(NULL);
+						return;
 					}
 
 				} else {
 					// Invalid second parameter
 					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varMonth), false);
-					return(NULL);
+					return;
 				}
 
 			} else {
@@ -202,6 +204,6 @@
 		//////////
 		// Return the result
 		//////
-			return(result);
+			rpar->returns[0] = result;
 
 	}

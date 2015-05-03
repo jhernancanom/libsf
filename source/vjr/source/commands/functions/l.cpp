@@ -107,10 +107,10 @@
 // Returns:
 //    Character		-- The string of the left N characters
 //////
-	SVariable* function_left(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_left(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varString	= returnsParams->params[0];
-		SVariable*	varCount	= returnsParams->params[1];
+		SVariable*	varString	= rpar->params[0];
+		SVariable*	varCount	= rpar->params[1];
 		s32			lnLength;
 		u32			errorNum;
 		bool		error;
@@ -120,10 +120,11 @@
 		//////////
 		// Parameter 1 must be character
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varString) || iVariable_getType(varString) != _VAR_TYPE_CHARACTER)
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varString), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -133,7 +134,7 @@
 			if (!iVariable_isValid(varCount) || !iVariable_isTypeNumeric(varCount))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varCount), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -144,7 +145,7 @@
 			if (error)
 			{
 				iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varCount), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -155,7 +156,7 @@
 			if (!result)
 			{
 				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
+				return;
 			}
 
 
@@ -169,7 +170,8 @@
 		//////////
         // Return our converted result
 		//////
-	        return(result);
+			rpar->returns[0] = result;
+
 	}
 
 
@@ -195,19 +197,20 @@
 // Returns:
 //    Numeric		-- The length of the string
 //////
-	SVariable* function_len(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_len(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varString = returnsParams->params[0];
+		SVariable* varString = rpar->params[0];
         SVariable* result;
 
 
 		//////////
 		// Parameter 1 must be character
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varString) || iVariable_getType(varString) != _VAR_TYPE_CHARACTER)
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varString), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -218,7 +221,7 @@
 			if (!result)
 			{
 				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
+				return;
 			}
 
 
@@ -231,7 +234,8 @@
 		//////////
         // Return our converted result
 		//////
-	        return(result);
+			rpar->returns[0] = result;
+
 	}
 
 
@@ -258,13 +262,13 @@
 // Example:
 //    ? LOG(2)		&& Display 0.69
 //////
-    SVariable* function_log(SThisCode* thisCode, SReturnsParams* returnsParams)
+    void function_log(SThisCode* thisCode, SFunctionParms* rpar)
     {
-		SVariable* varNumber = returnsParams->params[0];
+		SVariable* varNumber = rpar->params[0];
 
 
         // Return log
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_LOG, _VAR_TYPE_F64, false, false, returnsParams));
+		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_LOG, _VAR_TYPE_F64, false, false);
 	}
 
 
@@ -293,13 +297,13 @@
 // Example:
 //    ? LOG10(2)		&& Display 0.30
 //////
-    SVariable* function_log10(SThisCode* thisCode, SReturnsParams* returnsParams)
+    void function_log10(SThisCode* thisCode, SFunctionParms* rpar)
     {
-		SVariable* varNumber = returnsParams->params[0];
+		SVariable* varNumber = rpar->params[0];
 
 
         // Return log10
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_LOG10, _VAR_TYPE_F64, false, false, returnsParams));
+		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_LOG10, _VAR_TYPE_F64, false, false);
 	}
 
 
@@ -325,9 +329,9 @@
 // Returns:
 //    Character		-- The string with all lowercase characters converted to lowercase
 //////
-	SVariable* function_lower(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_lower(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varString = returnsParams->params[0];
+		SVariable*	varString = rpar->params[0];
 		s32			lnI;
         SVariable*	result;
 
@@ -335,10 +339,11 @@
 		//////////
 		// Parameter 1 must be character
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varString) || iVariable_getType(varString) != _VAR_TYPE_CHARACTER)
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varString), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -349,7 +354,7 @@
 			if (!result)
 			{
 				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
+				return;
 			}
 
 
@@ -372,7 +377,8 @@
 		//////////
         // Return our converted result
 		//////
-	        return(result);
+			rpar->returns[0] = result;
+
 	}
 
 
@@ -398,14 +404,14 @@
 // Returns:
 //    Character		-- The string with any leading spaces removed
 //////
-	SVariable* function_ltrim(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_ltrim(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varString			= returnsParams->params[0];
-		SVariable* varCaseInsensitive	= returnsParams->params[1];
-		SVariable* varTrimChars1		= returnsParams->params[2];
-		SVariable* varTrimChars2		= returnsParams->params[3];
+		SVariable* varString			= rpar->params[0];
+		SVariable* varCaseInsensitive	= rpar->params[1];
+		SVariable* varTrimChars1		= rpar->params[2];
+		SVariable* varTrimChars2		= rpar->params[3];
 
 
 		// Return ltrim
-		return(ifunction_trim_common(thisCode, varString, varCaseInsensitive, varTrimChars1, varTrimChars2, true, false, returnsParams));
+		ifunction_trim_common(thisCode, rpar, varString, varCaseInsensitive, varTrimChars1, varTrimChars2, true, false);
 	}

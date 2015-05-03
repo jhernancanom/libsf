@@ -112,11 +112,11 @@
 //	  dt = datetime()	&& May.01.2015
 //    ? WEEK(dt)		&& Displays 18
 //////
-	SVariable* function_week(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_week(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varParam			= returnsParams->params[0];
-		SVariable*	varFirstWeek		= returnsParams->params[1];
-		SVariable*	varFirstDayOfWeek	= returnsParams->params[2];
+		SVariable*	varParam			= rpar->params[0];
+		SVariable*	varFirstWeek		= rpar->params[1];
+		SVariable*	varFirstDayOfWeek	= rpar->params[2];
 
 		u32			lnYear, lnMonth, lnDay;
 		s32			lnWeek, lnMinDaysInWeek, lnFirstDayOfWeek;
@@ -134,7 +134,7 @@
 				if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
 				{
 					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
-					return(NULL);
+					return;
 				}
 
 			//////////
@@ -161,7 +161,7 @@
 				if (!iVariable_isValid(varFirstWeek) || !iVariable_isTypeNumeric(varFirstWeek))
 				{
 					iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varFirstWeek), false);
-					return(NULL);
+					return;
 				}
 
 				// Grab the minimum number of days in week
@@ -170,13 +170,13 @@
 				{
 					// An error extracting the value (should never happen)
 					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varFirstWeek), false);
-					return(NULL);
+					return;
 				}
 
 				if (lnMinDaysInWeek < 1 || 7 < lnMinDaysInWeek)
 				{
 					iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varFirstWeek), false);
-					return(NULL);				
+					return;				
 				}
 			}
 			else
@@ -191,7 +191,7 @@
 				if (!iVariable_isValid(varFirstDayOfWeek) || !iVariable_isTypeNumeric(varFirstDayOfWeek))
 				{
 					iError_reportByNumber(thisCode, _ERROR_P3_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varFirstDayOfWeek), false);
-					return(NULL);
+					return;
 				}
 
 				// Grab the first day of week
@@ -200,13 +200,13 @@
 				{
 					// An error extracting the value (should never happen)
 					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varFirstDayOfWeek), false);
-					return(NULL);
+					return;
 				}
 
 				if (lnFirstDayOfWeek < 0 || 6 < lnFirstDayOfWeek)
 				{
 					iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varFirstWeek), false);
-					return(NULL);				
+					return;				
 				}
 			}
 			else
@@ -230,7 +230,7 @@
 		//////////
 		// Indicate our result
 		//////
-			return(result);
+			rpar->returns[0] = result;
 	}
 
 	s32	ifunction_week_common(u32 tnYear, u32 tnMonth, u32 tnDay, s32 tnMinDaysInWeek, s32 tnFirstDayOfWeek)

@@ -161,7 +161,7 @@
 	//////////
 
 
-	struct SReturnsParams
+	struct SFunctionParms
 	{
 		SVariable*		returns[_MAX_RETURN_COUNT];			// Return parameters
 		s32				rcount;								// Number of return parameters specified

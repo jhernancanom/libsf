@@ -699,20 +699,21 @@
 //    The sum of p1 + p2
 //
 //////
-	SVariable* function_concatenate(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_concatenate(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varString1	= returnsParams->params[0];
-		SVariable*	varString2	= returnsParams->params[1];
+		SVariable*	varString1	= rpar->params[0];
+		SVariable*	varString2	= rpar->params[1];
 		SVariable*	result;
 
 
 		//////////
 		// Parameter 1 must be character
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varString1) || !iVariable_isTypeCharacter(varString1))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varString1), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -722,7 +723,7 @@
 			if (!iVariable_isValid(varString2) || !iVariable_isTypeCharacter(varString2))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varString2), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -733,7 +734,7 @@
 			if (!result)
 			{
 				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
+				return;
 			}
 
 			// Populate
@@ -747,7 +748,8 @@
 		//////////
 		// Indicate our result
 		//////
-			return(result);
+			rpar->returns[0] = result;
+
 	}
 
 
@@ -776,10 +778,10 @@
 //    The sum of p1 + p2
 //
 //////
-	SVariable* function_add(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_add(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varNum1	= returnsParams->params[0];
-		SVariable*	varNum2	= returnsParams->params[1];
+		SVariable*	varNum1	= rpar->params[0];
+		SVariable*	varNum2	= rpar->params[1];
 		s64			lnValue1, lnValue2;
 		f64			lfValue1, lfValue2;
 		bool		error;
@@ -790,10 +792,11 @@
 		//////////
 		// Parameter 1 must be numeric
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varNum1) || !iVariable_isTypeNumeric(varNum1))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNum1), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -803,7 +806,7 @@
 			if (!iVariable_isValid(varNum2) || !iVariable_isTypeNumeric(varNum2))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNum2), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -814,7 +817,11 @@
 			{
 				// p1 is floating point, meaning the result will be too
 				lfValue1 = iiVariable_getAs_f64(thisCode, varNum1, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum1), false);	return(NULL);	}
+				if (error)
+				{
+					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum1), false);
+					return;
+				}
 
 				// Create our floating point result
 				result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
@@ -825,7 +832,11 @@
 					{
 						// p2 is floating point
 						lfValue2 = iiVariable_getAs_f64(thisCode, varNum2, false, &error, &errorNum);
-						if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
+						if (error)
+						{
+							iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);
+							return;
+						}
 
 						// Store the result
 						*(f64*)result->value.data = lfValue1 + lfValue2;
@@ -833,7 +844,11 @@
 					} else  {
 						// p2 is not floating point, so we'll get it as an integer
 						lnValue2 = iiVariable_getAs_s64(thisCode, varNum2, false, &error, &errorNum);
-						if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
+						if (error)
+						{
+							iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);
+							return;
+						}
 
 						// Store the result
 						*(f64*)result->value.data = lfValue1 + (f64)lnValue2;
@@ -843,14 +858,22 @@
 			} else {
 				// p1 is integer, result is determined by what p2 is, either integer or floating point
 				lnValue1 = iiVariable_getAs_s64(thisCode, varNum1, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum1), false);	return(NULL);	}
+				if (error)
+				{
+					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum1), false);
+					return;
+				}
 
 				// Grab p2
 				if (iVariable_isTypeFloatingPoint(varNum2))
 				{
 					// p2 is floating point
 					lfValue2 = iiVariable_getAs_f64(thisCode, varNum2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
+					if (error)
+					{
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);
+						return;
+					}
 
 					// Create our floating point result
 					result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
@@ -860,7 +883,11 @@
 				} else  {
 					// p2 is not floating point, so we'll get it as an integer
 					lnValue2 = iiVariable_getAs_s64(thisCode, varNum2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
+					if (error)
+					{
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);
+						return;
+					}
 
 					// Create our floating point result
 					result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
@@ -880,7 +907,8 @@
 		//////////
 		// Indicate our result
 		//////
-			return(result);
+			rpar->returns[0] = result;
+
 	}
 
 
@@ -909,10 +937,10 @@
 //    The sum of p1 - p2
 //
 //////
-	SVariable* function_sub(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_sub(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varNum1	= returnsParams->params[0];
-		SVariable*	varNum2	= returnsParams->params[1];
+		SVariable*	varNum1	= rpar->params[0];
+		SVariable*	varNum2	= rpar->params[1];
 		s64			lnValue1, lnValue2;
 		f64			lfValue1, lfValue2;
 		bool		error;
@@ -923,10 +951,11 @@
 		//////////
 		// Parameter 1 must be numeric
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varNum1) || !iVariable_isTypeNumeric(varNum1))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNum1), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -936,7 +965,7 @@
 			if (!iVariable_isValid(varNum2) || !iVariable_isTypeNumeric(varNum2))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNum2), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -947,7 +976,11 @@
 			{
 				// p1 is floating point, meaning the result will be too
 				lfValue1 = iiVariable_getAs_f64(thisCode, varNum1, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum1), false);	return(NULL);	}
+				if (error)
+				{
+					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum1), false);
+					return;
+				}
 
 				// Create our floating point result
 				result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
@@ -958,7 +991,11 @@
 					{
 						// p2 is floating point
 						lfValue2 = iiVariable_getAs_f64(thisCode, varNum2, false, &error, &errorNum);
-						if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
+						if (error)
+						{
+							iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);
+							return;
+						}
 
 						// Store the result
 						*(f64*)result->value.data = lfValue1 - lfValue2;
@@ -966,7 +1003,11 @@
 					} else  {
 						// p2 is not floating point, so we'll get it as an integer
 						lnValue2 = iiVariable_getAs_s64(thisCode, varNum2, false, &error, &errorNum);
-						if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
+						if (error)
+						{
+							iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);
+							return;
+						}
 
 						// Store the result
 						*(f64*)result->value.data = lfValue1 - (f64)lnValue2;
@@ -976,14 +1017,22 @@
 			} else {
 				// p1 is integer, result is determined by what p2 is, either integer or floating point
 				lnValue1 = iiVariable_getAs_s64(thisCode, varNum1, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum1), false);	return(NULL);	}
+				if (error)
+				{
+					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum1), false);
+					return;
+				}
 
 				// Grab p2
 				if (iVariable_isTypeFloatingPoint(varNum2))
 				{
 					// p2 is floating point
 					lfValue2 = iiVariable_getAs_f64(thisCode, varNum2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
+					if (error)
+					{
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);
+						return;
+					}
 
 					// Create our floating point result
 					result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
@@ -993,7 +1042,11 @@
 				} else  {
 					// p2 is not floating point, so we'll get it as an integer
 					lnValue2 = iiVariable_getAs_s64(thisCode, varNum2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
+					if (error)
+					{
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);
+						return;
+					}
 
 					// Create our floating point result
 					result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
@@ -1013,7 +1066,8 @@
 		//////////
 		// Indicate our result
 		//////
-			return(result);
+			rpar->returns[0] = result;
+
 	}
 
 
@@ -1042,10 +1096,10 @@
 //    The sum of p1 * p2
 //
 //////
-	SVariable* function_mul(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_mul(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varNum1	= returnsParams->params[0];
-		SVariable*	varNum2	= returnsParams->params[1];
+		SVariable*	varNum1	= rpar->params[0];
+		SVariable*	varNum2	= rpar->params[1];
 		s64			lnValue1, lnValue2;
 		f64			lfValue1, lfValue2;
 		bool		error;
@@ -1056,10 +1110,11 @@
 		//////////
 		// Parameter 1 must be numeric
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varNum1) || !iVariable_isTypeNumeric(varNum1))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNum1), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -1069,7 +1124,7 @@
 			if (!iVariable_isValid(varNum2) || !iVariable_isTypeNumeric(varNum2))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNum2), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -1080,7 +1135,11 @@
 			{
 				// p1 is floating point, meaning the result will be too
 				lfValue1 = iiVariable_getAs_f64(thisCode, varNum1, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum1), false);	return(NULL);	}
+				if (error)
+				{
+					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum1), false);
+					return;
+				}
 
 				// Create our floating point result
 				result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
@@ -1091,7 +1150,11 @@
 					{
 						// p2 is floating point
 						lfValue2 = iiVariable_getAs_f64(thisCode, varNum2, false, &error, &errorNum);
-						if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
+						if (error)
+						{
+							iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);
+							return;
+						}
 
 						// Store the result
 						*(f64*)result->value.data = lfValue1 * lfValue2;
@@ -1099,7 +1162,11 @@
 					} else  {
 						// p2 is not floating point, so we'll get it as an integer
 						lnValue2 = iiVariable_getAs_s64(thisCode, varNum2, false, &error, &errorNum);
-						if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
+						if (error)
+						{
+							iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);
+							return;
+						}
 
 						// Store the result
 						*(f64*)result->value.data = lfValue1 * (f64)lnValue2;
@@ -1109,14 +1176,22 @@
 			} else {
 				// p1 is integer, result is determined by what p2 is, either integer or floating point
 				lnValue1 = iiVariable_getAs_s64(thisCode, varNum1, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum1), false);	return(NULL);	}
+				if (error)
+				{
+					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum1), false);
+					return;
+				}
 
 				// Grab p2
 				if (iVariable_isTypeFloatingPoint(varNum2))
 				{
 					// p2 is floating point
 					lfValue2 = iiVariable_getAs_f64(thisCode, varNum2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
+					if (error)
+					{
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);
+						return;
+					}
 
 					// Create our floating point result
 					result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
@@ -1126,7 +1201,11 @@
 				} else  {
 					// p2 is not floating point, so we'll get it as an integer
 					lnValue2 = iiVariable_getAs_s64(thisCode, varNum2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
+					if (error)
+					{
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);
+						return;
+					}
 
 					// Create our floating point result
 					result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
@@ -1146,7 +1225,8 @@
 		//////////
 		// Indicate our result
 		//////
-			return(result);
+			rpar->returns[0] = result;
+
 	}
 
 
@@ -1175,10 +1255,10 @@
 //    The sum of p1 / p2
 //
 //////
-	SVariable* function_div(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_div(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varNum1	= returnsParams->params[0];
-		SVariable*	varNum2	= returnsParams->params[1];
+		SVariable*	varNum1	= rpar->params[0];
+		SVariable*	varNum2	= rpar->params[1];
 		s64			lnValue1, lnValue2;
 		f64			lfValue1, lfValue2;
 		bool		error;
@@ -1189,10 +1269,11 @@
 		//////////
 		// Parameter 1 must be numeric
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varNum1) || !iVariable_isTypeNumeric(varNum1))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNum1), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -1202,7 +1283,7 @@
 			if (!iVariable_isValid(varNum2) || !iVariable_isTypeNumeric(varNum2))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNum2), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -1213,7 +1294,7 @@
 			if (lfValue1 == 0.0 || error)
 			{
 				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNum2), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -1224,7 +1305,11 @@
 			{
 				// p1 is floating point, meaning the result will be too
 				lfValue1 = iiVariable_getAs_f64(thisCode, varNum1, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum1), false);	return(NULL);	}
+				if (error)
+				{
+					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum1), false);
+					return;
+				}
 
 				// Create our floating point result
 				result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
@@ -1235,7 +1320,11 @@
 					{
 						// p2 is floating point
 						lfValue2 = iiVariable_getAs_f64(thisCode, varNum2, false, &error, &errorNum);
-						if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
+						if (error)
+						{
+							iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);
+							return;
+						}
 
 						// Store the result
 						*(f64*)result->value.data = lfValue1 / lfValue2;
@@ -1243,7 +1332,11 @@
 					} else  {
 						// p2 is not floating point, so we'll get it as an integer
 						lnValue2 = iiVariable_getAs_s64(thisCode, varNum2, false, &error, &errorNum);
-						if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
+						if (error)
+						{
+							iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);
+							return;
+						}
 
 						// Store the result
 						*(f64*)result->value.data = lfValue1 / (f64)lnValue2;
@@ -1253,7 +1346,11 @@
 			} else {
 				// p1 is integer, result is determined by what p2 is, either integer or floating point
 				lnValue1 = iiVariable_getAs_s64(thisCode, varNum1, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum1), false);	return(NULL);	}
+				if (error)
+				{
+					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum1), false);
+					return;
+				}
 
 				// Create our floating point result
 				result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
@@ -1264,7 +1361,11 @@
 					{
 						// p2 is floating point
 						lfValue2 = iiVariable_getAs_f64(thisCode, varNum2, false, &error, &errorNum);
-						if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
+						if (error)
+						{
+							iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);
+							return;
+						}
 
 						// Store the result
 						*(f64*)result->value.data = (f64)lnValue1 / lfValue2;
@@ -1272,7 +1373,11 @@
 					} else  {
 						// p2 is not floating point, so we'll get it as an integer
 						lnValue2 = iiVariable_getAs_s64(thisCode, varNum2, false, &error, &errorNum);
-						if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
+						if (error)
+						{
+							iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);
+							return;
+						}
 
 						// Store the result
 						*(f64*)result->value.data = (f64)lnValue1 / (f64)lnValue2;
@@ -1291,7 +1396,8 @@
 		//////////
 		// Indicate our result
 		//////
-			return(result);
+			rpar->returns[0] = result;
+
 	}
 
 
@@ -1316,7 +1422,7 @@
 // Returns:
 //		Nothing, but whatever it is that's being modified may be open for modifying.
 //////
-	void command_clear(SThisCode* thisCode, SComp* compCommand, SReturnsParams* returnsParams)
+	void command_clear(SThisCode* thisCode, SComp* compCommand, SFunctionParms* rpar)
 	{
 		SComp*			compClear = compCommand;
 		s32				lnClearLines, lnSaveLines;
@@ -1559,7 +1665,7 @@
 // Returns:
 //		Nothing, but whatever it is that's being modified may be open for modifying.
 //////
-	void command_modify(SThisCode* thisCode, SComp* compCommand, SReturnsParams* returnsParams)
+	void command_modify(SThisCode* thisCode, SComp* compCommand, SFunctionParms* rpar)
 	{
 		SComp*	compModify = compCommand;
 		SComp*	compType;
@@ -1682,7 +1788,7 @@
 // Returns:
 //		Nothing, but the environment may be changed.
 //////
-	void command_open(SThisCode* thisCode, SComp* compCommand, SReturnsParams* returnsParams)
+	void command_open(SThisCode* thisCode, SComp* compCommand, SFunctionParms* rpar)
 	{
 		SComp*	compOpen = compCommand;
 		s32		lnLength;
@@ -1815,7 +1921,7 @@
 // Returns:
 //    Nothing, but the environment may be changed.
 //////
-	void command_set(SThisCode* thisCode, SComp* compCommand, SReturnsParams* returnsParams)
+	void command_set(SThisCode* thisCode, SComp* compCommand, SFunctionParms* rpar)
 	{
 		SComp*			compSet = compCommand;
 		s32				lnIndex;
@@ -1939,7 +2045,7 @@
 // Returns:
 //    Nothing, but the environment may be changed.
 //////
-	void command_use(SThisCode* thisCode, SComp* compCommand, SReturnsParams* returnsParams)
+	void command_use(SThisCode* thisCode, SComp* compCommand, SFunctionParms* rpar)
 	{
 		SComp*		compUse = compCommand;
 		sptr		lnWorkArea, lnWorkAreaAlias;

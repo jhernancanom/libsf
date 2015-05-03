@@ -483,12 +483,10 @@ LOCAL lcCodeArrayName, loObjProp, lcProcName, lcProcNameDescent
 					**********
 					* See if this method name already exists
 					*****
-*						llDescentObj	= .f.
-						loObjProp		= toObj
-						llBigError		= .f.
+						loObjProp	= toObj
+						llBigError	= .f.
 						IF "." $ lcProcName
 							* It is code added to a nested class
-*							llDescentObj		= .t.
 							llFound				= .t.
 							lcProcNameDescent	= lcProcName
 							DO WHILE !llBigError AND "." $ lcProcNameDescent

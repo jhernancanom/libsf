@@ -108,11 +108,11 @@
 // Returns:
 //    Date			-- Current date(), or input converted to date
 //////
-	SVariable* function_date(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_date(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable*	varYear			= returnsParams->params[0];
-		SVariable*	varMonth		= returnsParams->params[1];
-		SVariable*	varDay			= returnsParams->params[2];
+		SVariable*	varYear			= rpar->params[0];
+		SVariable*	varMonth		= rpar->params[1];
+		SVariable*	varDay			= rpar->params[2];
 
 		SVariable*	result;
 		u32			errorNum;
@@ -122,6 +122,7 @@
 
 
 		// Have they provided us with data?
+		rpar->returns[0] = NULL;
 		if (!varYear)
 		{
 			// Nope, we are creating the current system time
@@ -145,13 +146,13 @@
 					if (!iVariable_isTypeNumeric(varYear))
 					{
 						iError_report(thisCode, (cu8*)"Year must be numeric", false);
-						return(NULL);
+						return;
 					}
 					lst.wYear = (u16)iiVariable_getAs_s32(thisCode, varYear, false, &error, &errorNum);
 					if (!error && (lst.wYear < 1600 || lst.wYear > 2400))
 					{
 						iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varYear), false);
-						return(NULL);
+						return;
 					}
 				}
 
@@ -165,13 +166,13 @@
 					if (!iVariable_isTypeNumeric(varMonth))
 					{
 						iError_report(thisCode, (cu8*)"Month must be numeric", false);
-						return(NULL);
+						return;
 					}
 					lst.wMonth = (u16)iiVariable_getAs_s32(thisCode, varMonth, false, &error, &errorNum);
 					if (!error && (lst.wMonth < 1 || lst.wMonth > 12))
 					{
 						iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varMonth), false);
-						return(NULL);
+						return;
 					}
 				}
 
@@ -185,13 +186,13 @@
 					if (!iVariable_isTypeNumeric(varDay))
 					{
 						iError_report(thisCode, (cu8*)"Day must be numeric", false);
-						return(NULL);
+						return;
 					}
 					lst.wDay = (u16)iiVariable_getAs_s32(thisCode, varDay, false, &error, &errorNum);
 					if (!error && !iDateMath_isValidDate(lst.wYear, lst.wMonth, lst.wDay))
 					{
 						iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varDay), false);
-						return(NULL);
+						return;
 					}
 				}
 
@@ -211,7 +212,7 @@
 		//////////
 		// Return our converted result
 		//////
-			return(result);
+			rpar->returns[0] = result;
 
 	}
 
@@ -245,10 +246,10 @@
 //    Datetime		-- Current datetime(), or input converted to datetime
 //
 //////
-	SVariable* function_datetime(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_datetime(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		// Return the datetime
-		return(ifunction_datetimex_common(thisCode, returnsParams, false));
+		// Return datetime
+		ifunction_datetimex_common(thisCode, rpar, false);
 	}
 
 
@@ -282,22 +283,22 @@
 //    Datetimex		-- Current datetimex(), or input converted to datetimex
 //
 //////
-	SVariable* function_datetimex(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_datetimex(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		// Return the datetimex
-		return(ifunction_datetimex_common(thisCode, returnsParams, true));
+		// Return datetimex
+		ifunction_datetimex_common(thisCode, rpar, true);
 	}
 
-	SVariable* ifunction_datetimex_common(SThisCode* thisCode, SReturnsParams* returnsParams, bool tlIsDatetimeX)
+	void ifunction_datetimex_common(SThisCode* thisCode, SFunctionParms* rpar, bool tlIsDatetimeX)
 	{
-		SVariable*	varYear			= returnsParams->params[0];
-		SVariable*	varMonth		= returnsParams->params[1];
-		SVariable*	varDay			= returnsParams->params[2];
-		SVariable*	varHour			= returnsParams->params[3];
-		SVariable*	varMinute		= returnsParams->params[4];
-		SVariable*	varSecond		= returnsParams->params[5];
-		SVariable*	varMillisecond	= returnsParams->params[6];
-		SVariable*	varNanosecond	= returnsParams->params[7];		// Only if tlIsDatetimeX
+		SVariable*	varYear			= rpar->params[0];
+		SVariable*	varMonth		= rpar->params[1];
+		SVariable*	varDay			= rpar->params[2];
+		SVariable*	varHour			= rpar->params[3];
+		SVariable*	varMinute		= rpar->params[4];
+		SVariable*	varSecond		= rpar->params[5];
+		SVariable*	varMillisecond	= rpar->params[6];
+		SVariable*	varNanosecond	= rpar->params[7];		// Only if tlIsDatetimeX
 
 		s32				lnMicrosecond;
 		SVariable*		result;
@@ -308,6 +309,7 @@
 
 
 		// Have they provided us with data?
+		rpar->returns[0] = NULL;
 		if (!varYear)
 		{
 			// Nope, we are creating the current system time
@@ -341,13 +343,13 @@
 					if (!iVariable_isTypeNumeric(varYear))
 					{
 						iError_report(thisCode, (cu8*)"Year must be numeric", false);
-						return(NULL);
+						return;
 					}
 					lst.wYear = (u16)iiVariable_getAs_s32(thisCode, varYear, false, &error, &errorNum);
 					if (!error && (lst.wYear < 1600 || lst.wYear > 2400))
 					{
 						iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varYear), false);
-						return(NULL);
+						return;
 					}
 				}
 
@@ -361,13 +363,13 @@
 					if (!iVariable_isTypeNumeric(varMonth))
 					{
 						iError_report(thisCode, (cu8*)"Month must be numeric", false);
-						return(NULL);
+						return;
 					}
 					lst.wMonth = (u16)iiVariable_getAs_s32(thisCode, varMonth, false, &error, &errorNum);
 					if (!error && (lst.wMonth < 1 || lst.wMonth > 12))
 					{
 						iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varMonth), false);
-						return(NULL);
+						return;
 					}
 				}
 
@@ -381,13 +383,13 @@
 					if (!iVariable_isTypeNumeric(varDay))
 					{
 						iError_report(thisCode, (cu8*)"Day must be numeric", false);
-						return(NULL);
+						return;
 					}
 					lst.wDay = (u16)iiVariable_getAs_s32(thisCode, varDay, false, &error, &errorNum);
 					if (!error && !iDateMath_isValidDate(lst.wYear, lst.wMonth, lst.wDay))
 					{
 						iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varDay), false);
-						return(NULL);
+						return;
 					}
 				}
 
@@ -401,13 +403,13 @@
 					if (!iVariable_isTypeNumeric(varHour))
 					{
 						iError_report(thisCode, (cu8*)"Hours must be numeric", false);
-						return(NULL);
+						return;
 					}
 					lst.wHour = (u16)iiVariable_getAs_s32(thisCode, varHour, false, &error, &errorNum);
 					if (!error && (lst.wHour < 0 || lst.wHour > 23))
 					{
 						iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varHour), false);
-						return(NULL);
+						return;
 					}
 				}
 
@@ -421,13 +423,13 @@
 					if (!iVariable_isTypeNumeric(varMinute))
 					{
 						iError_report(thisCode, (cu8*)"Minutes must be numeric", false);
-						return(NULL);
+						return;
 					}
 					lst.wMinute = (u16)iiVariable_getAs_s32(thisCode, varMinute, false, &error, &errorNum);
 					if (!error && (lst.wMinute < 0 || lst.wMinute > 59))
 					{
 						iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varMinute), false);
-						return(NULL);
+						return;
 					}
 				}
 
@@ -441,13 +443,13 @@
 					if (!iVariable_isTypeNumeric(varSecond))
 					{
 						iError_report(thisCode, (cu8*)"Seconds must be numeric", false);
-						return(NULL);
+						return;
 					}
 					lst.wSecond = (u16)iiVariable_getAs_s32(thisCode, varSecond, false, &error, &errorNum);
 					if (!error && (lst.wSecond < 0 || lst.wSecond > 59))
 					{
 						iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varSecond), false);
-						return(NULL);
+						return;
 					}
 				}
 
@@ -461,13 +463,13 @@
 					if (!iVariable_isTypeNumeric(varMillisecond))
 					{
 						iError_report(thisCode, (cu8*)"Milliseconds must be numeric", false);
-						return(NULL);
+						return;
 					}
 					lst.wMilliseconds = (u16)iiVariable_getAs_s32(thisCode, varMillisecond, false, &error, &errorNum);
 					if (!error && (lst.wMilliseconds < 0 || lst.wMilliseconds > 999))
 					{
 						iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varMillisecond), false);
-						return(NULL);
+						return;
 					}
 				}
 
@@ -484,13 +486,13 @@
 						if (!iVariable_isTypeNumeric(varNanosecond))
 						{
 							iError_report(thisCode, (cu8*)"Nanoseconds must be numeric", false);
-							return(NULL);
+							return;
 						}
 						lnMicrosecond = iiVariable_getAs_s32(thisCode, varNanosecond, false, &error, &errorNum);
 						if (!error && (lnMicrosecond < 0 || lnMicrosecond > 999999999))
 						{
 							iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varNanosecond), false);
-							return(NULL);
+							return;
 						}
 
 					} else {
@@ -503,7 +505,7 @@
 					if (iVariable_isValid(varNanosecond))
 					{
 						iError_reportByNumber(thisCode, _ERROR_TOO_MANY_PARAMETERS, iVariable_getRelatedComp(thisCode, varNanosecond), false);
-						return(NULL);
+						return;
 					}
 				}
 		}
@@ -516,7 +518,7 @@
 			if (!result)
 			{
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varYear), false);
-				return(NULL);
+				return;
 			}
 
 			if (tlIsDatetimeX)
@@ -534,7 +536,8 @@
 		//////////
         // Return our converted result
 		//////
-	        return(result);
+			rpar->returns[0] = result;
+
 	}
 
 
@@ -565,16 +568,17 @@
 //    ? DAY(dt)		&& Displays 6
 //    ? DAY()       && Displays current date's day of month
 //////
-	SVariable* function_day(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_day(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varParam = returnsParams->params[0];
+		SVariable* varParam = rpar->params[0];
+
 
 		// Return day
-		return(ifunction_day_month_year_common(thisCode, varParam, _DMY_COMMON_DAY));
+		ifunction_day_month_year_common(thisCode, rpar, varParam, _DMY_COMMON_DAY);
 	}
 	
 	// Common date functions used for DAY(), MONTH(), YEAR()
-	SVariable* ifunction_day_month_year_common(SThisCode* thisCode, SVariable* varParam, u32 tnFunctionType)
+	void ifunction_day_month_year_common(SThisCode* thisCode, SFunctionParms* rpar, SVariable* varParam, u32 tnFunctionType)
 	{
 		u32			lnResult, lnYear, lnMonth, lnDay;
 		SYSTEMTIME	lst;
@@ -584,27 +588,29 @@
 		//////////
 		// If Parameter 1 is provided, it must be date or datetime
 		//////
-// TODO:  Must also support DATETIMEX at some point
+			rpar->returns[0] = NULL;
 			if (varParam)
 			{
-				if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
+				if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam) || iVariable_isTypeDatetimeX(varParam)))
 				{
 					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
-					return(NULL);
+					return;
 				}
 
 
 				//////////
 				// Grab year, month, day from datetime or date
 				//////
-					if (iVariable_isTypeDatetime(varParam))			iiDateMath_get_YyyyMmDd_from_julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-					else /* date */									iiDateMath_get_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+					     if (iVariable_isTypeDatetime(varParam))		iiDateMath_get_YyyyMmDd_from_julian					(varParam->value.data_dt->julian,			&lnYear, &lnMonth, &lnDay);
+					else if (iVariable_isTypeDatetimeX(varParam))		iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_jseconds	(varParam->value.data_dtx->jseconds, NULL,	&lnYear, &lnMonth, &lnDay, NULL, NULL, NULL, NULL, NULL);
+					else /* date */										iiDateMath_get_YyyyMmDd_from_YYYYMMDD				(varParam->value.data_u8,					&lnYear, &lnMonth, &lnDay);
 
 
 			} else {
 				// Use the current date
 				if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
 				else				GetLocalTime(&lst);
+
 				lnYear	= lst.wYear;
 				lnMonth	= lst.wMonth;
 				lnDay	= lst.wDay;
@@ -623,7 +629,7 @@
 				// Should never happen
 				default:
 					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
-					return(NULL);
+					return;
 			}
 
 
@@ -638,7 +644,7 @@
 		//////////
 		// Return the result
 		//////
-			return(result);
+			rpar->returns[0] = result;
 
 	}
 
@@ -665,14 +671,16 @@
 // Returns:
 //    Character - If SET CENTURY is OFF, DMY( ) returns a character string in a dd-Month-yy format (for example, 16 February 98). 
 //////
-	SVariable* function_dmy(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_dmy(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varParam = returnsParams->params[0];
+		SVariable* varParam = rpar->params[0];
 
-		return(ifunction_dtoc_common(thisCode, varParam, _DMY_COMMON_DMY));
+
+		// Return dmy
+		ifunction_dtoc_common(thisCode, rpar, varParam, _DMY_COMMON_DMY);
 	}
 
-	SVariable* ifunction_dtoc_common(SThisCode* thisCode, SVariable* varParam, u32 tnFunctionType)
+	void ifunction_dtoc_common(SThisCode* thisCode, SFunctionParms* rpar, SVariable* varParam, u32 tnFunctionType)
 	{
 		u32			lnYear, lnMonth, lnDay;
 		s8			lnMonthIdx;
@@ -684,27 +692,29 @@
 		//////////
 		// If provided, parameter 1 must be date or datetime
 		//////
+			rpar->returns[0] = NULL;
 			if (varParam)
 			{
-// TODO:  Must also support DATETIMEX at some point
-				if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
+				if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam) || iVariable_isTypeDatetimeX(varParam)))
 				{
 					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
-					return(NULL);
+					return;
 				}
 
 
 				//////////
 				// Grab year, month, day from datetime or date
 				//////
-					if (iVariable_isTypeDatetime(varParam))			iiDateMath_get_YyyyMmDd_from_julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-					else /* date */									iiDateMath_get_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
-
+					     if (iVariable_isTypeDatetime(varParam))		iiDateMath_get_YyyyMmDd_from_julian					(varParam->value.data_dt->julian,			&lnYear, &lnMonth, &lnDay);
+					else if (iVariable_isTypeDatetimeX(varParam))		iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_jseconds	(varParam->value.data_dtx->jseconds, NULL,	&lnYear, &lnMonth, &lnDay, NULL, NULL, NULL, NULL, NULL);
+					else /* date */										iiDateMath_get_YyyyMmDd_from_YYYYMMDD				(varParam->value.data_u8,					&lnYear, &lnMonth, &lnDay);
+		
 
 			} else {
 				// Use the current date
 				if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
 				else				GetLocalTime(&lst);
+
 				lnYear	= lst.wYear;
 				lnMonth	= lst.wMonth;
 				lnDay	= lst.wDay;
@@ -738,9 +748,10 @@
 				// Should never happen
 				default:
 					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
-					return(NULL);
+					return;
 			}
-			
+
+
 		//////////
 		// Create our result
 		//////
@@ -752,7 +763,7 @@
 		//////////
 		// Indicate our result
 		//////
-			return(result);
+			rpar->returns[0] = result;
 
 	}
 
@@ -787,10 +798,10 @@
 //    ? DOW()           && Displays current date's number day of week
 //
 //////
-	SVariable* function_dow(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_dow(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varDateOrDatetime	= returnsParams->params[0];
-		SVariable* varFirstDow			= returnsParams->params[1];
+		SVariable* varDateOrDatetime	= rpar->params[0];
+		SVariable* varFirstDow			= rpar->params[1];
 		
 		u32			lnYear, lnMonth, lnDay;
 		s32			lnDow, lnFirstDow;
@@ -803,24 +814,26 @@
 		//////////
 		// If provided, parameter 1 must be date or datetime
 		//////
+			rpar->returns[0] = NULL;
 			if (varDateOrDatetime)
 			{
-// TODO:  Must also support DATETIMEX at some point
-				if (!iVariable_isValid(varDateOrDatetime) || !(iVariable_isTypeDate(varDateOrDatetime) || iVariable_isTypeDatetime(varDateOrDatetime)))
+				if (!iVariable_isValid(varDateOrDatetime) || !(iVariable_isTypeDate(varDateOrDatetime) || iVariable_isTypeDatetime(varDateOrDatetime) || iVariable_isTypeDatetime(varDateOrDatetime)))
 				{
 					iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varDateOrDatetime), false);
-					return(NULL);
+					return;
 				}
 
 			//////////
 			// Grab year, month, day from datetime or date
 			//////
-				if iVariable_isTypeDatetime(varDateOrDatetime)		iiDateMath_get_YyyyMmDd_from_julian  (varDateOrDatetime->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-				else /* date */										iiDateMath_get_YyyyMmDd_from_YYYYMMDD(varDateOrDatetime->value.data_u8,         &lnYear, &lnMonth, &lnDay);
+				     if iVariable_isTypeDatetime(varDateOrDatetime)			iiDateMath_get_YyyyMmDd_from_julian					(varDateOrDatetime->value.data_dt->julian,			&lnYear, &lnMonth, &lnDay);
+				else if (iVariable_isTypeDatetimeX(varDateOrDatetime))		iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_jseconds	(varDateOrDatetime->value.data_dtx->jseconds, NULL,	&lnYear, &lnMonth, &lnDay, NULL, NULL, NULL, NULL, NULL);
+				else /* date */												iiDateMath_get_YyyyMmDd_from_YYYYMMDD				(varDateOrDatetime->value.data_u8,					&lnYear, &lnMonth, &lnDay);
 
 			} else {
 				// Use the current date
 				GetLocalTime(&lst);
+
 				lnYear	= lst.wYear;
 				lnMonth	= lst.wMonth;
 				lnDay	= lst.wDay;
@@ -845,7 +858,7 @@
 					if (!iVariable_isValid(varFirstDow) || !iVariable_isTypeNumeric(varFirstDow))
 					{
 						iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varFirstDow), false);
-						return(NULL);
+						return;
 					}
 
 
@@ -856,12 +869,12 @@
 					if (error)
 					{
 						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varFirstDow), false);
-						return(NULL);
+						return;
 					}
 					if (lnFirstDow < 0 || lnFirstDow > 7)
 					{
 						iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varFirstDow), false);
-						return(NULL);
+						return;
 					}
 
 
@@ -906,7 +919,7 @@
 		//////////
 		// Indicate our result
 		//////
-			return(result);
+			rpar->returns[0] = result;
 
 	}
 
@@ -936,10 +949,10 @@
 //	  The date format is determined by SET CENTURY and SET DATE. 
 //
 //////
-	SVariable* function_dtoc(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_dtoc(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varParam	= returnsParams->params[0];
-		SVariable* varFlag	= returnsParams->params[1];
+		SVariable* varParam	= rpar->params[0];
+		SVariable* varFlag	= rpar->params[1];
 
 		s32			lnFlag;
 		u32			lnYear, lnMonth, lnDay;
@@ -954,12 +967,13 @@
 		//////////
 		// Parameter 2 must be numeric
 		//////
+			rpar->returns[0] = NULL;
 			if (varFlag)
 			{
 				if (!iVariable_isValid(varFlag) || !iVariable_isTypeNumeric(varFlag))
 				{
 					iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varFlag), false);
-					return(NULL);
+					return;
 				}
 
 				// Grab the flag
@@ -968,16 +982,19 @@
 				{
 					// An error extracting the value (should never happen)
 					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varFlag), false);
-					return(NULL);
+					return;
 				}		
 
 				// DTOC(--, 1) is DTOS(--)
 				if (lnFlag == 1)
-					return(ifunction_dtoc_common(thisCode, varParam, _DMY_COMMON_DTOS));
+				{
+					ifunction_dtoc_common(thisCode, rpar, varParam, _DMY_COMMON_DTOS);
+					return;
+				}
 
 				// If we get here, invalid parameter specified
 				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varFlag), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -990,12 +1007,15 @@
 				if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
 				{
 					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
-					return(NULL);
+					return;
 				}
 
 				// If date we finished
 				if (iVariable_isTypeDate(varParam))
-					return(iVariable_convertForDisplay(thisCode, varParam));
+				{
+					rpar->returns[0] = iVariable_convertForDisplay(thisCode, varParam);
+					return;
+				}
 				
 
 				//////////
@@ -1008,6 +1028,7 @@
 				// Use the current date
 				if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
 				else				GetLocalTime(&lst);
+
 				lnYear	= lst.wYear;
 				lnMonth	= lst.wMonth;
 				lnDay	= lst.wDay;
@@ -1024,7 +1045,7 @@
 			{
 				// Fatal error
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
-				return(NULL);
+				return;
 			}
 
 
@@ -1045,7 +1066,7 @@
 		//////////
 		// Signify our result
 		//////
-			return(result);
+			rpar->returns[0] = result;
 
 	}
 
@@ -1075,13 +1096,13 @@
 // Example:
 //    ? DTOR(180)		&& Display 3.14
 //////
-    SVariable* function_dtor(SThisCode* thisCode, SReturnsParams* returnsParams)
+    void function_dtor(SThisCode* thisCode, SFunctionParms* rpar)
     {
-		SVariable* varNumber = returnsParams->params[0];
+		SVariable* varNumber = rpar->params[0];
 
 
 		// Return dtor
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_DTOR, _VAR_TYPE_F64, false, false, returnsParams));
+		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_DTOR, _VAR_TYPE_F64, false, false);
 	}
 
 
@@ -1109,13 +1130,13 @@
 //	  It is equivalent to DTOC( ) when its optional 1 argument is included. 
 //
 //////
-	SVariable* function_dtos(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_dtos(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varParam = returnsParams->params[0];
+		SVariable* varParam = rpar->params[0];
 
 
 		// Return dtos
-		return(ifunction_dtoc_common(thisCode, varParam, _DMY_COMMON_DTOS));
+		ifunction_dtoc_common(thisCode, rpar, varParam, _DMY_COMMON_DTOS);
 	}
 
 
@@ -1143,9 +1164,10 @@
 //    Datetime	-- DTOT( ) adds a default time of 12:00:00 AM (if SET HOURS is 12) or 00:00:00 (if SET HOURS is 24) to the date to produce a valid DateTime value.
 //                 If the second parameter is provided and is valid, it will override the default midnight time.
 //////
-	SVariable* function_dtot(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_dtot(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATE, _CONVERSION_FUNCTION_DATETIME));
+		// Return dtot
+		ifunction_timesAndDatesConversion_common(thisCode, rpar, _CONVERSION_FUNCTION_DATE, _CONVERSION_FUNCTION_DATETIME);
 	}
 
 
@@ -1175,9 +1197,10 @@
 //    k = DATE()
 //    ? DTOX(k)
 //////
-	SVariable* function_dtox(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_dtox(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		return(ifunction_timesAndDatesConversion_common(thisCode, returnsParams, _CONVERSION_FUNCTION_DATE, _CONVERSION_FUNCTION_DATETIMEX));
+		// Return dtox
+		ifunction_timesAndDatesConversion_common(thisCode, rpar, _CONVERSION_FUNCTION_DATE, _CONVERSION_FUNCTION_DATETIMEX);
 	}
 
 
@@ -1241,9 +1264,9 @@
 // Returns:
 //    Formatted string.
 //////
-	SVariable* function_dtransform(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_dtransform(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varFormatStr = returnsParams->params[0];
+		SVariable* varFormatStr = rpar->params[0];
 
 		s32			lnI, lnResultLength;
 		s8*			lcResult;
@@ -1254,28 +1277,29 @@
 		//////////
 		// Parameters 1 must be present and character
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varFormatStr) || !iVariable_isTypeCharacter(varFormatStr))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varFormatStr), false);
-				return(NULL);
+				return;
 			}
 
 
 		//////////
 		// All parameter 2 and later must be date/datetime type, and are translated locally into datetime types
 		//////
-			for (lnI = 1; lnI < returnsParams->pcount; lnI++)
+			for (lnI = 1; lnI < rpar->pcount; lnI++)
 			{
 
 				//////////
 				// Make sure this variable type matches the test value
 				//////
-					param = returnsParams->params[lnI];
+					param = rpar->params[lnI];
 					if (!iVariable_isValid(param) || !(iVariable_isTypeDate(param) || iVariable_isTypeDatetime(param)))
 					{
 						// The types do not match
 						iError_reportByNumber(thisCode, _ERROR_DATA_TYPE_MISMATCH, iVariable_getRelatedComp(thisCode, param), false);
-						return(NULL);
+						return;
 					}
 
 			}
@@ -1285,7 +1309,7 @@
 		// Call the common function
 		//////
 			lcResult		= NULL;
-			lnResultLength	= ifunction_dtransform_textmerge_common(thisCode, &lcResult, varFormatStr->value.data_cs8, varFormatStr->value.length, NULL, NULL, &returnsParams->params[1], true, true);
+			lnResultLength	= ifunction_dtransform_textmerge_common(thisCode, &lcResult, varFormatStr->value.data_cs8, varFormatStr->value.length, NULL, NULL, &rpar->params[1], true, true);
 
 
 		//////////
@@ -1305,7 +1329,7 @@
 		//////////
 		// Indicate our result
 		//////
-			return(result);		
+			rpar->returns[0] = result;
 
 	}
 

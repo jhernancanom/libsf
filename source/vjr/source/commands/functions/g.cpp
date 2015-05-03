@@ -110,10 +110,10 @@
 //////
 	static cs8 cgGoMonthData[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
-	SVariable* function_gomonth(SThisCode* thisCode, SReturnsParams* returnsParams)
+	VOID function_gomonth(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varParam = returnsParams->params[0];
-		SVariable* varMonth = returnsParams->params[1];
+		SVariable* varParam = rpar->params[0];
+		SVariable* varMonth = rpar->params[1];
 
 		s32			lnNumOfMonths, lnYear, lnMonth;
 		u32			lnDay, lnLastDay, lnHour, lnMinute, lnSecond;
@@ -128,10 +128,11 @@
 		//////////
 		// Parameter 1 must be date or datetime
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetimeX(varParam) || iVariable_isTypeDatetime(varParam)))
 			{
 				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -151,7 +152,7 @@
 			{
 				// Invalid second parameter
 				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varMonth), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -162,7 +163,7 @@
 			if (error)
 			{
 				iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varMonth), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -190,7 +191,7 @@
 					if (lnYear < 1600 || lnYear > 2400)
 					{
 						iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varParam), false);
-						return(NULL);
+						return;
 					}
 
 
@@ -270,7 +271,7 @@
 		//////////
 		// Return the result
 		//////
-			return(result);
+			rpar->returns[0] = result;
 
 	}
 
@@ -297,14 +298,14 @@
 // Returns:
 //    The input pathname with the new stem.
 //////
-	SVariable* function_grayscale(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_grayscale(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varColor			= returnsParams->params[0];
-		SVariable* varPercentage	= returnsParams->params[1];
+		SVariable* varColor			= rpar->params[0];
+		SVariable* varPercentage	= rpar->params[1];
 
 
 		// Return grayscale
-		return(ifunction_colorize_common(thisCode, varColor, NULL, varPercentage, false, returnsParams));
+		ifunction_colorize_common(thisCode, rpar, varColor, NULL, varPercentage, false);
 	}
 
 
@@ -330,11 +331,11 @@
 // Returns:
 //    Numeric	-- Input number converted to ASCII value number
 //////
-	SVariable* function_grn(SThisCode* thisCode, SReturnsParams* returnsParams)
+	void function_grn(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varColor = returnsParams->params[0];
+		SVariable* varColor = rpar->params[0];
 
 
 		// Return grn
-		return(ifunction_color_common(thisCode, varColor, 0x0000ff00, 8, returnsParams));
+		ifunction_color_common(thisCode, rpar, varColor, 0x0000ff00, 8);
 	}
