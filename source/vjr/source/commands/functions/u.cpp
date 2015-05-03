@@ -106,7 +106,7 @@
 // Returns:
 //    Character		-- The string with all lowercase characters converted to uppercase
 //////
-	SVariable* function_upper(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_upper(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable*	varString = rpar->params[0];
 		s32			lnI;
@@ -116,10 +116,11 @@
 		//////////
 		// Parameter 1 must be character
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varString) || iVariable_getType(varString) != _VAR_TYPE_CHARACTER)
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varString), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -130,7 +131,7 @@
 			if (!result)
 			{
 				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
+				return;
 			}
 
 
@@ -153,5 +154,6 @@
 		//////////
         // Return our converted result
 		//////
-	        return(result);
+			rpar->returns[0] = result;
+
 	}

@@ -114,7 +114,7 @@
 //    ? EMPTY("  ")	&& Display .T.
 //    ? EMPTY(0.0)	&& Display .T.
 //////
-	SVariable* function_empty(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_empty(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable*	varExpr = rpar->params[0];
 		bool		llEmpty;
@@ -124,17 +124,18 @@
 		//////////
 		// Verify the expression is correct
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varExpr))
 			{
 				iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varExpr), false);
-				return(NULL);
+				return;
 			}
 
 
 		//////////
 		// Create and populate the return variable
 		//////
-			llEmpty	= function_isempty_common(thisCode, varExpr, rpar);
+			llEmpty	= function_isempty_common(thisCode, rpar, varExpr);
 			result	= iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_LOGICAL, (cs8*)((llEmpty) ? &_LOGICAL_TRUE : &_LOGICAL_FALSE), 1, false);
 			if (!result)
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varExpr), false);
@@ -143,11 +144,11 @@
 		//////////
 		// Signify our result
 		//////
-			return(result);
+			rpar->returns[0] = result;
 
 	}
 
-	bool function_isempty_common(SThisCode* thisCode, SVariable* varExpr, SFunctionParms* rpar)
+	bool function_isempty_common(SThisCode* thisCode, SFunctionParms* rpar, SVariable* varExpr)
 	{
 		s8			c, cPointChar;
 		u32			lnI;
@@ -308,7 +309,7 @@
 //    Logical		-- .t. if the search string is found in the string, .f. otherwise
 //
 //////
-	SVariable* function_endswith(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_endswith(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varString	= rpar->params[0];
 		SVariable* varSearch	= rpar->params[1];
@@ -318,7 +319,6 @@
 
 		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varString), false);
-		return(NULL);
 	}
 
 
@@ -330,7 +330,7 @@
 // Case-insensitive version of ENDSWITH()
 //
 //////
-	SVariable* function_endswithc(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_endswithc(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varString	= rpar->params[0];
 		SVariable* varSearch	= rpar->params[1];
@@ -340,7 +340,6 @@
 
 		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varString), false);
-		return(NULL);
 	}
 
 
@@ -371,7 +370,7 @@
 // Example:
 //    ? EVL("  ", "None")	&& Display "None"
 //////
-	SVariable* function_evl(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_evl(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable*	varExpr1 = rpar->params[0];
 		SVariable*	varExpr2 = rpar->params[1];
@@ -382,10 +381,11 @@
 		//////////
 		// Verify p1 is correct
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varExpr1))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varExpr1), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -395,14 +395,14 @@
 			if (!iVariable_isValid(varExpr2))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varExpr2), false);
-				return(NULL);
+				return;
 			}
 
 
 		//////////
 		// Create our result
 		//////
-			llEmpty	= function_isempty_common(thisCode, varExpr1, rpar);
+			llEmpty	= function_isempty_common(thisCode, rpar, varExpr1);
 			result	= iVariable_copy(thisCode, ((llEmpty) ? varExpr2 : varExpr1), false);
 			if (!result)
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, ((llEmpty) ? varExpr2 : varExpr1)), false);
@@ -411,7 +411,8 @@
 		//////////
 		// Signify our result
 		//////
-			return(result);
+			rpar->returns[0] = result;
+
 	}
 
 
@@ -446,11 +447,11 @@
 
 
 		// Return exp
-		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_EXP, _VAR_TYPE_F64, false, false, rpar);
+		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_EXP, _VAR_TYPE_F64, false, false);
 	}
 
 	// Common numeric functions used for EXP(), LOG(), LOG10(), PI(), SQRT(), CEILING(), FLOOR(), DTOR(), RTOD(), ...
-    void ifunction_numbers_common(SThisCode* thisCode, SFunctionParms* rpar, SVariable* varNumber1, SVariable* varNumber2, SVariable* varNumber3, u32 tnFunctionType, const u32 tnResultType, bool tlSameInputType, bool tlNoEmptyParam, SFunctionParms* rpar)
+    void ifunction_numbers_common(SThisCode* thisCode, SFunctionParms* rpar, SVariable* varNumber1, SVariable* varNumber2, SVariable* varNumber3, u32 tnFunctionType, const u32 tnResultType, bool tlSameInputType, bool tlNoEmptyParam)
     {
 		f64			lfResult, lfValue1, lfValue2, lfValue3;
 		u32			errorNum;
@@ -592,7 +593,7 @@
 						{
 							// Oops!
 							iError_reportByNumber(thisCode, _ERROR_CANNOT_BE_NEGATIVE, iVariable_getRelatedComp(thisCode, varNumber1), false);
-							return(NULL);
+							return;
 						}
 
 
@@ -624,7 +625,7 @@
 						{
 							// Oops!
 							iError_reportByNumber(thisCode, _ERROR_CANNOT_BE_ZERO_OR_NEGATIVE, iVariable_getRelatedComp(thisCode, varNumber1), false);
-							return(NULL);
+							return;
 						}
 
 

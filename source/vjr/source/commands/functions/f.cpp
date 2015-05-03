@@ -115,7 +115,7 @@
 
 
         // Return floor
-		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_FLOOR, _VAR_TYPE_S64, propGet_settings_ncset_ceilingFloor(_settings), false, rpar);
+		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_FLOOR, _VAR_TYPE_S64, propGet_settings_ncset_ceilingFloor(_settings), false);
 	}
 
 
@@ -150,7 +150,7 @@
 //    ? FORCEEXT("c:\mydir.mydir\foo",	"prg")		&& Displays "c:\mydir.mydir\fred.prg"
 //    ? FORCEEXT("c:\mydir\fred.txt",	"")			&& Displays "c:\mydir\fred"
 //////
-	SVariable* function_forceext(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_forceext(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varPathname		= rpar->params[0];
 		SVariable* varNewExtension	= rpar->params[1];
@@ -163,10 +163,11 @@
 		//////////
 		// Parameter 1 must be character
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varPathname) || !iVariable_isTypeCharacter(varPathname))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varPathname), false);
-				return(NULL);
+				return;
 			}
 
 		
@@ -176,14 +177,14 @@
 			if (!iVariable_isValid(varNewExtension) || !iVariable_isTypeCharacter(varNewExtension))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNewExtension), false);
-				return(NULL);
+				return;
 			}
 
 
 		//////////
 		// Based on its type, process it accordingly
 		//////
-			if (ifunction_pathname_common(thisCode, varPathname, &lnFNameOffset, &lnExtOffset))
+			if (ifunction_pathname_common(thisCode, rpar, varPathname, &lnFNameOffset, &lnExtOffset))
 			{
 
 				//////////
@@ -207,7 +208,7 @@
 							{
 								// Too big
 								iError_reportByNumber(thisCode, _ERROR_TOO_BIG_FOR_TARGET, iVariable_getRelatedComp(thisCode, varNewExtension), false);
-								return(NULL);
+								return;
 							}
 
 							// Copy new extension (which already has a period)
@@ -220,7 +221,7 @@
 							{
 								// Too big
 								iError_reportByNumber(thisCode, _ERROR_TOO_BIG_FOR_TARGET, iVariable_getRelatedComp(thisCode, varNewExtension), false);
-								return(NULL);
+								return;
 							}
 
 							// Copy new period, and new extension (without period)
@@ -264,7 +265,8 @@
 		//////////
 		// Return our result
 		//////
-			return(result);
+			rpar->returns[0] = result;
+
 	}
 
 //////////
@@ -272,7 +274,7 @@
 // tnFNameOffset	-- offset to start of file name
 // tnExtOffset		-- offset to start of file extension
 //////
-	bool ifunction_pathname_common(SThisCode* thisCode, SVariable* varPathname, s32* tnFNameOffset, s32* tnExtOffset)
+	bool ifunction_pathname_common(SThisCode* thisCode, SFunctionParms* rpar, SVariable* varPathname, s32* tnFNameOffset, s32* tnExtOffset)
 	{
 		s8		lc;
 		s32		lnI, lnLookingFor;
@@ -283,6 +285,7 @@
 		//////////
 		// Make sure our environment is sane
 		//////
+			rpar->returns[0] = NULL;
 			if (varPathname->value.length >= 1)
 			{
 
@@ -368,7 +371,7 @@
 // Returns:
 //    The input pathname with the filename.
 //////
-	SVariable* function_forcefname(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_forcefname(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varPathname		= rpar->params[0];
 		SVariable* varNewFilename	= rpar->params[1];
@@ -381,10 +384,11 @@
 		//////////
 		// Parameter 1 must be character
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varPathname) || !iVariable_isTypeCharacter(varPathname))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varPathname), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -394,14 +398,14 @@
 			if (!iVariable_isValid(varNewFilename) || !iVariable_isTypeCharacter(varNewFilename))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNewFilename), false);
-				return(NULL);
+				return;
 			}
 
 
 		//////////
 		// Based on its type, process it accordingly
 		//////
-			if (ifunction_pathname_common(thisCode, varPathname, &lnFNameOffset, &lnExtOffset))
+			if (ifunction_pathname_common(thisCode, rpar, varPathname, &lnFNameOffset, &lnExtOffset))
 			{
 
 				//////////
@@ -422,7 +426,7 @@
 						{
 							// Too big
 							iError_reportByNumber(thisCode, _ERROR_TOO_BIG_FOR_TARGET, iVariable_getRelatedComp(thisCode, varNewFilename), false);
-							return(NULL);
+							return;
 						}
 
 						// Copy new filename
@@ -464,7 +468,8 @@
 		//////////
 		// Return our result
 		//////
-			return(result);
+			rpar->returns[0] = result;
+
 	}
 
 
@@ -492,7 +497,7 @@
 // Returns:
 //    The input pathname with the new path.
 //////
-	SVariable* function_forcepath(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_forcepath(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varPathname		= rpar->params[0];
 		SVariable* varNewPathname	= rpar->params[1];
@@ -506,10 +511,11 @@
 		//////////
 		// Parameter 1 must be character
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varPathname) || !iVariable_isTypeCharacter(varPathname))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varPathname), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -519,13 +525,13 @@
 		if (!iVariable_isValid(varNewPathname) || !iVariable_isTypeCharacter(varNewPathname))
 		{
 			iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNewPathname), false);
-			return(NULL);
+			return;
 		}
 
 		//////////
 		// Based on its type, process it accordingly
 		//////
-			if (ifunction_pathname_common(thisCode, varPathname, &lnFNameOffset, &lnExtOffset))
+			if (ifunction_pathname_common(thisCode, rpar, varPathname, &lnFNameOffset, &lnExtOffset))
 			{
 
 				//////////
@@ -554,7 +560,7 @@
 							{
 								// Too big
 								iError_reportByNumber(thisCode, _ERROR_TOO_BIG_FOR_TARGET, iVariable_getRelatedComp(thisCode, varNewPathname), false);
-								return(NULL);
+								return;
 							}
 
 							// Copy new path, plus trailing backslash, plus whatever was there before
@@ -569,7 +575,7 @@
 							{
 								// Too big
 								iError_reportByNumber(thisCode, _ERROR_TOO_BIG_FOR_TARGET, iVariable_getRelatedComp(thisCode, varNewPathname), false);
-								return(NULL);
+								return;
 							}
 
 							// Copy new path, plus whatever was there before
@@ -593,7 +599,7 @@
 			} else {
 				// Unable to parse the string properly, so return whatever they supplied
 				lnFNameLength	= varPathname->value.length;
-				result		= iVariable_copy(thisCode, varPathname, false);
+				result			= iVariable_copy(thisCode, varPathname, false);
 			}
 
 
@@ -614,7 +620,8 @@
 		//////////
 		// Return our result
 		//////
-			return(result);
+			rpar->returns[0] = result;
+
 	}
 
 
@@ -642,7 +649,7 @@
 // Returns:
 //    The input pathname with the new stem.
 //////
-	SVariable* function_forcestem(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_forcestem(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varPathname	= rpar->params[0];
 		SVariable* varNewStem	= rpar->params[1];
@@ -655,10 +662,11 @@
 		//////////
 		// Parameter 1 must be character
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varPathname) || !iVariable_isTypeCharacter(varPathname))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varPathname), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -668,14 +676,14 @@
 			if (!iVariable_isValid(varNewStem) || !iVariable_isTypeCharacter(varNewStem))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNewStem), false);
-				return(NULL);
+				return;
 			}
 
 
 		//////////
 		// Based on its type, process it accordingly
 		//////
-			if (ifunction_pathname_common(thisCode, varPathname, &lnFNameOffset, &lnExtOffset))
+			if (ifunction_pathname_common(thisCode, rpar, varPathname, &lnFNameOffset, &lnExtOffset))
 			{
 
 				//////////
@@ -702,7 +710,7 @@
 						{
 							// Too big
 							iError_reportByNumber(thisCode, _ERROR_TOO_BIG_FOR_TARGET, iVariable_getRelatedComp(thisCode, varNewStem), false);
-							return(NULL);
+							return;
 						}
 
 						// Copy path, plus new stem, plus original extension
@@ -747,7 +755,8 @@
 		//////////
 		// Return our result
 		//////
-			return(result);
+			rpar->returns[0] = result;
+
 	}
 
 
@@ -785,5 +794,5 @@
 
 
 		// Return fv
-		ifunction_numbers_common(thisCode, rpar, varPayment, varInterestRate, varPeriods, _FP_COMMON_FV, _VAR_TYPE_F64, false, true, rpar);
+		ifunction_numbers_common(thisCode, rpar, varPayment, varInterestRate, varPeriods, _FP_COMMON_FV, _VAR_TYPE_F64, false, true);
 	}

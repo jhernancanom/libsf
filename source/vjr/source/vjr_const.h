@@ -200,32 +200,32 @@ typedef SEM**		SEMpp;
 	#define validateVariable(var, error)				if (!iVariable_isValid(var)) \
 														{ \
 															iError_reportByNumber(thisCode, error, iVariable_getRelatedComp(thisCode, var), false); \
-															return(NULL); \
+															return; \
 														}
 
 	#define validateNumeric(var, error)					if (!iVariable_isTypeNumeric(var)) \
 														{ \
 															iError_reportByNumber(thisCode, error, iVariable_getRelatedComp(thisCode, var), false); \
-															return(NULL); \
+															return; \
 														}
 
 	#define validateCharacter(var, error)				if (!iVariable_isTypeCharacter(var)) \
 														{ \
 															iError_reportByNumber(thisCode, error, iVariable_getRelatedComp(thisCode, var), false); \
-															return(NULL); \
+															return; \
 														}
 
 	#define validateFloatingPoint(var, error)			if (!iVariable_isTypeFloatingPoint(var)) \
 														{ \
 															iError_reportByNumber(thisCode, error, iVariable_getRelatedComp(thisCode, var), false); \
-															return(NULL); \
+															return; \
 														}
 
 	#define getAs_s32(local, var)						local = iiVariable_getAs_s32(thisCode, var, false, &error, &errorNum); \
 														if (error) \
 														{ \
 															iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, var), false); \
-															return(NULL); \
+															return; \
 														}
 
 	#define propHasCaption(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_HASCAPTION)	!= _LOGICAL_FALSE)

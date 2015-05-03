@@ -116,7 +116,7 @@
 
 
 		// Return abs
-		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_ABS, _VAR_TYPE_F64, true, false, rpar);
+		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_ABS, _VAR_TYPE_F64, true, false);
 	}
 
 
@@ -151,7 +151,7 @@
 
 
 		// Return acos
-		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_ACOS, _VAR_TYPE_F64, false, false, rpar);
+		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_ACOS, _VAR_TYPE_F64, false, false);
 	}
 
 
@@ -517,7 +517,11 @@
 
 						// When we get here, we have determined the number of characters on the left
 						if (lnClipStartPos >= varString->value.length)
-							return(result);		// The entire character string is empty, so we just return the blank string
+						{
+							// The entire character string is empty, so we just return the blank string
+							rpar->returns[0] = result;
+							return;
+						}
 					}
 
 
@@ -663,7 +667,7 @@
 
 
 		// Return alp
-		ifunction_color_common(thisCode, rpar, varColor, 0xff000000, 24, rpar);
+		ifunction_color_common(thisCode, rpar, varColor, 0xff000000, 24);
 	}
 
 
@@ -703,7 +707,7 @@
 			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varString), false);
-				return
+				return;
 			}
 
 
@@ -775,7 +779,7 @@
 
 
 		// Return asin
-		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_ASIN, _VAR_TYPE_F64, false, false, rpar);
+		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_ASIN, _VAR_TYPE_F64, false, false);
 	}
 
 
@@ -810,7 +814,7 @@
 
 
 		// Return atan
-		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_ATAN, _VAR_TYPE_F64, false, false, rpar);
+		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_ATAN, _VAR_TYPE_F64, false, false);
 	}
 
 
@@ -902,7 +906,7 @@
 			if (!iVariable_isValid(varNeedle) || !iVariable_isTypeCharacter(varNeedle))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNeedle), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -912,7 +916,7 @@
 			if (!iVariable_isValid(varHaystack) || !iVariable_isTypeCharacter(varHaystack))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varHaystack), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -925,18 +929,22 @@
 				if (!iVariable_isTypeNumeric(varOccurrence))
 				{
 					iError_reportByNumber(thisCode, _ERROR_P3_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varOccurrence), false);
-					return(NULL);
+					return;
 				}
 
 				// Grab the occurrence
 				lnOccurrence = iiVariable_getAs_s32(thisCode, varOccurrence, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varOccurrence), false);	return(NULL);	}
+				if (error)
+				{
+					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varOccurrence), false);
+					return;
+				}
 
 				// Validate that the occurrence is
 				if (lnOccurrence <= 0)
 				{
 					iError_report(thisCode, (cu8*)"Parameter 3 must be 1 or greater", false);
-					return(NULL);
+					return;
 				}
 
 			} else {
@@ -952,7 +960,7 @@
 			if (!result)
 			{
 				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
+				return;
 			}
 
 
@@ -960,7 +968,10 @@
 		// If either string has a zero length, or the needle is bigger than the haystack, we cannot find it
 		//////
 			if (varNeedle->value.length == 0 || varHaystack->value.length == 0 || varNeedle->value.length > varHaystack->value.length)
-				return(result);
+			{
+				rpar->returns[0] = result;
+				return;
+			}
 
 
 		//////////
@@ -1033,7 +1044,8 @@
 		//////////
 		// Indicate our status
 		//////
-			return(result);
+			rpar->returns[0] = result;
+
 	}
 
 
@@ -1070,5 +1082,5 @@
 
 
 		// Return atn2
-		ifunction_numbers_common(thisCode, rpar, varY, varX, NULL, _FP_COMMON_ATN2, _VAR_TYPE_F64, false, false, rpar);
+		ifunction_numbers_common(thisCode, rpar, varY, varX, NULL, _FP_COMMON_ATN2, _VAR_TYPE_F64, false, false);
 	}

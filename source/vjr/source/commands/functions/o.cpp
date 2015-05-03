@@ -135,7 +135,7 @@
 
 
 		// Compute the found count
-		ifunction_at_occurs_common(thisCode, varNeedle, varHaystack, NULL, false, false, &lnFoundCount);
+		ifunction_at_occurs_common(thisCode, rpar, varNeedle, varHaystack, NULL, false, false, &lnFoundCount);
 		result = rpar->returns[0];
 		if (result)
 		{
@@ -170,7 +170,7 @@
 // Returns:
 //    Logical		-- .t. if the item is not inclusively between the values of two expressions of the same type, .f. if between
 //////
-	SVariable* function_outside(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_outside(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* result;
 
@@ -178,19 +178,13 @@
 		//////////
 		// Invoke BETWEEN()
 		//////
-			result = function_between(thisCode, rpar);
+			function_between(thisCode, rpar);
+			result = rpar->returns[0];
 
 
 		//////////
 		// OUTSIDE() is reverse of BETWEEN()
 		//////
 			if (result)
-				result->value.data_u8[0] = ~result->value.data_u8[0];
-
-
-		//////////
-		// Indicate our result
-		//////
-			return(result);
-
+				result->value.data_u8[0] = ((result->value.data_u8[0] == _LOGICAL_FALSE) ? _LOGICAL_TRUE : _LOGICAL_FALSE);
 	}

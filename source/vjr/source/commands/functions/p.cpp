@@ -111,7 +111,7 @@
 //                         then padded to its destination size. If the string is larger than
 //                         the destination, then it remains as it is.
 //////
-	SVariable* function_padc(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_padc(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varExpr			= rpar->params[0];
 		SVariable* varResultSize	= rpar->params[1];
@@ -119,10 +119,10 @@
 
 
 		// Return padc
-		return(ifunction_pad_common(thisCode, varExpr, varResultSize, varPadCharacter, true, true, rpar));
+		ifunction_pad_common(thisCode, rpar, varExpr, varResultSize, varPadCharacter, true, true);
 	}
 
-	SVariable* function_padl(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_padl(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varExpr			= rpar->params[0];
 		SVariable* varResultSize	= rpar->params[1];
@@ -130,10 +130,10 @@
 
 
 		// Return padl
-		return(ifunction_pad_common(thisCode, varExpr, varResultSize, varPadCharacter, true, false, rpar));
+		ifunction_pad_common(thisCode, rpar, varExpr, varResultSize, varPadCharacter, true, false);
 	}
 
-	SVariable* function_padr(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_padr(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varExpr			= rpar->params[0];
 		SVariable* varResultSize	= rpar->params[1];
@@ -141,10 +141,10 @@
 
 
 		// Return padr
-		return(ifunction_pad_common(thisCode, varExpr, varResultSize, varPadCharacter, false, true, rpar));
+		ifunction_pad_common(thisCode, rpar, varExpr, varResultSize, varPadCharacter, false, true);
 	}
 
-	SVariable* ifunction_pad_common(SThisCode* thisCode, SVariable* varExpr, SVariable* varResultSize, SVariable* varPadCharacter, bool tlPadLeft, bool tlPadRight, SFunctionParms* rpar)
+	void ifunction_pad_common(SThisCode* thisCode, SFunctionParms* rpar, SVariable* varExpr, SVariable* varResultSize, SVariable* varPadCharacter, bool tlPadLeft, bool tlPadRight)
 	{
 		u32			errorNum;
 		s32			lnI, lnResultSize, lnCopyStart, lnPadLeftStopper, lnPadRightStart, lnPadRightStopper;
@@ -156,10 +156,11 @@
 		//////////
         // Make sure our parameters are correct
 		//////
+			rpar->returns[0] = NULL;
 			if (!tlPadLeft && !tlPadRight)
 			{
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
-				return(NULL);
+				return;
 			}
 
 
@@ -169,7 +170,7 @@
 			if (!iVariable_isValid(varExpr))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, NULL, false);
-				return(NULL);
+				return;
 			}
 
 
@@ -179,10 +180,14 @@
 			if (!iVariable_isValid(varResultSize) || !iVariable_isTypeNumeric(varResultSize))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varResultSize), false);
-				return(NULL);
+				return;
 			}
 			lnResultSize = iiVariable_getAs_s32(thisCode, varResultSize, false, &error, &errorNum);
-			if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varResultSize), false);	return(NULL);	}
+			if (error)
+			{
+				iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varResultSize), false);
+				return;
+			}
 
 
 		//////////
@@ -194,14 +199,14 @@
 				if (!iVariable_isTypeCharacter(varPadCharacter))
 				{
 					iError_reportByNumber(thisCode, _ERROR_P3_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varPadCharacter), false);
-					return(NULL);
+					return;
 				}
 
 				// Validate the pad character is at least one character long
 				if (varPadCharacter->value.length == 0)
 				{
 					iError_report(thisCode, (cu8*)"Parameter 3 must be at least one character", false);
-					return(NULL);
+					return;
 				}
 
 			} else {
@@ -217,14 +222,17 @@
 
 			// If it wasn't created, or it's already as long or longer than its target, return it
 			if (!tempVar || tempVar->value.length >= lnResultSize)
-				return(tempVar);
+			{
+				rpar->returns[0] = tempVar;
+				return;
+			}
 
 			// If we get here, the result will be needed
 			result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
 			if (!result)
 			{
 				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
+				return;
 			}
 
 			// Populate
@@ -302,7 +310,8 @@
 		//////////
 		// Indicate our status
 		//////
-			return(result);
+			rpar->returns[0] = result;
+
 	}
 
 
@@ -341,7 +350,7 @@
 
 
 		// Return payment
-		ifunction_numbers_common(thisCode, rpar, varPayment, varInterestRate, varPeriods, _FP_COMMON_PAYMENT, _VAR_TYPE_F64, false, true, rpar);
+		ifunction_numbers_common(thisCode, rpar, varPayment, varInterestRate, varPeriods, _FP_COMMON_PAYMENT, _VAR_TYPE_F64, false, true);
 	}
 
 
@@ -372,7 +381,7 @@
 	void function_pi(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		// Return pi
-		ifunction_numbers_common(thisCode, rpar, NULL, NULL, NULL, _FP_COMMON_PI, _VAR_TYPE_F64, false, false, rpar);
+		ifunction_numbers_common(thisCode, rpar, NULL, NULL, NULL, _FP_COMMON_PI, _VAR_TYPE_F64, false, false);
 	}
 
 
@@ -404,7 +413,7 @@
 //    ? pow(10, 3456789, 3)				&& Displays 1
 //    ? pow(10.0, 3456789.0, 3.0)		&& Displays 1.00
 //////
-	SVariable* function_pow(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_pow(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable*	varP1 = rpar->params[0];
 		SVariable*	varP2 = rpar->params[1];
@@ -421,6 +430,7 @@
 		//////////
 		// Determine parameter input formats
 		//////
+			rpar->returns[0] = NULL;
 			llIsP1Valid = (iVariable_isValid(varP1) && iVariable_isTypeNumeric(varP1));
 			llIsP2Valid = (iVariable_isValid(varP2) && iVariable_isTypeNumeric(varP2));
 			if (llIsP1Valid && llIsP2Valid)
@@ -451,7 +461,7 @@
 			if (!llIsP1Valid || !llIsP2Valid || !llIsP3Valid)
 			{
 				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, ((!llIsP1Valid) ? varP1 : ((!llIsP2Valid) ? varP2 : varP3))), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -468,7 +478,7 @@
 					if (error)
 					{
 						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP1), false);
-						return(NULL);
+						return;
 					}
 
 
@@ -479,7 +489,7 @@
 					if (error || (lnExp < 0 && (errorNum = _ERROR_PARAMETER_IS_INCORRECT)))
 					{
 						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP2), false);
-						return(NULL);
+						return;
 					}
 
 
@@ -491,7 +501,7 @@
 					{
 						// Error, or 0
 						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP3), false);
-						return(NULL);
+						return;
 					}
 
 
@@ -525,13 +535,13 @@
 					// Grab P3 if need be
 					error3 = false;
 					if (rpar->pcount == 3)		lfVal3 = iiVariable_getAs_f64(thisCode, varP3, false, &error3, &errorNum);
-					else								lfVal3 = 1.0;
+					else						lfVal3 = 1.0;
 
 					// Make sure we don't have an error in conversion, and that lfValue3 is > 0.0
 					if (error1 || error2 || error3 || (lfVal3 <= 0.0 && (error3 = true) && (errorNum = _ERROR_INVALID_ARGUMENT_TYPE_COUNT)))
 					{
 						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, ((error1) ? varP1 : ((error2) ? varP2 : varP3))), false);
-						return(NULL);
+						return;
 					}
 
 
@@ -566,7 +576,7 @@
 		//////////
         // Signify the result
 		//////
-	        return(result);
+			rpar->returns[0] = result;
 
 	}
 
@@ -594,7 +604,7 @@
 // Returns:
 //    Character		-- The string with all words proper'd (if I can use that as a verb)
 //////
-	SVariable* function_proper(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_proper(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable*	varString = rpar->params[0];
 		s32			lnI;
@@ -605,10 +615,11 @@
 		//////////
 		// Parameter 1 must be character
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varString) || iVariable_getType(varString) != _VAR_TYPE_CHARACTER)
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varString), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -619,7 +630,7 @@
 			if (!result)
 			{
 				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
+				return;
 			}
 
 
@@ -662,7 +673,8 @@
 		//////////
         // Return our converted result
 		//////
-	        return(result);
+			rpar->returns[0] = result;
+
 	}
 
 
@@ -702,5 +714,5 @@
 
 
 		// Return pv
-		ifunction_numbers_common(thisCode, rpar, varPayment, varInterestRate, varPeriods, _FP_COMMON_PV, _VAR_TYPE_F64, false, true, rpar);
+		ifunction_numbers_common(thisCode, rpar, varPayment, varInterestRate, varPeriods, _FP_COMMON_PV, _VAR_TYPE_F64, false, true);
 	}

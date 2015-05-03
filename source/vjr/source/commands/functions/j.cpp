@@ -105,7 +105,7 @@
 // Returns:
 //		Character		-- The drive component of the pathname, or the current drive if it wasn't specified, ("c:" of "c:\path\to\sample.txt")
 //////
-	SVariable* function_justdrive(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_justdrive(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable*	varString = rpar->params[0];
 		u8*			ptr;
@@ -115,10 +115,11 @@
 		//////////
 		// Parameter 1 must be character
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varString), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -129,7 +130,7 @@
 			if (!result)
 			{
 				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
+				return;
 			}
 
 			if (varString->value.length >= 2)
@@ -157,7 +158,8 @@
 		//////////
         // Return our converted result
 		//////
-	        return(result);
+			rpar->returns[0] = result;
+
 	}
 
 
@@ -183,7 +185,7 @@
 // Returns:
 //		Character		-- The file extension component, or an empty string if one was not specified, ("txt" of "c:\path\to\sample.txt")
 //////
-	SVariable* function_justext(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_justext(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable*	varString = rpar->params[0];
 		s32			lnI, lnLength;
@@ -194,10 +196,11 @@
 		//////////
 		// Parameter 1 must be character
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varString), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -239,16 +242,14 @@
 		// Are we good?
 		//////
 			if (!result)
-			{
 				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
-			}
 
 
 		//////////
         // Return our converted result
 		//////
-	        return(result);
+			rpar->returns[0] = result;
+
 	}
 
 
@@ -273,7 +274,7 @@
 // Returns:
 //		Character		-- The file name portion of the pathname ("sample.txt" of "c:\path\to\sample.txt")
 //////
-	SVariable* function_justfname(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_justfname(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable*	varString = rpar->params[0];
 		s32			lnI, lnLength;
@@ -287,7 +288,7 @@
 			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varString), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -332,16 +333,14 @@
 		// Are we good?
 		//////
 			if (!result)
-			{
 				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
-			}
 
 
 		//////////
         // Return our converted result
 		//////
-	        return(result);
+			rpar->returns[0] = result;
+
 	}
 
 
@@ -367,7 +366,7 @@
 // Returns:
 //		Character		-- The file path of the pathname ("c:\path\to" of "c:\path\to\sample.txt")
 //////
-	SVariable* function_justpath(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_justpath(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable*	varString = rpar->params[0];
 		s32			lnLength;
@@ -378,10 +377,11 @@
 		//////////
 		// Parameter 1 must be character
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varString), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -425,16 +425,14 @@
 		// Are we good?
 		//////
 			if (!result)
-			{
 				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
-			}
 
 
 		//////////
         // Return our converted result
 		//////
-	        return(result);
+			rpar->returns[0] = result;
+
 	}
 
 
@@ -460,7 +458,7 @@
 // Returns:
 //		Character		-- The file name portion of the pathname ("sample" of "c:\path\to\sample.txt")
 //////
-	SVariable* function_juststem(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_juststem(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable*	varString		= rpar->params[0];
 		SVariable*	varPostfixWidth	= rpar->params[1];
@@ -474,10 +472,11 @@
 		//////////
 		// Parameter 1 must be character
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varString), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -489,7 +488,7 @@
 				if (!iVariable_isValid(varPostfixWidth) || !iVariable_isTypeNumeric(varPostfixWidth))
 				{
 					iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varPostfixWidth), false);
-					return(NULL);
+					return;
 				}
 				// Grab the postfix width
 				lnPostfixWidth = iiVariable_getAs_s32(thisCode, varPostfixWidth, false, &error, &errorNum);
@@ -508,7 +507,7 @@
 			if (!result)
 			{
 				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
+				return;
 			}
 
 			if (varString->value.length >= 1)
@@ -558,5 +557,6 @@
 		//////////
         // Return our converted result
 		//////
-	        return(result);
+			rpar->returns[0] = result;
+
 	}

@@ -237,7 +237,7 @@
 
 
         // Return ceiling
-		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_CEILING, _VAR_TYPE_S64, propGet_settings_ncset_ceilingFloor(_settings), false, rpar);
+		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_CEILING, _VAR_TYPE_S64, propGet_settings_ncset_ceilingFloor(_settings), false);
 	}
 
 
@@ -425,7 +425,10 @@
 
 			// If the original string is empty, or the characters to search for are empty, then we don't need to do anything
 			if (varString->value.length == 0 || varSearch->value.length == 0)
-				return(result);
+			{
+				rpar->returns[0] = result;
+				return;
+			}
 
 
 		//////////
@@ -533,7 +536,7 @@
 //    ? CMONTH(dt)		&& Displays April
 //    ? CMONTH()        && Displays current date's character month
 //////
-	SVariable* function_cmonth(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_cmonth(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varParam = rpar->params[0];
 
@@ -546,13 +549,14 @@
 		//////////
 		// If provided, parameter 1 must be date or datetime
 		//////
+			rpar->returns[0] = NULL;
 			if (varParam)
 			{
 	// TODO:  Must also support DATETIMEX at some point
 				if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
 				{
 					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
-					return(NULL);
+					return;
 				}
 
 
@@ -560,13 +564,14 @@
 				// Grab year, month, day from datetime or date
 				//////
 					if (iVariable_isTypeDatetime(varParam))			iiDateMath_get_YyyyMmDd_from_julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-					else /* date */									iiDateMath_get_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+					else /* date */									iiDateMath_get_YyyyMmDd_from_YYYYMMDD	(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
 
 
 			} else {
 				// Use the current date
 				if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
 				else				GetLocalTime(&lst);
+
 				lnYear	= lst.wYear;
 				lnMonth	= lst.wMonth;
 				lnDay	= lst.wDay;
@@ -590,7 +595,7 @@
 		//////////
 		// Indicate our result
 		//////
-			return(result);
+			rpar->returns[0] = result;
 
 	}
 
@@ -620,7 +625,7 @@
 //    Numeric			-- The resulting colorized color
 //
 //////
-	SVariable* function_colorize(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_colorize(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varColor			= rpar->params[0];
 		SVariable* varColorTarget	= rpar->params[1];
@@ -628,10 +633,10 @@
 
 
 		// Return colorize
-		return(ifunction_colorize_common(thisCode, varColor, varColorTarget, varPercentage, true, rpar));
+		ifunction_colorize_common(thisCode, rpar, varColor, varColorTarget, varPercentage, true);
 	}
 
-	SVariable* ifunction_colorize_common(SThisCode* thisCode, SVariable* varColor, SVariable* varColorTarget, SVariable* varPercentage, bool tlApplyColorTarget, SFunctionParms* rpar)
+	void ifunction_colorize_common(SThisCode* thisCode, SFunctionParms* rpar, SVariable* varColor, SVariable* varColorTarget, SVariable* varPercentage, bool tlApplyColorTarget)
 	{
 		u32			lnColor, lnColorTarget, lnColorNew;
 		f32			lfRedC, lfGrnC, lfBluC, lfAlpC;		// varColor
@@ -645,10 +650,11 @@
 		//////////
 		// Color must be numeric
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varColor) || !iVariable_isTypeNumeric(varColor))
 			{
 				iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varColor), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -660,7 +666,7 @@
 				if (!iVariable_isValid(varColorTarget) || !iVariable_isTypeNumeric(varColorTarget))
 				{
 					iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varColorTarget), false);
-					return(NULL);
+					return;
 				}
 			}
 
@@ -674,18 +680,22 @@
 				if (!iVariable_isValid(varPercentage) || !iVariable_isTypeFloatingPoint(varPercentage))
 				{
 					iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varPercentage), false);
-					return(NULL);
+					return;
 				}
 
 				// Grab the value
 				lfAlp = iiVariable_getAs_f32(thisCode, varPercentage, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varPercentage), false);	return(NULL);	}
+				if (error)
+				{
+					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varPercentage), false);
+					return;
+				}
 
 				// Must be in the range 0.0 to 1.0
 				if (lfAlp < 0.0f || lfAlp > 1.0f)
 				{
 					iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varPercentage), false);
-					return(NULL);
+					return;
 				}
 				// If we get here, we're good
 
@@ -704,7 +714,11 @@
 		//////
 			// Extract the color
 			lnColor = iiVariable_getAs_u32(thisCode, varColor, false, &error, &errorNum);
-			if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varColor), false);	return(NULL);	}
+			if (error)
+			{
+				iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varColor), false);
+				return;
+			}
 
 			// Extract channels
 			lfRedC = (f32)red(lnColor);
@@ -720,7 +734,11 @@
 			{
 				// Extract the color target
 				lnColorTarget = iiVariable_getAs_u32(thisCode, varColorTarget, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varColor), false);	return(NULL);	}
+				if (error)
+				{
+					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varColor), false);
+					return;
+				}
 
 				// Extract channels
 				lfRedT = (f32)red(lnColorTarget);
@@ -763,15 +781,18 @@
 			if (!result)
 			{
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
-				return(NULL);
+
+			} else {
+				// Populate
+				*result->value.data_u32 = lnColorNew;
 			}
 
 
 		//////////
-		// Populate and return our result
+		// Signify our result
 		//////
-			*result->value.data_u32 = lnColorNew;
-			return(result);
+			rpar->returns[0] = result;
+
 	}
 
 
@@ -806,7 +827,7 @@
 
 
 		// Return cos
-		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_COS, _VAR_TYPE_F64, false, false, rpar);
+		ifunction_numbers_common(thisCode, rpar, varNumber, NULL, NULL, _FP_COMMON_COS, _VAR_TYPE_F64, false, false);
 	}
 
 
@@ -834,7 +855,7 @@
 //    Object		-- The class instance object is returned
 //
 //////
-	SVariable* function_createobject(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_createobject(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable*	varClass = rpar->params[0];
 		s32			lnObjType;
@@ -845,10 +866,11 @@
 		//////////
 		// Parameter 1 must be character
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varClass) || !iVariable_isTypeCharacter(varClass))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varClass), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -866,7 +888,7 @@
 			if (lnObjType <= 0)
 			{
 				iError_report(thisCode, (cu8*)"Unknown class", false);
-				return(NULL);
+				return;
 			}
 
 			// Create our object
@@ -874,7 +896,7 @@
 			if (!obj)
 			{
 				iError_report(thisCode, (cu8*)"Internal error on create object.", false);
-				return(NULL);
+				return;
 			}
 
 
@@ -886,7 +908,7 @@
 			{
 				iObj_delete(thisCode, &obj, true, true, true);
 				iError_report(thisCode, (cu8*)"Internal error on create variable.", false);
-				return(NULL);
+				return;
 			}
 
 			// Store the object reference
@@ -896,7 +918,8 @@
 		//////////
         // Return our converted result
 		//////
-	        return(result);
+			rpar->returns[0] = result;
+
 	}
 
 
@@ -932,15 +955,15 @@
 //    ?CTOD("12-25-15 12:33:44.555") &&Displays 12-25-2015
 //
 //////
-	SVariable* function_ctod(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_ctod(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varString = rpar->params[0];
 
 		//Return date
-		return(ifunction_ctox_common(thisCode, varString, true));
+		ifunction_ctox_common(thisCode, rpar, varString, true);
 	}
 
-	SVariable* ifunction_ctox_common(SThisCode* thisCode, SVariable* varCtoxString, bool tlIncludeTime)
+	void ifunction_ctox_common(SThisCode* thisCode, SFunctionParms* rpar, SVariable* varCtoxString, bool tlIncludeTime)
 	{
 		s8			c1, c2, cx, cMark;
 		s32			lnI, lnSkip, lnStop, lnDate, lnAmPm;
@@ -964,10 +987,11 @@ debug_break;
 		//////////
 		// varCtoxString must be character
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varCtoxString) || !iVariable_isTypeCharacter(varCtoxString))
 			{
 				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varCtoxString),false);
-				return(NULL);
+				return;
 			}
 
 
@@ -1091,8 +1115,10 @@ debug_break;
 							iEngine_update_meta2(thisCode, lnI);
 
 							// Return a blank datetime or date
-							if (tlIncludeTime)		return(iVariable_create(thisCode, _VAR_TYPE_DATETIME,	NULL, true));
-							else					return(iVariable_create(thisCode, _VAR_TYPE_DATE,		NULL, true));
+							if (tlIncludeTime)		rpar->returns[0] = iVariable_create(thisCode, _VAR_TYPE_DATETIME,	NULL, true);
+							else					rpar->returns[0] = iVariable_create(thisCode, _VAR_TYPE_DATE,		NULL, true);
+
+							return;
 						}
 
 				}
@@ -1187,7 +1213,7 @@ debug_break;
 		//////////
 		// Signify our result
 		//////
-			return(result);
+			rpar->returns[0] = result;
 
 	}
 
@@ -1223,12 +1249,13 @@ debug_break;
 //    ?CTOD("12-25-15 12:33:44.555") &&Displays 12-25-2015 12:33:44
 //
 //////
-	SVariable* function_ctot(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_ctot(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varString = rpar->params[0];
 
-		//Return datetime
-		return(ifunction_ctox_common(thisCode, varString, false));
+
+		// Return datetime
+		ifunction_ctox_common(thisCode, rpar, varString, false);
 	}
 
 
@@ -1253,7 +1280,7 @@ debug_break;
 // Returns:
 //		Character		-- Current directory
 //////
-	SVariable* function_curdir(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_curdir(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		u8			curdir[_MAX_PATH];
 		SVariable*	result;
@@ -1270,5 +1297,5 @@ debug_break;
 			iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
 
 		// Indicate our result
-		return(result);
+		rpar->returns[0] = result;
 	}

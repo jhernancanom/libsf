@@ -108,7 +108,7 @@
 // Returns:
 //    A copy of either varTrue or varFalse.
 //////
-	SVariable* function_iif(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_iif(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable*	varTest		= rpar->params[0];
 		SVariable*	varTrue		= rpar->params[1];
@@ -122,10 +122,11 @@
 		//////////
 		// Parameter 1 must be logical
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varTest) || !iVariable_isFundamentalTypeLogical(varTest))
 			{
 				iError_reportByNumber(thisCode, _ERROR_MUST_BE_LOGICAL, iVariable_getRelatedComp(thisCode, varTest), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -136,7 +137,7 @@
 			if (error)
 			{
 				iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varTest), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -164,7 +165,8 @@
 		//////////
         // Return our converted result
 		//////
-	        return(result);
+			rpar->returns[0] = result;
+
 	}
 
 
@@ -194,7 +196,7 @@
 // Returns:
 //    Logical		-- .t. if the item is found in the list, .f. otherwise
 //////
-	SVariable* function_inlist(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_inlist(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable*	varValue = rpar->params[0];
 		SVariable*	varList1 = rpar->params[1];
@@ -208,15 +210,16 @@
 		//////////
 		// Parameters 1 and 2 must be present, and of equal types
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varValue))
 			{
 				iError_reportByNumber(thisCode, _ERROR_MISSING_PARAMETER, iVariable_getRelatedComp(thisCode, varValue), false);
-				return(NULL);
+				return;
 			}
 			if (!iVariable_isValid(varList1))
 			{
 				iError_reportByNumber(thisCode, _ERROR_MISSING_PARAMETER, iVariable_getRelatedComp(thisCode, varList1), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -233,7 +236,7 @@
 					{
 						// The types do not match
 						iError_reportByNumber(thisCode, _ERROR_DATA_TYPE_MISMATCH, iVariable_getRelatedComp(thisCode, rpar->params[lnI]), false);
-						return(NULL);
+						return;
 					}
 
 			}
@@ -262,7 +265,7 @@
 					if (error)
 					{
 						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, rpar->params[lnI]), false);
-						return(NULL);
+						return;
 					}
 
 			}
@@ -279,7 +282,8 @@
 		//////////
 		// Indicate our result
 		//////
-			return(result);
+			rpar->returns[0] = result;
+
 	}
 
 
@@ -306,7 +310,7 @@
 // Returns:
 //    INT(n) of the value in p1
 //////
-    SVariable* function_int(SThisCode* thisCode, SFunctionParms* rpar)
+    void function_int(SThisCode* thisCode, SFunctionParms* rpar)
     {
 		SVariable*	varNumber = rpar->params[0];
 		f64			fValue;
@@ -318,10 +322,11 @@
 		//////////
 		// Parameter 1 must be numeric
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varNumber) || !iVariable_isTypeNumeric(varNumber))
 			{
 				iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNumber), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -331,7 +336,11 @@
 			if (iVariable_isTypeFloatingPoint(varNumber))
 			{
 				fValue = iiVariable_getAs_f64(thisCode, varNumber, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNumber), false);	return(NULL);	}
+				if (error)
+				{
+					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNumber), false);
+					return;
+				}
 
 				// Convert to S64
 				result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
@@ -350,14 +359,15 @@
 			if (!result)
 			{
 				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
+				return;
 			}
 
 
 		//////////
         // Return our converted result
 		//////
-	        return(result);
+			rpar->returns[0] = result;
+
     }
 
 
@@ -390,7 +400,7 @@
 //    ? ISNULL(0.0)  	&& Display .F.
 //    ? ISNULL(.null.)  && Display .T.
 //////
-	SVariable* function_isnull(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_isnull(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable*	varExpr = rpar->params[0];
 
@@ -401,17 +411,18 @@
 		//////////
 		// Verify the variable is of a valid format
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValidType(varExpr))
 			{
 				iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varExpr), false);
-				return(NULL);
+				return;
 			}
 
 
 		//////////
 		// Create and populate the return variable
 		//////
-			llIsNull	= ifunction_isnull_common(thisCode, varExpr);
+			llIsNull	= ifunction_isnull_common(thisCode, rpar, varExpr);
 			result		= iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_LOGICAL, (cs8*)((llIsNull) ? &_LOGICAL_TRUE : &_LOGICAL_FALSE), 1, true);
 			if (!result)
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varExpr), false);
@@ -420,11 +431,11 @@
 		//////////
 		// Signify our result
 		//////
-			return(result);
+			rpar->returns[0] = result;
 
 	}
 
-	bool ifunction_isnull_common(SThisCode* thisCode, SVariable* varExpr)
+	bool ifunction_isnull_common(SThisCode* thisCode, SFunctionParms* rpar, SVariable* varExpr)
 	{
 		bool llIsNull;
 
@@ -432,7 +443,8 @@
 		//////////
 		// Determine what we're evaluating
 		//////
-			llIsNull = true;
+			rpar->returns[0]	= NULL;
+			llIsNull			= true;
 			switch (varExpr->varType)
 			{
 				case _VAR_TYPE_NULL:
@@ -464,7 +476,7 @@
 
 				default:
 					iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-					return(NULL);
+					return(false);
 			}
 
 

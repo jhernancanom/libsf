@@ -765,7 +765,7 @@
 
 
 		// Return bits8()
-		ifunction_bits_common(thisCode, rpar, varBits, cvarEight));
+		ifunction_bits_common(thisCode, rpar, varBits, cvarEight);
 	}
 
 
@@ -861,7 +861,7 @@
 
 
 		// Return bits64()
-		ifunction_bits_common(thisCode, rpar, varBits, cvarSixtyFour));
+		ifunction_bits_common(thisCode, rpar, varBits, cvarSixtyFour);
 	}
 
 
@@ -963,7 +963,7 @@
 
 
 		// Return blu
-		ifunction_color_common(thisCode, rpar, varColor, 0x00ff0000, 16, rpar);
+		ifunction_color_common(thisCode, rpar, varColor, 0x00ff0000, 16);
 	}
 
 
@@ -1000,7 +1000,7 @@
 
 
 		// Return bgr
-		ifunction_rgba_common(thisCode, rpar, varRed, varGrn, varBlu, NULL, rpar);
+		ifunction_rgba_common(thisCode, rpar, varRed, varGrn, varBlu, NULL);
 	}
 
 
@@ -1039,5 +1039,5 @@
 
 
 		// Return bgra
-		ifunction_rgba_common(thisCode, rpar, varRed, varGrn, varBlu, varAlp, rpar);
+		ifunction_rgba_common(thisCode, rpar, varRed, varGrn, varBlu, varAlp);
 	}

@@ -110,7 +110,7 @@
 //////
 	static cs8 cgGoMonthData[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
-	SVariable* function_gomonth(SThisCode* thisCode, SFunctionParms* rpar)
+	VOID function_gomonth(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varParam = rpar->params[0];
 		SVariable* varMonth = rpar->params[1];
@@ -128,10 +128,11 @@
 		//////////
 		// Parameter 1 must be date or datetime
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetimeX(varParam) || iVariable_isTypeDatetime(varParam)))
 			{
 				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -151,7 +152,7 @@
 			{
 				// Invalid second parameter
 				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varMonth), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -162,7 +163,7 @@
 			if (error)
 			{
 				iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varMonth), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -190,7 +191,7 @@
 					if (lnYear < 1600 || lnYear > 2400)
 					{
 						iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varParam), false);
-						return(NULL);
+						return;
 					}
 
 
@@ -270,7 +271,7 @@
 		//////////
 		// Return the result
 		//////
-			return(result);
+			rpar->returns[0] = result;
 
 	}
 
@@ -297,14 +298,14 @@
 // Returns:
 //    The input pathname with the new stem.
 //////
-	SVariable* function_grayscale(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_grayscale(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varColor			= rpar->params[0];
 		SVariable* varPercentage	= rpar->params[1];
 
 
 		// Return grayscale
-		return(ifunction_colorize_common(thisCode, varColor, NULL, varPercentage, false, rpar));
+		ifunction_colorize_common(thisCode, rpar, varColor, NULL, varPercentage, false);
 	}
 
 
@@ -336,5 +337,5 @@
 
 
 		// Return grn
-		ifunction_color_common(thisCode, rpar, varColor, 0x0000ff00, 8, rpar);
+		ifunction_color_common(thisCode, rpar, varColor, 0x0000ff00, 8);
 	}

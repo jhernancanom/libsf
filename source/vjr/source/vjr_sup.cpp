@@ -658,7 +658,8 @@
 		// _startupTime
 		//////
 			memset(&lsrpar, 0, sizeof(lsrpar));
-			varStartupTime = function_datetime(NULL, &lsrpar);
+			function_datetime(NULL, &lsrpar);
+			varStartupTime = lsrpar.returns[0];
 			iDatum_duplicate(&varStartupTime->name, cgcName_startupTime, -1);
 			iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)varStartupTime);
 

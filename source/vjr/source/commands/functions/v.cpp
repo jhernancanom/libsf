@@ -109,7 +109,7 @@
 //						Leading blanks are ignored.
 //						VAL( ) returns 0 if the first character of the character expression is not a number, a dollar sign ($), a plus sign (+), or minus sign (-).
 //////
-	SVariable* function_val(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_val(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable*	varExpr			= rpar->params[0];
 		SVariable*	varIgnoreChars	= rpar->params[1];
@@ -130,10 +130,11 @@
 		//////////
 		// Parameter 1 must be valid
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varExpr))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varExpr), false);
-				return(NULL);
+				return;
 			}
 
 		//////////
@@ -147,7 +148,8 @@
 					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varExpr), false);
 
 				// Success or failure, return our result
-				return(result);
+				rpar->returns[0] = result;
+				return;
 			}
 
 
@@ -159,7 +161,7 @@
 			{
 				case _VAR_TYPE_NULL:
 					iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varExpr), false);
-					return(NULL);
+					return;
 					break;
 
 				case _VAR_TYPE_LOGICAL:		// 0=.F., 1=.T.
@@ -198,7 +200,7 @@
 							if (!iVariable_isValid(varIgnoreChars) || !iVariable_isTypeCharacter(varIgnoreChars))
 							{
 								iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varIgnoreChars), false);
-								return(NULL);
+								return;
 							}
 						}
 
@@ -213,7 +215,7 @@
 						{
 							// Should never happen
 							iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
-							return(NULL);
+							return;
 						}
 
 
@@ -345,7 +347,7 @@
 				default:
 					// Unrecognized type
 					iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varExpr), false);
-					return(NULL);
+					return;
 			}
 
 
@@ -359,7 +361,8 @@
 		//////////
         // Return our converted result
 		//////
-	        return(result);
+			rpar->returns[0] = result;
+
 	}
 
 
@@ -386,7 +389,7 @@
 // Returns:
 //    Character		-- A one-digit value indicating the type
 //////
-	SVariable* function_vartype(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_vartype(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* var		= rpar->params[0];
 		SVariable* varNull	= rpar->params[1];
@@ -399,10 +402,11 @@
 		//////////
 		// varLookup must exist
 		//////
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValidType(var))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, var), false);
-				return(NULL);
+				return;
 			}
 		
 
@@ -418,7 +422,7 @@
 					if (!iVariable_isValid(varNull) || !iVariable_isTypeLogical(varNull))
 					{
 						iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNull), false);
-						return(NULL);
+						return;
 					}
 
 
@@ -429,7 +433,7 @@
 					if (error)
 					{
 						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNull), false);
-						return(NULL);
+						return;
 					}
 
 
@@ -442,7 +446,7 @@
 		//////////
 		// Compute our result
 		//////
-			return(ifunction_type_common(thisCode, var, false, true, llNullIsType));
+			ifunction_type_common(thisCode, rpar, var, false, true, llNullIsType);
 
 	}
 
@@ -472,14 +476,14 @@
 // Returns:
 //    Vector		-- The concatenated value, assumes the current SET VECSEPARATOR symbol
 //////
-	SVariable* function_vec(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_vec(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varV1 = rpar->params[0];
 
 
 		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varV1), false);
-		return(NULL);
+		rpar->returns[0] = NULL;
 	}
 
 
@@ -505,14 +509,14 @@
 // Returns:
 //     Numeric, the number of elements in the vector.
 //////
-	SVariable* function_veccount(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_veccount(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varVec = rpar->params[0];
 
 
 		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varVec), false);
-		return(NULL);
+		rpar->returns[0] = NULL;
 	}
 
 
@@ -541,7 +545,7 @@
 //    if varNewValue was specified, returns the new vector
 //    else                          returns the value of that element
 //////
-	SVariable* function_vecel(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_vecel(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varVec		= rpar->params[0];
 		SVariable* varEl		= rpar->params[1];
@@ -550,7 +554,7 @@
 
 		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varVec), false);
-		return(NULL);
+		rpar->returns[0] = NULL;
 	}
 
 
@@ -578,7 +582,7 @@
 // Returns:
 //     The extracted element or elements as a vector.
 //////
-	SVariable* function_vecslice(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_vecslice(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varVec		= rpar->params[0];
 		SVariable* varStartEl	= rpar->params[1];
@@ -587,7 +591,7 @@
 
 		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		rpar->returns[0] = NULL;
 	}
 
 
@@ -614,7 +618,7 @@
 // Returns:
 //     A character string containing the vector values interspersed with symbol space, or the varSymbolOverride
 //////
-	SVariable* function_vecstr(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_vecstr(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varVec				= rpar->params[0];
 		SVariable* varSymbolOverride	= rpar->params[1];
@@ -622,7 +626,7 @@
 
 		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		rpar->returns[0] = NULL;
 	}
 
 
@@ -652,7 +656,7 @@
 //    if varNewValue was specified, returns the new vector
 //    else                          returns the value of that element
 //////
-	SVariable* function_vecstuff(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_vecstuff(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varVec			= rpar->params[0];
 		SVariable* varStartEl		= rpar->params[1];
@@ -662,7 +666,7 @@
 
 		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varVec), false);
-		return(NULL);
+		rpar->returns[0] = NULL;
 	}
 
 
@@ -691,7 +695,7 @@
 //    if varNewSymbol was specified, returns the old symbol
 //    else                           returns the current symbol
 //////
-	SVariable* function_vecsymbol(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_vecsymbol(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varVec		= rpar->params[0];
 		SVariable* varEl		= rpar->params[1];
@@ -700,7 +704,7 @@
 
 		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varVec), false);
-		return(NULL);
+		rpar->returns[0] = NULL;
 	}
 
 
@@ -726,7 +730,7 @@
 // Returns:
 //    Numeric or Character	-- Depending on index, various values are returned
 //////
-    SVariable* function_version(SThisCode* thisCode, SFunctionParms* rpar)
+    void function_version(SThisCode* thisCode, SFunctionParms* rpar)
     {
 		SVariable*	varIndex = rpar->params[0];
         s32			index;
@@ -739,7 +743,8 @@
 		//////////
 		// Parameter 1 must be numeric
 		//////
-			lptr = NULL;
+			rpar->returns[0]	= NULL;
+			lptr				= NULL;
 			if (!iVariable_isValid(varIndex))
 			{
 				// They are requesting the default information
@@ -748,7 +753,7 @@
 			} else if (!iVariable_isTypeNumeric(varIndex)) {
 				// The parameter is not numeric
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varIndex), false);
-				return(NULL);
+				return;
 
 			} else {
 				// It must be in the range 1..5
@@ -756,12 +761,12 @@
 				if (error)
 				{
 					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varIndex), false);
-					return(NULL);
+					return;
 
 				} else if (index < 1 || index > 5) {
 					// We report our own error
 					iError_report(thisCode, (cu8*)"Parameter must be in the range 1..5", false);
-					return(NULL);
+					return;
 				}
 			}
 
@@ -806,12 +811,13 @@
 			if (!result)
 			{
 				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
+				return;
 			}
 
 
 		//////////
         // Return our converted result
 		//////
-	        return(result);
+			rpar->returns[0] = result;
+
     }

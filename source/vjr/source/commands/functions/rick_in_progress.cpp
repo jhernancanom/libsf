@@ -110,10 +110,10 @@
 //    k = "Apr.26.2015, 8:15p"
 //    ? CXLATD(k)
 //////
-	SVariable* function_cxlatd(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_cxlatd(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		rpar->returns[0] = NULL;
 	}
 
 
@@ -143,10 +143,10 @@
 //    k = "Apr.26.2015, 8:15p"
 //    ? CXLATT(k)
 //////
-	SVariable* function_cxlatt(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_cxlatt(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		rpar->returns[0] = NULL;
 	}
 
 
@@ -176,10 +176,10 @@
 //    k = "Apr.26.2015, 8:15p"
 //    ? CXLATX(k)
 //////
-	SVariable* function_cxlatx(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_cxlatx(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		rpar->returns[0] = NULL;
 	}
 
 
@@ -234,7 +234,7 @@
 //    ldDate = DBUNDLE(tDatetime)
 //    ldDate = DBUNDLE(sDatetimex)
 //////
-	SVariable* function_dbundle(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_dbundle(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable*	varR1;
 		SVariable*	varP1;
@@ -254,6 +254,7 @@
 		//////
 // TODO:  Need to set the return parameter count so we know what's happening
 debug_break;
+			rpar->returns[0] = NULL;
 			if (rpar->rcount == 1)
 			{
 				// ldDate = DBUNDLE(p1[, p2][, p3])
@@ -326,7 +327,7 @@ debug_break;
 					} else {
 						// Invalid
 						iError_reportByNumber(thisCode, lnP1Error, iVariable_getRelatedComp(thisCode, varP1), false);
-						return(NULL);
+						return;
 					}
 
 				} else {
@@ -340,7 +341,7 @@ debug_break;
 					if (lnYear < 1600 || lnYear > 9999)
 					{
 						iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varP1), false);
-						return(NULL);
+						return;
 					}
 					// When we get here, the year is good
 					lst.wYear = (u16)lnYear;
@@ -364,7 +365,7 @@ debug_break;
 				if (lnMonth < 1 || lnMonth > 12)
 				{
 					iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varP2), false);
-					return(NULL);
+					return;
 				}
 				// When we get here, the year is good
 				lst.wMonth = (u16)lnMonth;
@@ -387,7 +388,7 @@ debug_break;
 				if (lnMonth < 1 || lnMonth > 31)
 				{
 					iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varP3), false);
-					return(NULL);
+					return;
 				}
 				// When we get here, the year is good
 				lst.wDay = (u16)lnDay;
@@ -400,7 +401,7 @@ debug_break;
 			if (!iDateMath_isValidDate(lst.wYear, lst.wMonth, lst.wDay))
 			{
 				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varP1), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -414,7 +415,7 @@ debug_break;
 				if (!varR1)
 				{
 					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
-					return(NULL);
+					return;
 				}
 
 			} else {
@@ -431,7 +432,7 @@ debug_break;
 			if (!varResult->value.data || varResult->value.length == 0)
 			{
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varR1), false);
-				return(NULL);
+				return;
 			}
 
 
@@ -444,7 +445,8 @@ debug_break;
 		//////////
 		// No return value in this function
 		//////
-			return(NULL);
+// TODO:  I am debating create an indirect reference to the varR1 value so that it is returned
+			return;
 
 	}
 
@@ -493,10 +495,10 @@ debug_break;
 //    DUNBUNDLE(k, lnYear, lnMonth, lnDay)
 //    lnYear, lnMonth, lnDay = DUNBUNDLE(k)
 //////
-	SVariable* function_dunbundle(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_dunbundle(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return;
 	}
 
 
@@ -552,20 +554,13 @@ debug_break;
 //    TBUNDLE(ltDatetime, 2015, 4, 26, 12, 15, 04, 291)
 //    ltDatetime = DBUNDLE(2015, 4, 26, 12, 15, 04, 291)		&& Identical to DATETIME()
 //////
-	SVariable* function_tbundle(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_tbundle(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		//////////
-		// If it's lsDatetime = TBUNDLE(lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond), then it's the same as DATETIME()
-		//////
-			if (rpar->rcount == 1)
-				return(function_date(thisCode, rpar));
-
-
 		//////////
 		// If we get here, they're bundling on-the-fly
 		//////
 			iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-			return(NULL);
+			return;
 	}
 
 
@@ -621,10 +616,10 @@ debug_break;
 //    TUNBUNDLE(k, lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond)
 //    lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond = TUNBUNDLE(k)
 //////
-	SVariable* function_tunbundle(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_tunbundle(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return;
 	}
 
 
@@ -682,20 +677,13 @@ debug_break;
 //    XBUNDLE(lsDatetime, 2015, 4, 26, 12, 15, 04, 291, 291393)
 //    lsDatetimex = XBUNDLE(2015, 4, 26, 12, 15, 04, 291, 291393)		&& Identical to DATETIMEX()
 //////
-	SVariable* function_xbundle(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_xbundle(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		//////////
-		// If it's lsDatetime = TBUNDLE(lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond), then it's the same as DATETIME()
-		//////
-			if (rpar->rcount == 1)
-				return(function_date(thisCode, rpar));
-
-
 		//////////
 		// If we get here, they're bundling on-the-fly
 		//////
 			iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-			return(NULL);
+			return;
 	}
 
 
@@ -753,10 +741,10 @@ debug_break;
 //    XUNBUNDLE(k, lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, lnMicrosecond)
 //    lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, lnMicrosecond = XUNBUNDLE(k)
 //////
-	SVariable* function_xunbundle(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_xunbundle(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return;
 	}
 
 
@@ -805,10 +793,10 @@ debug_break;
 //    TIMEBUNDLE(lcTime, 12, 15, 04, 291)
 //    lcTime = TIMEBUNDLE(12, 15, 04, 291)
 //////
-	SVariable* function_timebundle(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_timebundle(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return;
 	}
 
 
@@ -858,10 +846,10 @@ debug_break;
 //    TIMEUNBUNDLE(k, lnHour, lnMinute, lnSecond, lnMillisecond)
 //    lnHour, lnMinute, lnSecond, lnMillisecond = TIMEUNBUNDLE(k)
 //////
-	SVariable* function_timeunbundle(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_timeunbundle(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return;
 	}
 
 
@@ -912,10 +900,10 @@ debug_break;
 //    TIMEXBUNDLE(lcTime, 12, 15, 04, 291, 291393)
 //    lcTime = TIMEXBUNDLE(12, 15, 04, 291, 291393)
 //////
-	SVariable* function_timexbundle(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_timexbundle(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return;
 	}
 
 
@@ -967,10 +955,10 @@ debug_break;
 //    TIMEXUNBUNDLE(k, lnHour, lnMinute, lnSecond, lnMillisecond, lnMicrosecond)
 //    lnHour, lnMinute, lnSecond, lnMillisecond, lnMicrosecond = TIMEXUNBUNDLE(k)
 //////
-	SVariable* function_timexunbundle(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_timexunbundle(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return;
 	}
 
 
@@ -1019,10 +1007,10 @@ debug_break;
 //    SECONDSBUNDLE(lfTime, 12, 15, 04, 291)
 //    lfTime = SECONDSBUNDLE(12, 15, 04, 291)
 //////
-	SVariable* function_secondsbundle(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_secondsbundle(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return;
 	}
 
 
@@ -1072,10 +1060,10 @@ debug_break;
 //    SECONDSUNBUNDLE(k, lnHour, lnMinute, lnSecond, lnMillisecond)
 //    lnHour, lnMinute, lnSecond, lnMillisecond = SECONDSUNBUNDLE(k)
 //////
-	SVariable* function_secondsunbundle(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_secondsunbundle(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return;
 	}
 
 
@@ -1126,10 +1114,10 @@ debug_break;
 //    SECONDSXBUNDLE(lfTime, 12, 15, 04, 291, 291393)
 //    lfTime = SECONDSXBUNDLE(12, 15, 04, 291, 291393)
 //////
-	SVariable* function_secondsxbundle(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_secondsxbundle(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return;
 	}
 
 
@@ -1181,8 +1169,8 @@ debug_break;
 //    SECONDSXUNBUNDLE(k, lnHour, lnMinute, lnSecond, lnMillisecond, lnMicrosecond)
 //    lnHour, lnMinute, lnSecond, lnMillisecond, lnMicrosecond = SECONDSXUNBUNDLE(k)
 //////
-	SVariable* function_secondsxunbundle(SThisCode* thisCode, SFunctionParms* rpar)
+	void function_secondsxunbundle(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return;
 	}
