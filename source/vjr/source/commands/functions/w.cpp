@@ -86,4 +86,258 @@
 
 
 
-// Nothing currently defined
+//////////
+//
+// Function: WEEK()
+// Returns a number representing the week of the year from a Date or DateTime expression.
+//
+//////
+// Version 0.57
+// Last update:
+//     May.01.2015
+//////
+// Change log:
+//     May.01.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Date or DateTime
+//     p2			-- Numeric [nMinDaysOfWeek] Minimum number of days in first week of year (1..7)
+//     p3			-- Numeric [nFirstDayOfWeek] 
+//
+//////
+// Returns:
+//    WEEK() returns a number representing the week of the year.
+//////
+// Example:
+//	  dt = datetime()	&& May.01.2015
+//    ? WEEK(dt)		&& Displays 18
+//////
+	void function_week(SThisCode* thisCode, SFunctionParms* rpar)
+	{
+		SVariable*	varParam			= rpar->params[0];
+		SVariable*	varFirstWeek		= rpar->params[1];
+		SVariable*	varFirstDayOfWeek	= rpar->params[2];
+
+		u32			lnYear, lnMonth, lnDay;
+		s32			lnWeek, lnMinDaysInWeek, lnFirstDayOfWeek;
+		SYSTEMTIME	lst;
+		bool		error;
+		u32			errorNum;
+		SVariable*	result;
+
+		//////////
+		// If provided, parameter 1 must be date or datetime
+		//////
+			if (varParam)
+			{
+// TODO:  Must also support DATETIMEX at some point
+				if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
+				{
+					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
+					return;
+				}
+
+			//////////
+			// Grab year, month, day from datetime or date
+			//////
+				if (iVariable_isTypeDatetime(varParam))			iiDateMath_get_YyyyMmDd_from_julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+				else /* date */									iiDateMath_get_YyyyMmDd_from_YYYYMMDD	(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+
+			} else {
+				// Use the current date
+				if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
+				else				GetLocalTime(&lst);
+				lnYear	= lst.wYear;
+				lnMonth	= lst.wMonth;
+				lnDay	= lst.wDay;
+			}
+
+
+		//////////
+		// Parameter 2 must be numeric
+		//////
+			if (varFirstWeek)
+			{
+				if (!iVariable_isValid(varFirstWeek) || !iVariable_isTypeNumeric(varFirstWeek))
+				{
+					iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varFirstWeek), false);
+					return;
+				}
+
+				// Grab the minimum number of days in week
+				lnMinDaysInWeek = iiVariable_getAs_s32(thisCode, varFirstWeek, false, &error, &errorNum);
+				if (error)
+				{
+					// An error extracting the value (should never happen)
+					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varFirstWeek), false);
+					return;
+				}
+
+				if (lnMinDaysInWeek < 1 || 7 < lnMinDaysInWeek)
+				{
+					iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varFirstWeek), false);
+					return;				
+				}
+			}
+			else
+				lnMinDaysInWeek = 1;	//First week contains January 1st.
+
+
+		//////////
+		// Parameter 3 must be numeric
+		//////
+			if (varFirstDayOfWeek)
+			{
+				if (!iVariable_isValid(varFirstDayOfWeek) || !iVariable_isTypeNumeric(varFirstDayOfWeek))
+				{
+					iError_reportByNumber(thisCode, _ERROR_P3_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varFirstDayOfWeek), false);
+					return;
+				}
+
+				// Grab the first day of week
+				lnFirstDayOfWeek = iiVariable_getAs_s32(thisCode, varFirstDayOfWeek, false, &error, &errorNum);
+				if (error)
+				{
+					// An error extracting the value (should never happen)
+					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varFirstDayOfWeek), false);
+					return;
+				}
+
+				if (lnFirstDayOfWeek < 0 || 6 < lnFirstDayOfWeek)
+				{
+					iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varFirstWeek), false);
+					return;				
+				}
+			}
+			else
+				lnFirstDayOfWeek = 0;	//Sunday
+
+
+		/////////
+		// Grab week
+		//////
+			lnWeek = ifunction_week_common(lnYear, lnMonth, lnDay, lnMinDaysInWeek, lnFirstDayOfWeek);
+
+
+		//////////
+		// Create and populate our output variable
+		//////
+			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_S32, (cs8*)&lnWeek, 4, false);
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
+
+
+		//////////
+		// Indicate our result
+		//////
+			rpar->returns[0] = result;
+	}
+
+	s32	ifunction_week_common(u32 tnYear, u32 tnMonth, u32 tnDay, s32 tnMinDaysInWeek, s32 tnFirstDayOfWeek)
+	{
+		s32	lnWeek, ln1WDay, lnDayOfYear, lnDaysInYear, lnDaysNextYear;
+		s32 lnTempDays;
+
+		//////////
+		// Day of week January 1 
+		//////
+			ln1WDay		= ifunction_dow_common(tnYear, 1, 1);
+
+
+		//////////
+		// Day of year 
+		//////
+			lnDayOfYear	= iDateMath_getDayNumberIntoYear(tnYear, tnMonth, tnDay);
+			// weekdays start at 0, thus decrement one
+			lnDayOfYear--;
+
+		//////////
+		// Account for first day of week
+		//////
+			ln1WDay = (ln1WDay + (7 - tnFirstDayOfWeek)) % 7;
+
+
+		//////////
+		// Compute week
+		//////
+			switch(tnMinDaysInWeek)
+			{
+				case 1:
+					//////////
+					// First week contains January 1st
+					//////
+						lnWeek = ((ln1WDay + lnDayOfYear) / 7) + 1;
+
+
+					//////////
+					// Set to 53rd week only if we're not in the first week of the new year
+					//////
+						if ( lnWeek == 54 )
+							lnWeek = 1;
+						else if ( lnWeek == 53 )
+						{
+							lnDaysInYear = iDateMath_isLeapYear(tnYear) ? 366 : 365;
+							lnDaysNextYear = ifunction_dow_common(tnYear + 1, 1, 1);
+							lnDaysNextYear = (lnDaysNextYear + (7 - tnFirstDayOfWeek)) % 7;
+							if ( lnDayOfYear > (lnDaysInYear-lnDaysNextYear-1) )
+								lnWeek = 1;
+						}
+						break;
+
+				case 7:
+					//////////
+					// First week has seven days
+					//////
+						lnWeek = ((ln1WDay + lnDayOfYear) / 7);
+
+
+					//////////
+					// First week of a year is equal to the last week of the previous year
+					//////
+						if ( lnWeek == 0 )
+							lnWeek = ifunction_week_common(tnYear - 1, 12, 31, tnMinDaysInWeek, tnFirstDayOfWeek);
+					break;
+
+				default:
+					//////////
+					// Example: The larger half (four days) of the first week is in the current year 
+					//////
+						if ( ln1WDay < tnMinDaysInWeek )				// Monday to Thursday
+							lnWeek = 1;		
+						else if ( ln1WDay == tnMinDaysInWeek )			// Friday
+							lnWeek = 53;	
+						else if ( ln1WDay == tnMinDaysInWeek + 1 )		// Saturday
+						{
+							// Year after leapyear
+							if ( iDateMath_isLeapYear(tnYear - 1) )
+								lnWeek = 53;
+							else
+								lnWeek = 52;
+						}
+						else											// Sunday
+							lnWeek = 52;
+
+						if ( (lnWeek == 1) || (lnDayOfYear + ln1WDay > 6) )
+						{
+							if ( lnWeek == 1 )
+								lnWeek += (lnDayOfYear + ln1WDay) / 7;
+							else
+								lnWeek = (lnDayOfYear + ln1WDay) / 7;
+
+							if ( lnWeek == 53 )
+							{ 
+								// next Sunday is equal to first Sunday in the new year
+								lnTempDays = iiDateMath_get_julian_from_YyyyMmDd(NULL, tnYear, tnMonth, tnDay);
+								lnTempDays +=  6 - (ifunction_dow_common(tnYear, tnMonth, tnDay) + (7 - tnFirstDayOfWeek)) % 7;
+								iiDateMath_get_YyyyMmDd_from_julian(lnTempDays, &tnYear, &tnMonth, &tnDay);
+								lnWeek = ifunction_week_common(tnYear, tnMonth, tnDay, tnMinDaysInWeek, tnFirstDayOfWeek);
+							}
+						}
+			}
+
+		/////////
+		// return week
+		//////
+			return lnWeek;
+	}
+
