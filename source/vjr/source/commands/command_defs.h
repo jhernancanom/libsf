@@ -458,7 +458,7 @@ struct SFunctionParms;
 		//////
 			union {
 				uptr		_func;
-				SVariable*	(*func)		(SThisCode* thisCode, SFunctionParms* rpar);
+				void		(*func)		(SThisCode* thisCode, SFunctionParms* rpar);
 			};
 
 

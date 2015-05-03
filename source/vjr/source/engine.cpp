@@ -708,7 +708,7 @@
 						//////////
 						// Perform the function
 						//////
-							rpar.returns[0] = funcData->func(NULL, &rpar);
+							funcData->func(NULL, &rpar);
 
 
 						//////////
