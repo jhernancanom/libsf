@@ -3,7 +3,7 @@
 // /libsf/source/vjr/bmps/graphics/bitmaps.h
 //
 //////
-// Version 0.56
+// Version 0.57
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:

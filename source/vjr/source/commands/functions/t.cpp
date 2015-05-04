@@ -18,7 +18,7 @@
 //      \_/  |_|  |_|  |_|
 //
 //////
-// Version 0.56
+// Version 0.57
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -92,7 +92,7 @@
 // This trigonometric function returns the tangent of an angle.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Mar.19.2015
 //////
@@ -1245,7 +1245,7 @@ debug_break;
 // Converts any variable input to a character form, and applies formatting based on codes.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Aug.03.2014
 //////

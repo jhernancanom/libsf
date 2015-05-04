@@ -18,7 +18,7 @@
 //      \_/  |_|  |_|  |_|
 //
 //////
-// Version 0.56
+// Version 0.57
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -214,7 +214,7 @@
 // Returns the next highest integer that is greater than or equal to the specified numeric expression.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Mar.16.2015
 //////
@@ -248,7 +248,7 @@
 // Takes a numeric input in the range 0..255, and converts it to its ASCII character.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Jul.05.2014
 //////
@@ -335,7 +335,7 @@
 // Character transformation
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Aug.21.2014
 //////
@@ -608,7 +608,7 @@
 // Colorizes an existing color by blending two colors.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Mar.16.2015
 //////
@@ -804,7 +804,7 @@
 // Returns the cosine of a numeric expression.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Mar.17.2015
 //////
@@ -839,7 +839,7 @@
 // Instantiates and instance of the indicated class.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Jul.12.2014
 //////
@@ -1267,7 +1267,7 @@ debug_break;
 // Returns the current directory
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last Update:
 //		Dec.25.2014
 //////

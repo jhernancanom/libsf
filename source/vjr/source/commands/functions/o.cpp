@@ -18,7 +18,7 @@
 //      \_/  |_|  |_|  |_|
 //
 //////
-// Version 0.56
+// Version 0.57
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -93,7 +93,7 @@
 // optionally with regards to case.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Aug.03.2014
 //////

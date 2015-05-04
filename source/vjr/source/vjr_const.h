@@ -18,7 +18,7 @@
 //      \_/  |_|  |_|  |_|
 //
 //////
-// Version 0.56
+// Version 0.57
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -1390,38 +1390,38 @@ typedef SEM**		SEMpp;
 	const u8			cgcSourceLightTitle[]				= "SourceLight";
 	const u8			cgcSystemLog[]						= "System Log";
 	const u8			cgc_noMateFound[]					= "Mate not found";
-	const u8			cgcVersionShort[]					= "Version 0.56";
+	const u8			cgcVersionShort[]					= "Version 0.57";
 #ifdef __GNUC__
 	#ifndef __amd64
-		const u8		cgcScreenTitle[]					= "Visual FreePro, Jr. 0.56 -- Mar.22.2015 -- GCC 32-bit";
-		const u8		cgcJDebiTitle[]						= "JDebi Debugger 0.56 -- Mar.22.2015 -- GCC 32-bit";
-		const u8		cgcVersionText[]					= "Visual FreePro, Jr. 32-bit 00.56.0001.9999 for Windows";
-		const u8		cgcVersion1Text[]					= "Visual FreePro, Jr. 32-bit 00.56.0001.9999 for Windows [Mar.22.2015 00:00:00] Product ID 31415-926-5358979-32384";
-		const u8		cgcVersion4Text[]					= "00.56.3201.9999";
+		const u8		cgcScreenTitle[]					= "Visual FreePro, Jr. Version 0.57 -- May.04.2015 -- GCC 32-bit";
+		const u8		cgcJDebiTitle[]						= "JDebi Debugger Version 0.57 -- May.04.2015 -- GCC 32-bit";
+		const u8		cgcVersionText[]					= "Visual FreePro, Jr. 32-bit 00.57.0001.9999 for Windows";
+		const u8		cgcVersion1Text[]					= "Visual FreePro, Jr. 32-bit 00.57.0001.9999 for Windows [May.04.2015 00:00:00] Product ID 31415-926-5358979-32384";
+		const u8		cgcVersion4Text[]					= "00.57.3201.9999";
 	#else
-		const u8		cgcScreenTitle[]					= "Visual FreePro, Jr. 0.56 -- Mar.22.2015   -- GCC 64-bit";
-		const u8		cgcJDebiTitle[]						= "JDebi Debugger 0.56 -- Mar.22.2015 -- GCC 64-bit";
-		const u8		cgcVersionText[]					= "Visual FreePro, Jr. 64-bit 00.56.0001.9999 for Windows";
-		const u8		cgcVersion1Text[]					= "Visual FreePro, Jr. 64-bit 00.56.0001.9999 for Windows [Mar.22.2015 00:00:00] Product ID 31415-926-5358979-32384";
-		const u8		cgcVersion4Text[]					= "00.56.6401.9999";
+		const u8		cgcScreenTitle[]					= "Visual FreePro, Jr. Version 0.57 -- May.04.2015   -- GCC 64-bit";
+		const u8		cgcJDebiTitle[]						= "JDebi Debugger Version 0.57 -- May.04.2015 -- GCC 64-bit";
+		const u8		cgcVersionText[]					= "Visual FreePro, Jr. 64-bit 00.57.0001.9999 for Windows";
+		const u8		cgcVersion1Text[]					= "Visual FreePro, Jr. 64-bit 00.57.0001.9999 for Windows [May.04.2015 00:00:00] Product ID 31415-926-5358979-32384";
+		const u8		cgcVersion4Text[]					= "00.57.6401.9999";
 	#endif
 #else
 	#ifndef _M_X64
-		const u8		cgcScreenTitle[]					= "Visual FreePro, Jr. 0.56 -- Mar.22.2015 -- MSVC 32-bit";
-		const u8		cgcJDebiTitle[]						= "JDebi Debugger 0.56 -- Mar.22.2015 -- MSVC 32-bit";
-		const u8		cgcVersionText[]					= "Visual FreePro, Jr. 32-bit 00.56.0001.9999 for Windows";
-		const u8		cgcVersion1Text[]					= "Visual FreePro, Jr. 32-bit 00.56.0001.9999 for Windows [Mar.22.2015 00:00:00] Product ID 31415-926-5358979-32384";
-		const u8		cgcVersion4Text[]					= "00.56.3201.9999";
+		const u8		cgcScreenTitle[]					= "Visual FreePro, Jr. Version 0.57 -- May.04.2015 -- MSVC 32-bit";
+		const u8		cgcJDebiTitle[]						= "JDebi Debugger Version 0.57 -- May.04.2015 -- MSVC 32-bit";
+		const u8		cgcVersionText[]					= "Visual FreePro, Jr. 32-bit 00.57.0001.9999 for Windows";
+		const u8		cgcVersion1Text[]					= "Visual FreePro, Jr. 32-bit 00.57.0001.9999 for Windows [May.04.2015 00:00:00] Product ID 31415-926-5358979-32384";
+		const u8		cgcVersion4Text[]					= "00.57.3201.9999";
 	#else
-		const u8		cgcScreenTitle[]					= "Visual FreePro, Jr. 0.56 -- Mar.22.2015 -- MSVC 64-bit";
-		const u8		cgcJDebiTitle[]						= "JDebi Debugger 0.56 -- Mar.22.2015 -- MSVC 64-bit";
+		const u8		cgcScreenTitle[]					= "Visual FreePro, Jr. Version 0.57 -- May.04.2015 -- MSVC 64-bit";
+		const u8		cgcJDebiTitle[]						= "JDebi Debugger Version 0.57 -- May.04.2015 -- MSVC 64-bit";
 		// VERSION() support
-		const u8		cgcVersionText[]					= "Visual FreePro, Jr. 64-bit 00.56.0001.9999 for Windows";
-		const u8		cgcVersion1Text[]					= "Visual FreePro, Jr. 64-bit 00.56.0001.9999 for Windows [Mar.22.2015 00:00:00] Product ID 31415-926-5358979-32384";
-		const u8		cgcVersion4Text[]					= "00.56.6401.9999";
+		const u8		cgcVersionText[]					= "Visual FreePro, Jr. 64-bit 00.57.0001.9999 for Windows";
+		const u8		cgcVersion1Text[]					= "Visual FreePro, Jr. 64-bit 00.57.0001.9999 for Windows [May.04.2015 00:00:00] Product ID 31415-926-5358979-32384";
+		const u8		cgcVersion4Text[]					= "00.57.6401.9999";
 	#endif
 #endif
-	const s32			gnVersion5							= 56;	// 0.56
+	const s32			gnVersion5							= 57;	// Version 0.57
 	const s32			gnVersion2							= 2;	// Professional
 	const s32			gnVersion3							= 0;	// English
 	const u8			cgcFontName_default[]				= "Ubuntu";

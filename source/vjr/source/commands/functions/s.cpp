@@ -18,7 +18,7 @@
 //      \_/  |_|  |_|  |_|
 //
 //////
-// Version 0.56
+// Version 0.57
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -525,7 +525,7 @@
 // Retrieves current settings
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Jul.12.2014
 //////
@@ -643,7 +643,7 @@
 // Returns a numeric value of 1 if varNumber >= 0, and -1 otherwise.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Mar.14.2015
 //////
@@ -772,7 +772,7 @@
 // Returns the sine of an angle.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Mar.17.2015
 //////
@@ -807,7 +807,7 @@
 // Extracts a portion of a string.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Mar.22.2015
 //////
@@ -844,7 +844,7 @@
 // Creates a character variable initialized with spaces.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Jul.12.2014
 //////
@@ -923,7 +923,7 @@
 // Returns the square root of the specified numeric expression.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Mar.15.2015
 //////
@@ -960,7 +960,7 @@
 // Determines if the character string starts with the search string.
 //
 //////
-// Version 0.56   (Determine the current version from the header in vjr.cpp)
+// Version 0.57   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Mar.22.2015
 //////
@@ -1019,7 +1019,7 @@
 // Converts the matching portions of the string from one form to another.
 //
 //////
-// Version 0.56   (Determine the current version from the header in vjr.cpp)
+// Version 0.57   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Aug.21.2014
 //////
@@ -1271,7 +1271,7 @@
 // Returns a string which has been modified, having optionally some characters optionally removed, some optionally inserted.
 //
 //////
-// Version 0.56   (Determine the current version from the header in vjr.cpp)
+// Version 0.57   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.12.2014
 //////
@@ -1826,7 +1826,7 @@ debug_break;
 // Based on the index, returns a wide array of information.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Jul.13.2014
 //////

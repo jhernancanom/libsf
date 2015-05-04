@@ -18,7 +18,7 @@
 //      \_/  |_|  |_|  |_|
 //
 //////
-// Version 0.56
+// Version 0.57
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -683,7 +683,7 @@
 // Concatenates two strings together.
 //
 //////
-// Version 0.56   (Determine the current version from the header in vjr.cpp)
+// Version 0.57   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -762,7 +762,7 @@
 // Adds two values and returns the result.
 //
 //////
-// Version 0.56   (Determine the current version from the header in vjr.cpp)
+// Version 0.57   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -921,7 +921,7 @@
 // Subtracts two values and returns the result.
 //
 //////
-// Version 0.56   (Determine the current version from the header in vjr.cpp)
+// Version 0.57   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -1080,7 +1080,7 @@
 // Multiplies two values and returns the result.
 //
 //////
-// Version 0.56   (Determine the current version from the header in vjr.cpp)
+// Version 0.57   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -1239,7 +1239,7 @@
 // Divides two values and returns the result.
 //
 //////
-// Version 0.56   (Determine the current version from the header in vjr.cpp)
+// Version 0.57   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -1409,7 +1409,7 @@
 // Clears various things.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Mar.15.2015
 //////
@@ -1652,7 +1652,7 @@
 // Modifies various things.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Jan.09.2015
 //////
@@ -1775,7 +1775,7 @@
 // Multiple forms.  Opens a database container.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Jan.06.2015
 //////
@@ -1908,7 +1908,7 @@
 // Sets various components within the current _settings object.
 //
 //////
-// Version 0.56   (Determine the current version from the header in vjr.cpp)
+// Version 0.57   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Mar.15.2015
 //////
@@ -2032,7 +2032,7 @@
 // Multiple forms.  Opens or close a table or view in the current or another area.
 //
 //////
-// Version 0.56   (Determine the current version from the header in vjr.cpp)
+// Version 0.57   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Nov.02.2014
 //////

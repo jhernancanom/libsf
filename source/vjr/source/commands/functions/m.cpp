@@ -18,7 +18,7 @@
 //      \_/  |_|  |_|  |_|
 //
 //////
-// Version 0.56
+// Version 0.57
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -92,7 +92,7 @@
 // Returns the 1.0 - ((255 - ALP()) / 255) calculation.
 //
 //////
-// Version 0.56   (Determine the current version from the header in vjr.cpp)
+// Version 0.57   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Mar.16.2015
 //////
@@ -221,7 +221,7 @@
 // Returns the maximum value of the two inputs.
 //
 //////
-// Version 0.56   (Determine the current version from the header in vjr.cpp)
+// Version 0.57   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.12.2014
 //////
@@ -531,7 +531,7 @@
 // Returns the minimum value of the two inputs.
 //
 //////
-// Version 0.56   (Determine the current version from the header in vjr.cpp)
+// Version 0.57   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.12.2014
 //////
@@ -806,7 +806,7 @@
 // Divides one numeric expression by another numeric expression and returns the remainder.
 //
 //////
-// Version 0.56   (Determine the current version from the header in vjr.cpp)
+// Version 0.57   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Mar.19.2015
 //////

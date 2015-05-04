@@ -18,7 +18,7 @@
 //      \_/  |_|  |_|  |_|
 //
 //////
-// Version 0.56
+// Version 0.57
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -225,7 +225,7 @@
 // Returns the current local time, or uses the input variables to create the indicated datetime.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Jul.10.2014
 //////
@@ -261,7 +261,7 @@
 // Returns the current local time, or uses the input variables to create the indicated datetimex.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Apr.25.2015
 //////
@@ -1079,7 +1079,7 @@
 // Converts degrees to radians.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Mar.16.2015
 //////

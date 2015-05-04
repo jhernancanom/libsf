@@ -18,7 +18,7 @@
 //      \_/  |_|  |_|  |_|
 //
 //////
-// Version 0.56
+// Version 0.57
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -92,7 +92,7 @@
 // Returns the left N characters of a string.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Jul.12.2014
 //////
@@ -183,7 +183,7 @@
 // Returns the length of the string.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Jul.12.2014
 //////
@@ -245,7 +245,7 @@
 // Returns the natural logarithm (base e) of the specified numeric expression.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Mar.15.2015
 //////
@@ -280,7 +280,7 @@
 // Returns the common logarithm (base 10) of the specified numeric expression.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Mar.15.2015
 //////
@@ -315,7 +315,7 @@
 // Converts every character in the string to lowercase.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Jul.12.2014
 //////
@@ -390,7 +390,7 @@
 // Trims spaces off the start of the string.
 //
 //////
-// Version 0.56
+// Version 0.57
 // Last update:
 //     Jul.12.2014
 //////
