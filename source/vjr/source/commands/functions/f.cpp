@@ -158,8 +158,8 @@
 		s32			lnFNameOffset, lnExtOffset, lnLength;
 		s8			newFilename[_MAX_PATH + 1];
 		SVariable*	result;
-		
-		
+
+
 		//////////
 		// Parameter 1 must be character
 		//////
@@ -170,7 +170,7 @@
 				return;
 			}
 
-		
+
 		//////////
 		// Parameter 2 must be character
 		//////
@@ -204,7 +204,7 @@
 						{
 							// Will the new filename be too big?
 							lnLength = lnExtOffset + varNewExtension->value.length;			// pathname up to extension + new extension (which already has a period)
-							if (lnLength >= sizeof(newFilename))
+							if (lnLength >= (s32)sizeof(newFilename))
 							{
 								// Too big
 								iError_reportByNumber(thisCode, _ERROR_TOO_BIG_FOR_TARGET, iVariable_getRelatedComp(thisCode, varNewExtension), false);
@@ -217,7 +217,7 @@
 						} else {
 							// Will the new filename be too big?
 							lnLength = lnExtOffset + 1 + varNewExtension->value.length;		// pathname up to extension + new period + new extension
-							if (lnLength >= sizeof(newFilename))
+							if (lnLength >= (s32)sizeof(newFilename))
 							{
 								// Too big
 								iError_reportByNumber(thisCode, _ERROR_TOO_BIG_FOR_TARGET, iVariable_getRelatedComp(thisCode, varNewExtension), false);
@@ -257,7 +257,7 @@
 				iVariable_delete(thisCode, result, true);
 				result = NULL;
 			}
-			
+
 			if (!result)
 				iError_report(thisCode, cgcInternalError, false);
 
@@ -422,7 +422,7 @@
 					{
 						// Will the new filename be too big?
 						lnLength = lnFNameOffset + varNewFilename->value.length;
-						if (lnLength >= sizeof(newFilename))
+						if (lnLength >= (s32)sizeof(newFilename))
 						{
 							// Too big
 							iError_reportByNumber(thisCode, _ERROR_TOO_BIG_FOR_TARGET, iVariable_getRelatedComp(thisCode, varNewFilename), false);
@@ -435,7 +435,7 @@
 					} else {
 						// If varNewFilename is empty, we remove filename
 						lnLength = lnFNameOffset;
-					}			
+					}
 
 
 				//////////
@@ -460,7 +460,7 @@
 				iVariable_delete(thisCode, result, true);
 				result = NULL;
 			}
-			
+
 			if (!result)
 				iError_report(thisCode, cgcInternalError, false);
 
@@ -556,7 +556,7 @@
 						{
 							// Will the new filename be too big?
 							lnLength = varNewPathname->value.length + 1 + lnFNameLength;
-							if (lnLength >= sizeof(newFilename))
+							if (lnLength >= (s32)sizeof(newFilename))
 							{
 								// Too big
 								iError_reportByNumber(thisCode, _ERROR_TOO_BIG_FOR_TARGET, iVariable_getRelatedComp(thisCode, varNewPathname), false);
@@ -571,7 +571,7 @@
 						} else {
 							// Will the new filename be too big?
 							lnLength = varNewPathname->value.length + lnFNameLength;
-							if (lnLength >= sizeof(newFilename))
+							if (lnLength >= (s32)sizeof(newFilename))
 							{
 								// Too big
 								iError_reportByNumber(thisCode, _ERROR_TOO_BIG_FOR_TARGET, iVariable_getRelatedComp(thisCode, varNewPathname), false);
@@ -612,7 +612,7 @@
 				iVariable_delete(thisCode, result, true);
 				result = NULL;
 			}
-			
+
 			if (!result)
 				iError_report(thisCode, cgcInternalError, false);
 
@@ -654,7 +654,7 @@
 		SVariable* varPathname	= rpar->params[0];
 		SVariable* varNewStem	= rpar->params[1];
 
-		s32			lnFNameOffset, lnExtOffset, lnLengthStem, lnLengthExt, lnLength;
+		s32			lnFNameOffset, lnExtOffset, lnLengthExt, lnLength;
 		s8			newFilename[_MAX_PATH + 1];
 		SVariable*	result;
 
@@ -695,7 +695,7 @@
 				//////////
 				// Compute the length of the non-path portion
 				//////
-					lnLengthStem	= varPathname->value.length - lnFNameOffset - lnExtOffset;
+//					lnLengthStem	= varPathname->value.length - lnFNameOffset - lnExtOffset;
 					lnLengthExt		= varPathname->value.length - lnExtOffset;
 
 
@@ -706,7 +706,7 @@
 					{
 						// Will the new filename be too big?
 						lnLength = lnFNameOffset + varNewStem->value.length + lnLengthExt;
-						if (lnLength >= sizeof(newFilename))
+						if (lnLength >= (s32)sizeof(newFilename))
 						{
 							// Too big
 							iError_reportByNumber(thisCode, _ERROR_TOO_BIG_FOR_TARGET, iVariable_getRelatedComp(thisCode, varNewStem), false);
@@ -723,7 +723,7 @@
 						lnLength = lnFNameOffset + lnLengthExt;
 						memcpy(newFilename, varPathname->value.data_s8, lnFNameOffset);
 						memcpy(newFilename + lnFNameOffset, varPathname->value.data_s8 + lnExtOffset, lnLengthExt);
-					}			
+					}
 
 
 				//////////
@@ -747,7 +747,7 @@
 				iVariable_delete(thisCode, result, true);
 				result = NULL;
 			}
-			
+
 			if (!result)
 				iError_report(thisCode, cgcInternalError, false);
 

@@ -4919,7 +4919,7 @@ debug_break;
 							varNew->value.data_big	= m_apm_init();
 							varNew->value.length	= tnBits;
 
-							// Store the bits for this creation in 
+							// Store the bits for this creation in
 							iEngine_update_meta1(thisCode, (s64)tnBits);
 							break;
 
@@ -5141,7 +5141,7 @@ debug_break;
 		//////////
 		// Make sure our length is set
 		//////
-			if (tnVarNameLength == -1)
+			if (tnVarNameLength == (u32)-1)
 				tnVarNameLength = (u32)strlen(tcVarName);
 
 
@@ -5919,7 +5919,7 @@ if (!gsProps_master[lnI].varInit)
 // through its indirect chain
 //
 //////
-	void iVariable_setVarType(SThisCode* thisCode, SVariable* var, s32 tnVarTypeNew)
+	void iVariable_setVarType(SThisCode* thisCode, SVariable* var, u32 tnVarTypeNew)
 	{
 		if (var)
 		{
@@ -7645,7 +7645,7 @@ debug_break;
 		//////
 			if (tlTerminateIndirect)
 				var = iiVariable_terminateIndirect(thisCode, var);
-			
+
 
 		//////////
 		// Delete the old value (if any)
@@ -8208,7 +8208,7 @@ debug_break;
 		//////
 			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, xlat->keyword, xlat->keywordLength, false);
 
-		
+
 		//////////
 		// Indicate our result
 		//////
@@ -11345,7 +11345,11 @@ debug_break;
 						}
 
 						// Grab the value
+#ifdef __GNUC__
+						lnDatetime = strtoull(buffer, NULL, 10);
+#else
 						lnDatetime = _strtoui64(buffer, NULL, 10);
+#endif
 						switch (varRight->varType)
 						{
 							case _VAR_TYPE_S64:
@@ -11750,7 +11754,7 @@ debug_break;
 
 
 		// Populate if missing
-		if (tnDateFormat < _SET_DATE_START || tnDateFormat > _SET_DATE_END)
+		if (tnDateFormat < (s32)_SET_DATE_START || tnDateFormat > (s32)_SET_DATE_END)
 			tnDateFormat = propGet_settings_Date(_settings);
 
 		// Which date is it?
@@ -11911,7 +11915,7 @@ debug_break;
 
 
 		//////////
-		// Indicate the 
+		// Indicate the
 		//////
 			return(result);
 	}
@@ -12069,16 +12073,16 @@ debug_break;
 		// Year
 		memcpy(buffer, YYYYMMDD, 4);
 		buffer[4] = 0;
-		*year = (u32)atoi(buffer);	
+		*year = (u32)atoi(buffer);
 
 		// Month
 		memcpy(buffer, YYYYMMDD + 4, 2);
 		buffer[2] = 0;
-		*month = (u32)atoi(buffer);		
+		*month = (u32)atoi(buffer);
 
 		// Day
 		memcpy(buffer, YYYYMMDD + 6, 2);
-		*day = (u32)atoi(buffer);	
+		*day = (u32)atoi(buffer);
 	}
 
 

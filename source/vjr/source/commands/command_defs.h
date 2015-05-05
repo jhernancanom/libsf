@@ -673,7 +673,7 @@ struct SFunctionParms;
 	// STEP2:
 	//////////
 		// Note:  Do not delete this line, it is used to terminate the function list
-		{	0,						0,					0,						0,				0,				NULL	}
+		{	0,						0,			0,				0,			0,								0,				0,				NULL,			NULL							}
 	};
 
 

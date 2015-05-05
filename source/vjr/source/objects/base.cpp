@@ -3,7 +3,7 @@
 // /libsf/source/vjr/source/objects/base.cpp
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -11,10 +11,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -722,7 +722,7 @@
 
 //////////
 //
-// Called to find the relative rectangle of the indicated 
+// Called to find the relative rectangle of the indicated
 //
 //////
 	bool iObj_find_relativeRect(SThisCode* thisCode, SObject* objThis, SObject* objTarget, s32 x, s32 y, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings)
@@ -1084,7 +1084,7 @@
 			if (obj->firstChild)
 				iObj_findFocusControls(thisCode, obj->firstChild, objFocusControls, true);
 
-		
+
 		//////////
 		// Process self
 		//////
@@ -1244,7 +1244,7 @@
 
 //////////
 //
-// Called to mark the object and optionally all its children and siblings 
+// Called to mark the object and optionally all its children and siblings
 //
 //////
 	void iObj_setDirtyRender_descent(SThisCode* thisCode, SObject* obj, bool tlProcessChildren, bool tlProcessSiblings)
@@ -1316,7 +1316,7 @@
 
 //////////
 //
-// Called to mark the object and optionally all its children and siblings 
+// Called to mark the object and optionally all its children and siblings
 //
 //////
 	void iObj_setDirtyPublish_descent(SThisCode* thisCode, SObject* obj, bool tlProcessChildren, bool tlProcessSiblings)
@@ -1950,7 +1950,7 @@
 			uptr	_bxml;
 			CXmlp	bxml;
 		};
-		CXmlp		bxmlJDebi, bxmlLayout;
+//		CXmlp		bxmlJDebi, bxmlLayout;
 
 
 		//////////
@@ -1979,15 +1979,15 @@
 		//////////
 		// Access the jdebi and layout tags
 		//////
-			bxmlJDebi	= bxml->child(cgcTag_jdebi);
-			bxmlLayout	= bxmlJDebi->child(cgcTag_layout);
+//			bxmlJDebi	= bxml->child(cgcTag_jdebi);
+//			bxmlLayout	= bxmlJDebi->child(cgcTag_layout);
 
 
 		//////////
 		// Iterate through each object, appending its content
 		//////
 			iiObj_saveLayoutAs_bxml_saveObject(thisCode, bxml, obj, tlFullProperties, tlSaveChildren, tlSaveSiblings);
-			
+
 
 		//////////
 		// Save the result
@@ -2037,26 +2037,26 @@
 			//////
 				varData		= propName(obj);
 				bxmlObj	= bxml->append_child(new CXml((s8*)cgcTag_object, -1, NULL, 0, (s8*)cgcTag_name, varData->value.data, varData->value.length));
-			
+
 
 			//////////
 			// Append the standard properties
 			//////
 				bxmlP	= bxmlObj->append_child(new CXml((s8*)cgcTag_p));
 				// X
-				sprintf(buffer, "%d\0", propX(obj));
+				sprintf(buffer, "%d\0", (s32)propX(obj));
 				bxmlP->append_attribute(new CXml((s8*)cgcTag_x, -1, buffer, -1, NULL, NULL, 0));
 
 				// Y
-				sprintf(buffer, "%d\0", propY(obj));
+				sprintf(buffer, "%d\0", (s32)propY(obj));
 				bxmlP->append_attribute(new CXml((s8*)cgcTag_y, -1, buffer, -1, NULL, NULL, 0));
 
 				// Width
-				sprintf(buffer, "%d\0", propWidth(obj));
+				sprintf(buffer, "%d\0", (s32)propWidth(obj));
 				bxmlP->append_attribute(new CXml((s8*)cgcTag_w, -1, buffer, -1, NULL, NULL, 0));
 
 				// Height
-				sprintf(buffer, "%d\0", propHeight(obj));
+				sprintf(buffer, "%d\0", (s32)propHeight(obj));
 				bxmlP->append_attribute(new CXml((s8*)cgcTag_h, -1, buffer, -1, NULL, NULL, 0));
 
 				// Class
@@ -2135,8 +2135,8 @@
 										break;
 							}
 
-							;
-							&thisObjProp[lnI];
+// TODO:  Working here
+//							&thisObjProp[lnI];
 						}
 						// If we get here, not found
 					}
@@ -2417,7 +2417,7 @@ debug_break;
 //////
 	void iObj_setSize(SThisCode* thisCode, SObject* obj, s32 tnLeft, s32 tnTop, s32 tnWidth, s32 tnHeight)
 	{
-		s32			lnAlignment, lnBorderStyle, lnLeft, lnRight, lnTop, lnBottom;
+		s32			lnAlignment, lnBorderStyle, lnLeft, lnTop;
 		bool		llTitleBar, llBorder;
 		SObject*	objChild;
 		SBitmap*	bmp;
@@ -2737,9 +2737,7 @@ debug_break;
 				// Adjust for the tabs placement
 				//////
 					lnLeft		= 0;
-					lnRight		= 0;
 					lnTop		= 0;
-					lnBottom	= 0;
 					lnAlignment	= propAlignment(obj);
 					switch (lnAlignment)
 					{
@@ -2750,7 +2748,6 @@ debug_break;
 
 						case _ALIGNMENT_RIGHT:		// Tabs are at the right
 							obj->rcClient.right		-= bmpArrowUl->bi.biWidth;
-							lnRight					= bmpArrowUl->bi.biWidth;
 							break;
 
 						case _ALIGNMENT_TOP:		// Tabs are at the top
@@ -2761,7 +2758,6 @@ debug_break;
 						default:
 						case _ALIGNMENT_BOTTOM:		// Tabs are at the bottom
 							obj->rcClient.bottom	-= bmpArrowUl->bi.biWidth;
-							lnBottom				= bmpArrowUl->bi.biWidth;
 							break;
 					}
 
@@ -2885,7 +2881,7 @@ debug_break;
 						} else if (objChild->objType == _OBJ_TYPE_RIDER) {
 							// Set the rider size
 							CopyRect(&objChild->rc,	&obj->rcClient);
-							
+
 							// Update the size
 							iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 						}
@@ -3072,7 +3068,7 @@ debug_break;
 					lnWidth		= objChild->rc.right - objChild->rc.left;
 					lnHeight	= objChild->rc.bottom - objChild->rc.top;
 					lnRowHeight	= max(lnHeight,	lnRowHeight);
-				
+
 
 				//////////
 				// Coordinate for the new object (if we're not over width)
@@ -3406,8 +3402,8 @@ if (!obj->props[lnI])
 	s32 iiObj_getBaseclassType_byName(SThisCode* thisCode, s8* tcTextname, s32 tnTextnameLength)
 	{
 		s32 lnI;
-		
-		
+
+
 		// Iterate through each function for matches
 		logfunc(__FUNCTION__);
 		for (lnI = 0; gsKnownBaseclasses[lnI].objType != 0; lnI++)
@@ -3431,8 +3427,8 @@ if (!obj->props[lnI])
 	SBaseClassMap* iiObj_getBaseclass_byName(SThisCode* thisCode, s8* tcTextname, s32 tnTextnameLength)
 	{
 		s32 lnI;
-		
-		
+
+
 		// Iterate through each function for matches
 		logfunc(__FUNCTION__);
 		for (lnI = 0; gsKnownBaseclasses[lnI].objType != 0; lnI++)

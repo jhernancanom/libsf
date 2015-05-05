@@ -286,6 +286,9 @@
 
 	#define _USE_MATH_DEFINES
 	#include <math.h>
+
+	#include "3rd_party/mapm/m_apm.h"
+	
 	#if defined(__linux__)
 		#include <SDL2/SDL.h>
 		#include <SDL2/SDL_audio.h>

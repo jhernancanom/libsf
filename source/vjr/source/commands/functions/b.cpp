@@ -124,7 +124,7 @@
 		//////////
 		// Parameters 1, 2 and 3 must be present
 		//////
-			rpar->returns[0];
+			rpar->returns[0] = NULL;
 			if (!iVariable_isValid(varValue))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varValue), false);
@@ -186,7 +186,7 @@
 				{
 					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varHighValue), false);
 					return;
-				}		
+				}
 
 				// If value is less than or equal to high, we're good
 				llInRange = (lnComp == -1/*less than*/ || lnComp == 0/*equal to*/);
@@ -622,7 +622,7 @@
 
 
 		//////////
-		// Make sure every digit in the character string is either a '1' or '0', and the total is 
+		// Make sure every digit in the character string is either a '1' or '0', and the total is
 		//////
 			for (lnBit = 0; lnBit < varBits->value.length; lnBit++)
 			{
@@ -676,7 +676,7 @@
 					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varBits), false);
 					return;
 			}
-		
+
 
 		//////////
 		// Are we good?
@@ -891,9 +891,9 @@
 //////
 	void function_bitslice(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varValue		= rpar->params[0];
-		SVariable* varBitStart	= rpar->params[1];
-		SVariable* varBitEnd	= rpar->params[2];
+//		SVariable* varValue		= rpar->params[0];
+//		SVariable* varBitStart	= rpar->params[1];
+//		SVariable* varBitEnd	= rpar->params[2];
 
 
 		// Not yet completed
@@ -926,8 +926,8 @@
 //////
 	void function_bitstr(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varValue		= rpar->params[0];
-		SVariable* varLength	= rpar->params[1];
+//		SVariable* varValue		= rpar->params[0];
+//		SVariable* varLength	= rpar->params[1];
 
 
 		// Not yet completed

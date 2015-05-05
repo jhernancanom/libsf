@@ -312,9 +312,9 @@
 	void function_endswith(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varString	= rpar->params[0];
-		SVariable* varSearch	= rpar->params[1];
-		SVariable* varStart		= rpar->params[2];
-		SVariable* varEnd		= rpar->params[3];
+//		SVariable* varSearch	= rpar->params[1];
+//		SVariable* varStart		= rpar->params[2];
+//		SVariable* varEnd		= rpar->params[3];
 
 
 		// Not yet completed
@@ -333,9 +333,9 @@
 	void function_endswithc(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varString	= rpar->params[0];
-		SVariable* varSearch	= rpar->params[1];
-		SVariable* varStart		= rpar->params[2];
-		SVariable* varEnd		= rpar->params[3];
+//		SVariable* varSearch	= rpar->params[1];
+//		SVariable* varStart		= rpar->params[2];
+//		SVariable* varEnd		= rpar->params[3];
 
 
 		// Not yet completed

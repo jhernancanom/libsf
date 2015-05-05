@@ -3,7 +3,7 @@
 // /libsf/source/vjr/source/sem/sem.cpp
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -11,10 +11,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -259,7 +259,7 @@
 
 		logfunc(__FUNCTION__);
 		// Make sure our environment is sane
-		if (sem && tcPathname && (lnPathnameLength = (s32)strlen((s8*)tcPathname)) < sizeof(sem->fileName) - 1 && lnPathnameLength > 0)
+		if (sem && tcPathname && (lnPathnameLength = (s32)strlen((s8*)tcPathname)) < (s32)sizeof(sem->fileName) - 1 && lnPathnameLength > 0)
 		{
 			// Store the last loaded filename
 			memset(sem->fileName, 0, sizeof(sem->fileName));
@@ -393,8 +393,8 @@ debug_break;
 // 			// Initialize
 // 			//////
 // 				memcpy(ecmNew, ecmSource, sizeof(SEM));
-// 
-// 
+//
+//
 // 			//////////
 // 			// Remove the connection to any undo history
 // 			// Note:  The undo history will be copied and translated separately if need be
@@ -402,8 +402,8 @@ debug_break;
 // 				ecmNew->undoHistory = NULL;
 // 				iBuilder_createAndInitialize(&xlatRoot, -1);
 // 				// Note:  We create the translation regardless so we can update the ecmNew-> members which relate to cursor line, highlighted, etc.
-// 
-// 
+//
+//
 // 			//////////
 // 			// Update caller
 // 			//////
@@ -411,15 +411,15 @@ debug_break;
 // 				// Right now:
 // 				//		ecmNew		-- our new SEC
 // 				//		ecmSource	-- SEC to duplicate
-// 
-// 
+//
+//
 // 			//////////
 // 			// Indicate where we'll be updating
 // 			//////
 // 				ecPrev	= &ecmNew->ecFirst;
 // 				ecLast	= NULL;
-// 
-// 
+//
+//
 // 			//////////
 // 			// Duplicate the chain
 // 			//////
@@ -444,13 +444,13 @@ debug_break;
 // 									xlat->p2	= ecNew;									// the new pointer
 // 								}
 // 							}
-// 
+//
 // 						} else {
 // 							// Should not happen.
 // 							return(false);
 // 						}
-// 
-// 
+//
+//
 // 					//////////
 // 					// Copy source information to new
 // 					//////
@@ -458,15 +458,15 @@ debug_break;
 // 						*ecPrev		= ecNew;												// Update the prior record to point here
 // 						ecNew->prev	= ecLast;												// Point backward to the previous entry
 // 						ecNew->next	= NULL;													// Currently points forward to nothing
-// 
-// 
+//
+//
 // 					//////////
 // 					// Duplicate its data
 // 					//////
 // 						ecNew->sourceCode = NULL;
 // 						iDatum_duplicate(ecNew->sourceCode, ecSource->sourceCode);
-// 
-// 
+//
+//
 // 					//////////
 // 					// General purpose extra data
 // 					//////
@@ -486,7 +486,7 @@ debug_break;
 // 										// Function call
 // 										eiNew = eiSource->extra_info_duplicate(ecmSource, ecSource, ecSource->extra_info);
 // 										// Right now, eiNew has either been updated or not depending on the decision making process in extra_info_duplicate().
-// 
+//
 // 									} else {
 // 										// Manual duplication
 // 										eiNew = (SExtraInfo*)malloc(sizeof(SExtraInfo));
@@ -494,18 +494,18 @@ debug_break;
 // 										{
 // 											// Copy everything
 // 											memcpy(eiNew, eiSource, sizeof(SExtraInfo));
-// 
+//
 // 											// Clear, and then duplicate the info datum
 // 											memset(&eiNew->info, 0, sizeof(eiNew->info));
 // 											iDatum_duplicate(&eiNew->info, &eiSource->info);
-// 
+//
 // 										} else {
 // 											// Should not happen
 // 											return(false);
 // 										}
 // 									}
-// 
-// 
+//
+//
 // 								//////////
 // 								// Update the back-link if need be
 // 								//////
@@ -514,16 +514,16 @@ debug_break;
 // 										*eiPrev	= eiNew;
 // 										eiPrev	= &eiNew->next;
 // 									}
-// 
-// 
+//
+//
 // 								//////////
 // 								// Move to next extra_info
 // 								//////
 // 									eiSource = eiSource->next;
 // 							}
 // 						}
-// 
-// 
+//
+//
 // 					//////////
 // 					// Move to next entry to duplicate
 // 					//////
@@ -531,8 +531,8 @@ debug_break;
 // 						ecPrev		= &ecNew->next;
 // 						ecSource	= ecSource->next;
 // 				}
-// 
-// 
+//
+//
 // 			//////////
 // 			// Translate each of the ecmSource pointers for ecmNew
 // 			// Note:  The rest of them use uid lookups
@@ -544,14 +544,14 @@ debug_break;
 // 				ecmNew->ecCursorLineLast	= (SEditChain*)iTranslate_p1_to_p2(xlatRoot, ecmSource->ecCursorLineLast);
 // 				ecmNew->ecSelectedLineStart	= (SEditChain*)iTranslate_p1_to_p2(xlatRoot, ecmSource->ecSelectedLineStart);
 // 				ecmNew->ecSelectedLineEnd	= (SEditChain*)iTranslate_p1_to_p2(xlatRoot, ecmSource->ecSelectedLineEnd);
-// 
-// 
+//
+//
 // 			//////////
 // 			// Free the pointers
 // 			//////
 // 				iBuilder_freeAndRelease(&xlatRoot);
-// 
-// 
+//
+//
 // 			//////////
 // 			// Indicate success
 // 			//////
@@ -2804,7 +2804,7 @@ renderAsOnlyText:
 
 //////////
 //
-// Called to 
+// Called to
 //
 //////
 	void iSEM_render_highlightSelectedComps(SThisCode* thisCode, SEM* sem, SComp* firstComp)
@@ -3655,7 +3655,7 @@ renderAsOnlyText:
 
 //////////
 //
-// 
+//
 //
 //////
 	bool iSEM_returnKey(SThisCode* thisCode, SEM* sem, SObject* obj)
@@ -3970,7 +3970,7 @@ renderAsOnlyText:
 			//////
 				sem->line_cursorLast	= sem->line_cursor;
 
-			
+
 			//////////
 			// Move to top of the document
 			//////
@@ -4899,7 +4899,7 @@ renderAsOnlyText:
 				lnExtra		= font->tm.tmMaxCharWidth - (font->tm.tmAveCharWidth * 2);			// Added to fix the bug mentioned below
 				if (lnExtra < 0)
 					lnExtra = 0;
-				
+
 				// We only go to the column if it's valid, otherwise we just move to the row
 				lnCandidateCol = sem->columnLeft + (x / (font->tm.tmAveCharWidth + lnExtra));
 				if (lnCandidateCol > 0 && x >= lrc.left)
@@ -4975,7 +4975,7 @@ renderAsOnlyText:
 				case ')':
 				case ',':
 					return(true);
-				
+
 				default:
 					if (sem->stopNavigationOnNbsp && c == 255)
 						return(true);

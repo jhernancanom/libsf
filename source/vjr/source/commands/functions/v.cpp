@@ -408,7 +408,7 @@
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, var), false);
 				return;
 			}
-		
+
 
 		//////////
 		// If varNull is specified, must be logical
@@ -548,8 +548,8 @@
 	void function_vecel(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varVec		= rpar->params[0];
-		SVariable* varEl		= rpar->params[1];
-		SVariable* varNewValue	= rpar->params[2];
+//		SVariable* varEl		= rpar->params[1];
+//		SVariable* varNewValue	= rpar->params[2];
 
 
 		// Not yet completed
@@ -584,9 +584,9 @@
 //////
 	void function_vecslice(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varVec		= rpar->params[0];
-		SVariable* varStartEl	= rpar->params[1];
-		SVariable* varEndEl		= rpar->params[2];
+//		SVariable* varVec		= rpar->params[0];
+//		SVariable* varStartEl	= rpar->params[1];
+//		SVariable* varEndEl		= rpar->params[2];
 
 
 		// Not yet completed
@@ -620,8 +620,8 @@
 //////
 	void function_vecstr(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varVec				= rpar->params[0];
-		SVariable* varSymbolOverride	= rpar->params[1];
+//		SVariable* varVec				= rpar->params[0];
+//		SVariable* varSymbolOverride	= rpar->params[1];
 
 
 		// Not yet completed
@@ -659,9 +659,9 @@
 	void function_vecstuff(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varVec			= rpar->params[0];
-		SVariable* varStartEl		= rpar->params[1];
-		SVariable* varRemoveCount	= rpar->params[2];
-		SVariable* varVecStuff		= rpar->params[3];
+//		SVariable* varStartEl		= rpar->params[1];
+//		SVariable* varRemoveCount	= rpar->params[2];
+//		SVariable* varVecStuff		= rpar->params[3];
 
 
 		// Not yet completed
@@ -698,8 +698,8 @@
 	void function_vecsymbol(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varVec		= rpar->params[0];
-		SVariable* varEl		= rpar->params[1];
-		SVariable* varNewSymbol	= rpar->params[2];
+//		SVariable* varEl		= rpar->params[1];
+//		SVariable* varNewSymbol	= rpar->params[2];
 
 
 		// Not yet completed

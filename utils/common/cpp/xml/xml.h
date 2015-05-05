@@ -3,7 +3,7 @@
 // /libsf/utils/common/cpp/xml/xml.h
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -11,10 +11,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -364,7 +364,7 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 			if (tcTag)
 			{
 				// Store the tag and the data
-				if (tnTagLength == -1)
+				if (tnTagLength == (u32)-1)
 					tnTagLength = (s32)strlen(tcTag);
 
 				dNew = new XmlData(tcTag, tnTagLength);
@@ -373,7 +373,7 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 
 			if (tcData)
 			{
-				if (tnDataLength == -1)
+				if (tnDataLength == (u32)-1)
 					tnDataLength = (s32)strlen(tcData);
 
 				dNew = new XmlData(tcData, tnDataLength);
@@ -387,7 +387,7 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 
 				if (tcAttributeData)
 				{
-					if (tnAttributeDataLength == -1)
+					if (tnAttributeDataLength == (u32)-1)
 						tnAttributeDataLength = (s32)strlen(tcAttributeData);
 
 					tNewTag->set_data(new XmlData(tcAttributeData, tnAttributeDataLength));
@@ -792,13 +792,11 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 		{
 			u32 lnLength;
 			CXml* child;
-s8* debug_text;
 
 			lnLength = (u32)strlen(text);
 			child = this->child();
 			while (child)
 			{
-debug_text = child->tag()->as_s8p();
 				if (child->tag()->length() == lnLength)
 				{
 					// They're the same length, it's possible
@@ -968,7 +966,7 @@ debug_text = child->tag()->as_s8p();
 
 			if (tcFilename)
 			{
-				_sopen_s(&lfh, tcFilename, _O_CREAT | _O_BINARY | _O_TRUNC | _O_RDWR, _SH_DENYRW, _S_IREAD | _S_IWRITE);
+				lfh = sopen(tcFilename, _O_CREAT | _O_BINARY | _O_TRUNC | _O_RDWR, _SH_DENYRW, _S_IREAD | _S_IWRITE);
 				if (lfh)
 				{
 //////////
@@ -1152,7 +1150,7 @@ private:
 				{
 					numread1 = _write(tfh, tcOpenCharacters, (u32)strlen(tcOpenCharacters));
 					numread2 = _write(tfh, tcData, tnLength);
-					if (numread1 != strlen(tcOpenCharacters) || numread2 != tnLength)
+					if (numread1 != (u32)strlen(tcOpenCharacters) || numread2 != tnLength)
 					{
 						// Some error writing
 						return(false);
@@ -1190,7 +1188,7 @@ private:
 				if (tfh)
 				{
 					numread3 = _write(tfh, tcCloseCharacters, (u32)strlen(tcCloseCharacters));
-					if (numread3 != strlen(tcCloseCharacters))
+					if (numread3 != (u32)strlen(tcCloseCharacters))
 					{
 						// Some error writing
 						return(false);

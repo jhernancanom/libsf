@@ -147,5 +147,5 @@ struct SThisCode;
 	SLL*					iLl_getLastNode								(SLL* node);
 	u32						iLl_countNodesToEnd							(SLL* node);
 
-#endif __LL_H_
+#endif // __LL_H_
 

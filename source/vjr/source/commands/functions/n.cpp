@@ -210,7 +210,7 @@
 
 			} else if (iVariable_isTypeCharacter(varIndex)) {
 				// They have specified a character string, so we can lookup the identifying tag
-				for (lnIndex = _INDEX_SET_NCSET_START, baseProp = &gsProps_master[_INDEX_SET_NCSET_START - 1], llFound = false; !llFound && lnIndex <= _INDEX_SET_NCSET_END; lnIndex++, baseProp++)
+				for (lnIndex = (s32)_INDEX_SET_NCSET_START, baseProp = &gsProps_master[_INDEX_SET_NCSET_START - 1], llFound = false; !llFound && lnIndex <= (s32)_INDEX_SET_NCSET_END; lnIndex++, baseProp++)
 				{
 					// Translate the property _INDEX to its related iCode
 					for (asciiComp = &cgcKeywordsVxb[0]; asciiComp->iCode != 0; asciiComp++)

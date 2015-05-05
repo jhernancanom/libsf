@@ -8,7 +8,7 @@
 //        related at the end of this source code file.
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -16,10 +16,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -229,11 +229,11 @@
 			for (lnI = 0; lnI < _SHA1_NUMBER_SIZE; lnI++)
 			{
 				// Convert this 32-bit quantity to hexadecimal
-				sprintf_s(buffer + strlen(buffer), sizeof(buffer) - strlen(buffer), "%02x\0", sha20Bytes[lnI]);
+				sprintf(buffer + strlen(buffer), "%02x\0", sha20Bytes[lnI]);
 
 				// Append a space between each 32-bit quantity if they want
 				if (tlSpacesBetween && lnI != 0 && (lnI + 1) % 4 == 0)
-					sprintf_s(buffer + strlen(buffer), sizeof(buffer) - strlen(buffer), " ");
+					sprintf(buffer + strlen(buffer), " ");
 			}
 
 			// When we get here, we have our string
@@ -418,9 +418,9 @@
 			isha1_transform(context->state, context->buffer);
 			for ( ; lnI + 63 < tnLength; lnI += 64)
 				isha1_transform(context->state, tcData + lnI);
-				
+
 			lnJ = 0;
-			
+
 		} else {
 			lnI = 0;
 		}
@@ -683,7 +683,7 @@
 									"34AA973C D4C4DAA4 F61EEB2B DBAD2731 6534016F"
 							};
 	#else
-		#define RW(x) (char []) { x } 
+		#define RW(x) (char []) { x }
 
 		s8* test_data[] = {		RW("abc"),
 								RW("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq"),

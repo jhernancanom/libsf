@@ -537,7 +537,7 @@
 				lst.wSecond	= lnSecond;
 			}
 
-			
+
 		//////////
 		// Convert lst.* into a VJr date variable
 		//////
@@ -707,7 +707,7 @@
 					}
 
 				} else if (tnOut == _CONVERSION_FUNCTION_DATETIME || tnOut == _CONVERSION_FUNCTION_DATETIMEX) {
-					// 
+					//
 // TODO:  Code this
 debug_break;
 
@@ -1350,7 +1350,7 @@ debug_break;
 //////
 // Parameters:
 //     p1			-- Datetime
-//	   p2			-- Numeric: 
+//	   p2			-- Numeric:
 //						1 -- yyyymmddhhmmss[.mss]
 //						2 -- only the time portion of p1
 //						3 -- yyyy-mm-ddThh:mm:ss[.mss]
@@ -1410,7 +1410,7 @@ debug_break;
 						// An error extracting the value (should never happen)
 						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varFlag), false);
 						return;
-					}	
+					}
 
 
 				//////////
@@ -1754,7 +1754,7 @@ debug_break;
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varLookup), false);
 				return;
 			}
-		
+
 
 		//////////
 		// If varExtraInfo is specified, must be numeric, and 1

@@ -63,6 +63,7 @@
     <File Name="../../source/bitmaps/bitmaps.h"/>
     <File Name="../../source/bmps/graphics/bitmaps.h"/>
     <File Name="../../source/forms3d/grace.h"/>
+    <File Name="../../source/compiler/vxb/vxb_defs.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="other">
     <File Name="../../source/bitmaps.cpp" ExcludeProjConfig="Debug;Debug64;Release"/>
@@ -97,6 +98,48 @@
     <File Name="../../source/dbf/dbf_globals.h"/>
     <File Name="../../source/dbf/dbf_structs.h"/>
   </VirtualDirectory>
+  <VirtualDirectory Name="mapm">
+    <File Name="../../source/3rd_party/mapm/mapm_add.c"/>
+    <File Name="../../source/3rd_party/mapm/mapm_cpi.c"/>
+    <File Name="../../source/3rd_party/mapm/mapm_div.c"/>
+    <File Name="../../source/3rd_party/mapm/mapm_exp.c"/>
+    <File Name="../../source/3rd_party/mapm/mapm_fam.c"/>
+    <File Name="../../source/3rd_party/mapm/mapm_fft.c"/>
+    <File Name="../../source/3rd_party/mapm/mapm_flr.c"/>
+    <File Name="../../source/3rd_party/mapm/mapm_fpf.c"/>
+    <File Name="../../source/3rd_party/mapm/mapm_gcd.c"/>
+    <File Name="../../source/3rd_party/mapm/mapm_lg2.c"/>
+    <File Name="../../source/3rd_party/mapm/mapm_lg3.c"/>
+    <File Name="../../source/3rd_party/mapm/mapm_lg4.c"/>
+    <File Name="../../source/3rd_party/mapm/mapm_log.c"/>
+    <File Name="../../source/3rd_party/mapm/mapm_mul.c"/>
+    <File Name="../../source/3rd_party/mapm/mapm_pow.c"/>
+    <File Name="../../source/3rd_party/mapm/mapm_rcp.c"/>
+    <File Name="../../source/3rd_party/mapm/mapm_rnd.c"/>
+    <File Name="../../source/3rd_party/mapm/mapm_set.c"/>
+    <File Name="../../source/3rd_party/mapm/mapm_sin.c"/>
+    <File Name="../../source/3rd_party/mapm/mapm5sin.c"/>
+    <File Name="../../source/3rd_party/mapm/mapmasin.c"/>
+    <File Name="../../source/3rd_party/mapm/mapmasn0.c"/>
+    <File Name="../../source/3rd_party/mapm/mapmcbrt.c"/>
+    <File Name="../../source/3rd_party/mapm/mapmcnst.c"/>
+    <File Name="../../source/3rd_party/mapm/mapmfact.c"/>
+    <File Name="../../source/3rd_party/mapm/mapmfmul.c"/>
+    <File Name="../../source/3rd_party/mapm/mapmgues.c"/>
+    <File Name="../../source/3rd_party/mapm/mapmhasn.c"/>
+    <File Name="../../source/3rd_party/mapm/mapmhsin.c"/>
+    <File Name="../../source/3rd_party/mapm/mapmipwr.c"/>
+    <File Name="../../source/3rd_party/mapm/mapmistr.c"/>
+    <File Name="../../source/3rd_party/mapm/mapmpwr2.c"/>
+    <File Name="../../source/3rd_party/mapm/mapmrsin.c"/>
+    <File Name="../../source/3rd_party/mapm/mapmsqrt.c"/>
+    <File Name="../../source/3rd_party/mapm/mapmstck.c"/>
+    <File Name="../../source/3rd_party/mapm/mapmutil.c"/>
+    <File Name="../../source/3rd_party/mapm/mapmutl1.c"/>
+    <File Name="../../source/3rd_party/mapm/mapmutl2.c"/>
+    <File Name="../../source/3rd_party/mapm/m_apm.h"/>
+    <File Name="../../source/3rd_party/mapm/m_apm_lc.h"/>
+  </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -108,7 +151,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Debug" CompilerType="MinGW ( CodeLite-4.8.1 )" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-O0;-Wall;-Wno-comment;-Wno-multichar;-Wno-narrowing;-Wno-write-strings;-Wno-format-contains-nul" C_Options="-g;-O0;-Wall;-Wno-comment;-Wno-multichar;-Wno-narrowing;-Wno-write-strings;-Wno-format-contains-nul" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      <Compiler Options="-g;-O0;-Wall;-Wno-comment;-Wno-multichar;-Wno-narrowing;-Wno-write-strings;-Wno-format-contains-nul;-Wno-reorder;-Wno-strict-aliasing;-Wno-char-subscripts" C_Options="-g;-O0;-Wall;-Wno-comment;-Wno-multichar;-Wno-narrowing;-Wno-write-strings;-Wno-format-contains-nul;-Wno-reorder;-Wno-strict-aliasing;-Wno-char-subscripts" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
         <IncludePath Value="C:/libsf/source/vjr/projects/vs2010/"/>
       </Compiler>
@@ -168,7 +211,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="Release" CompilerType="MinGW ( CodeLite-4.8.1 )" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;-Wall;-Wno-comment;-Wno-multichar;-Wno-narrowing;-Wno-write-strings;-Wno-format-contains-nul;-Wno-strict-aliasing" C_Options="-O2;-Wall;-Wno-comment;-Wno-multichar;-Wno-narrowing;-Wno-write-strings;-Wno-format-contains-nul;-Wno-strict-aliasing" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      <Compiler Options="-O2;-Wall;-Wno-comment;-Wno-multichar;-Wno-narrowing;-Wno-write-strings;-Wno-format-contains-nul;-Wno-reorder;-Wno-strict-aliasing;-Wno-char-subscripts" C_Options="-O2;-Wall;-Wno-comment;-Wno-multichar;-Wno-narrowing;-Wno-write-strings;-Wno-format-contains-nul;-Wno-reorder;-Wno-strict-aliasing;-Wno-char-subscripts" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
         <IncludePath Value="C:/libsf/source/vjr/projects/vs2010/"/>
         <Preprocessor Value="NDEBUG"/>

@@ -1103,7 +1103,7 @@
 		u8				output[256];
 		SBuilder*		metaData;
 		SBuilder*		errorData;
-		SCdxHeader*		head;
+//		SCdxHeader*		head;
 		SVariable*		varTableName;
 		SVariable*		varAlias;
 		SVariable*		varCdxName;
@@ -1197,7 +1197,7 @@
 				// Validate the header for a this compact .IDX
 				//////
 					node			= iCdx_getCompactIdxNode_byOffset(thisCode, wa->cdx_root, tagRoot.leftmostNode);
-					head			= (SCdxHeader*)iCdx_getCompactIdxNode_byOffset(thisCode, wa->cdx_root, tagRoot.keyNode);
+//					head			= (SCdxHeader*)iCdx_getCompactIdxNode_byOffset(thisCode, wa->cdx_root, tagRoot.keyNode);
 					lnTotalKeyCount	= 0;
 					while (node)
 					{
@@ -2079,7 +2079,7 @@ close_and_quit:
 				//////
 					if (wa->isExclusive)		lnNumread = iDisk_read(wa->fhIdxCdxDcx, nodeKeys->nodeNum * 512, nodeKeys->cachedNode, 512, &error, &errorNum);
 					else						lnNumread = iDisk_readShared_withRetryCallback(thisCode, wa->idxCdxDcxFileLocks, wa->fhIdxCdxDcx, nodeKeys->nodeNum * 512, nodeKeys->cachedNode, 512, &error, &errorNum, (uptr)&iiDbf_continueWithLockOperation, (uptr)&dl, &dl, true);
-			
+
 
 				//////////
 				// Are we good?
@@ -2150,7 +2150,7 @@ close_and_quit:
 // 					{
 // 						if (!iCdx_getCompactIdxKey_byNumber(thisCode, wa->cdx_root, tagHeader->keyLength, ->fillChar, lnKeyNumber, lnKeyNumber, node, &key, &tagRoot, true, true))
 // 						{
-// 
+//
 // 						}
 // 					}
 			}
@@ -2189,7 +2189,7 @@ close_and_quit:
 				free(nodeKeys->keyDecodedBuffer);
 				nodeKeys->keyDecodedBuffer = NULL;
 			}
-		
+
 
 		//////////
 		// Reset the count

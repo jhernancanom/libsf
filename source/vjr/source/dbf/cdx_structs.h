@@ -3,7 +3,7 @@
 // /libsf/source/vjr/source/dbf/cdx_structs.h
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -11,10 +11,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -240,7 +240,7 @@ struct SCdxKeyOp;
 		};											// ------
 													// 0,4		32 bits total in the bit structure
 		SCdxNodeKey**	keyDecodedBuffer;			// 4,4		Pointers to all of the keys in this node (first key = keys[0], second = keys[1], and so on)
-		u32				nodeNum;					// 8,4		Physical node within the index file on disk (may be uncommitted, existing only in memory)
+		s32				nodeNum;					// 8,4		Physical node within the index file on disk (may be uncommitted, existing only in memory)
 		SCdxNode*		cachedNode;					// 12,4		Node header and key buffer cached previously from disk (may be NULL)
 		// Total:  16 bytes
 	};
@@ -285,7 +285,7 @@ struct SCdxKeyOp;
 		u16			reserved8;					// 504,2
 
 		u16			forClauseLength;			// 506,2	Length of FOR clause
-		u16			reserved9;					// 508,2	
+		u16			reserved9;					// 508,2
 
 		u16			keyExpressionLength;		// 510,2	Length of index key expression
 		u8			keyExpression[512];			// 512,512	The key and FOR clause expression storage area, in that order, each is NULL-terminated

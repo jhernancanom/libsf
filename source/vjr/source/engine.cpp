@@ -3,7 +3,7 @@
 // /libsf/source/vjr/source/engine.cpp
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -11,10 +11,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -126,7 +126,7 @@
 						// They want to quit
 						iVjr_shutdown(thisCode);
 						break;
-// 
+//
 // 					case _ICODE_CLEAR:
 // 						// They want to clear the screen
 // 						iSEM_navigateToTopLine(screenData, _screen);
@@ -251,7 +251,7 @@
 									break;
 								}
 							}
-							
+
 							// Not a currently supported command
 							return(false);
 						}
@@ -664,8 +664,8 @@
 		SFunctionData*	funcData;
 		SFunctionParms	rpar;
 		SComp*			compLeftParen;
-		
-		
+
+
 		// Make sure our environment is sane
 		if (comp && (compLeftParen = comp->ll.nextComp) && compLeftParen->iCode == _ICODE_PARENTHESIS_LEFT)
 		{
@@ -771,7 +771,7 @@
 ///////////
 //
 // Signaled repeatedly during VALIDATE and ON VALIDATE from SET AUTOVALIDATE ON to
-// convey both meta data as well as 
+// convey both meta data as well as
 //
 //////
 	bool iEngine_signal_onValidate(SThisCode* thisCode, SVariable* varTableName, SVariable* varAlias, SVariable* varCdxName, SVariable* varTag, SVariable* varcMessage, SVariable* varIsError, SVariable* varRebuildIndexRequired)
@@ -795,7 +795,7 @@
 	{
 		if (obj)
 		{
-			if (tnEventId < 0 || tnEventId > _EVENT_MAX_COUNT || obj->ev.methods[tnEventId]._event == 0)
+			if (tnEventId < 0 || tnEventId > (s32)_EVENT_MAX_COUNT || obj->ev.methods[tnEventId]._event == 0)
 			{
 				// Should never happen
 // TODO:  For the extra info, we could add a call stack trace here
@@ -1146,8 +1146,8 @@
 
 
 		// Make sure our environment is sane
-		if (breakpoint && *breakpoint && (*breakpoint)->isUsed && 
-			(uptr)*breakpoint >= gBreakpoints->_data && 
+		if (breakpoint && *breakpoint && (*breakpoint)->isUsed &&
+			(uptr)*breakpoint >= gBreakpoints->_data &&
 			(uptr)*breakpoint <= gBreakpoints->_data + gBreakpoints->populatedLength - sizeof(SBreakpoint))
 		{
 			// Get a local copy of our pointer

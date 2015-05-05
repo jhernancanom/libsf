@@ -3,7 +3,7 @@
 // /libsf/utils/common/cpp/xml/xml.cpp
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -11,10 +11,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -117,7 +117,7 @@
 
 
 		// Open the file specified by the user
-		_sopen_s(&lfh, filename, _O_BINARY | _O_RDWR, _SH_DENYNO, _S_IREAD);
+		lfh = sopen(filename, _O_BINARY | _O_RDWR, _SH_DENYNO, _S_IREAD);
 		if (!lfh)
 			return(-101);		// No file could be opened
 
@@ -554,10 +554,10 @@
 										// We've reached the closing tag name
 										if (loTagNameData->length() == 0)
 											loTagNameData->set_length(lnThis - 1);		// We have not set the name length
-										
+
 										if (lnOffset + lnThis + 1 >= tnLength)
 											break;		// End of XML file
-										
+
 										lnOffset += lnThis + 1;	 // +1 move past closing >
 										// Indicate that we're done processing this tag (no attributes, on to whatever's next)
 										lbStop = true;
@@ -567,11 +567,11 @@
 										// We've reached the end of a single-item tag
 										if (loTagNameData->length() == 0)
 											loTagNameData->set_length(lnThis - 1);		// We have not set the name length
-										
+
 
 										if (lnOffset + lnThis + 1 >= tnLength)
 											break;		// We've reached the end of the XML file
-										
+
 										// Move past the /
 										lnOffset += lnThis + 1;
 										if (buffer[lnOffset] != '>')
@@ -788,7 +788,7 @@
 
 	uptr xml_access_node(uptr handle, s8* tcNode, s8* tcReturn_value, u32 tnReturn_value_length)
 	{
-		u32			lnStart, lnLength, lnMaxLength, lnCount;
+		u32			/*lnStart, lnLength,*/ lnMaxLength, lnCount;
 		CXml*		loRoot;
 		CXml*		loTag;
 		XmlNode*	loNodeRoot;
@@ -805,8 +805,8 @@
 
 
 		// Determine this level of node we're looking for
-		lnStart		= 0;
-		lnLength	= 0;
+//		lnStart		= 0;
+//		lnLength	= 0;
 		lnMaxLength	= (u32)strlen(tcNode);
 		loNodeRoot = iXml_access_node__get_node_segments(tcNode, lnMaxLength);
 		if (!loNodeRoot)
@@ -880,7 +880,7 @@
 
 								// There is at least one attribute
 								loTag = loTag->attribute();
-								if (loNode->get_iterate() == -1)
+								if (loNode->get_iterate() == (u32)-1)
 								{
 									// We are searching for the specified name
 									while (loTag)
@@ -982,7 +982,6 @@
 				{
 					// Move to next at this level
 					loTag = loTag->next();
-
 				}
 
 			}

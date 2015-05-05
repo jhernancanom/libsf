@@ -3,7 +3,7 @@
 // /libsf/source/vjr/source/compiler/vxb/vxb_defs.h
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -11,10 +11,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -246,7 +246,7 @@ struct SThisCode;
 	bool					iVariable_copy								(SThisCode* thisCode, SVariable* varDst, SVariable* varSrc);
 	SVariable*				iVariable_copy								(SThisCode* thisCode, SVariable* varSrc, bool tlMakeReference);
 	bool					iVariable_set								(SThisCode* thisCode, SVariable* varDst, SVariable* varSrc);
-	void					iVariable_setVarType						(SThisCode* thisCode, SVariable* var, s32 tnVarTypeNew);
+	void					iVariable_setVarType						(SThisCode* thisCode, SVariable* var, u32 tnVarTypeNew);
 	bool					iVariable_setNumeric_toNumericType			(SThisCode* thisCode, SVariable* varDst, f32* val_f32, f64* val_f64, s32* val_s32, u32* val_u32, s64* val_s64, u64* val_u64);
 	bool					iVariable_setNumeric_toDestinationType		(SThisCode* thisCode, SVariable* varDst, SVariable* varSrc);
 	bool					iVariable_set_f32_toExistingType			(SThisCode* thisCode, SVariable* var, f32 value);

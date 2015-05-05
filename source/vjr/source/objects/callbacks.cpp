@@ -3,7 +3,7 @@
 // /libsf/source/vjr/source/objects/callbacks.cpp
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -11,10 +11,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -178,7 +178,7 @@
 		return(false);
 	}
 
-	bool iiDefaultCallback_processMouseVariables(	SThisCode* thisCode, 
+	bool iiDefaultCallback_processMouseVariables(	SThisCode* thisCode,
 													SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick,
 													s32* lnX, s32* lnY, bool* tlCtrl, bool* tlAlt, bool* tlShift, u32* lnClick)
 	{
@@ -246,7 +246,7 @@
 		s32		lnX, lnY, lnUnits;
 		u32		lnClick;
 		bool	llCtrl, llAlt, llShift;
-		POINT	pt;
+//		POINT	pt;
 
 
 		// Make sure our environment is sane
@@ -276,8 +276,8 @@
 
 		} else if (obj->objType == _OBJ_TYPE_CAROUSEL) {
 			// Create a point
-			pt.x = lnX;
-			pt.y = lnY;
+//			pt.x = lnX;
+//			pt.y = lnY;
 
 			// They are they outside of the client area?
 			return(iEvents_carouselMouseWheel(thisCode, win, obj, lnX, lnY, llCtrl, llAlt, llShift, lnClick));
@@ -580,7 +580,7 @@
 		return(false);
 	}
 
-	bool iiDefaultCallback_processKeyVariables(	SThisCode* thisCode, 
+	bool iiDefaultCallback_processKeyVariables(	SThisCode* thisCode,
 												SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii,
 												bool* tlCtrl, bool* tlAlt, bool* tlShift, bool* tlCaps, bool* tlIsCAS, bool* tlIsAscii,
 												s16* lcAscii, u16* lnVKey)
@@ -712,7 +712,7 @@
 			// Redraw the window
 			iWindow_render(thisCode, win, false);
 		}
-		
+
 		// Do not continue to propagate this message to other objects
 		return(false);
 	}

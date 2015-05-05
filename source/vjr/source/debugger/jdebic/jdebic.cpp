@@ -77,11 +77,11 @@
 // Thank you.  And may The Lord bless you richly as you lift up your life, your
 // talents, your gifts, your praise, unto Him.  In Jesus' name I pray.  Amen.
 //
-//	       _  _____         _      _   _____ 
+//	       _  _____         _      _   _____
 //	      | ||  __ \       | |    (_) / ____|
-//	      | || |  | |  ___ | |__   _ | |     
-//	  _   | || |  | | / _ \| '_ \ | || |     
-//	 | |__| || |__| ||  __/| |_) || || |____ 
+//	      | || |  | |  ___ | |__   _ | |
+//	  _   | || |  | | / _ \| '_ \ | || |
+//	 | |__| || |__| ||  __/| |_) || || |____
 //	  \____/ |_____/  \___||_.__/ |_| \_____|
 //				JDebi Companion
 //			A Remote Debug Assist Tool
@@ -105,7 +105,7 @@
 // Temporarily disabled
 return;
 		// Are we connected?
-		if (iJDebiC_connect() && thisCode || win || obj)
+		if (iJDebiC_connect() && (thisCode || win || obj))
 		{
 
 			//////////
@@ -243,7 +243,7 @@ return;
 //////
 	HANDLE iJDebiC_createPipeHandle(cs8* lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile)
 	{
-		s32		lnError1, lnError2;
+//		s32		lnError1, lnError2;
 		HANDLE	hPipe;
 
 
@@ -251,11 +251,11 @@ return;
 		// Create the indicated pipe
 		//////
 			hPipe		= CreateFile(lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
-			lnError1	= GetLastError();
+//			lnError1	= GetLastError();
 			if (hPipe != INVALID_HANDLE_VALUE)
 			{
 				ConnectNamedPipe(hPipe, NULL);
-				lnError2 = GetLastError();
+//				lnError2 = GetLastError();
 			}
 
 
@@ -330,7 +330,7 @@ return;
 
 			} else {
 				// It is known ... see if we have the handles
-				llNeedHandles = (handleJDebiCOut == null);
+				llNeedHandles = ((handleJDebiCOut == null0) ? true : false);
 			}
 
 
@@ -361,13 +361,13 @@ return;
 		// Check values
 		//////
 			if (handleJDebiCOut == (u32)INVALID_HANDLE_VALUE)
-				handleJDebiCOut = NULL;
+				handleJDebiCOut = null0;
 
 
 		//////////
 		// Write the output data
 		//////
-			return((handleJDebiCOut != NULL));
+			return((handleJDebiCOut != null0));
 	}
 
 
@@ -653,12 +653,12 @@ return;
 
 // 		// If this variable is related to a component, indicate it here
 // 		SComp*		compRelated;											// Can vary regularly, but when available at compile time and in immediate scope, relates to a component
-// 
+//
 // 		// Variable data
 // 		SDatum		name;													// Name of this variable (alway allocated)
 // 		u32			arrayRows;												// If created as an array, how many rows
 // 		u32			arrayCols;												// If created as an array, how many columns
-// 
+//
 // 		// Variable content based on type
 // 		u32			varType;												// Variable type (see _VAR_TYPE_* constants)
 // 		bool		isValueAllocated;										// If true, the data pointed to by this->value.data, or this->obj, or this->bmp, or this->thisCode was allocated
@@ -669,7 +669,7 @@ return;
 // 			SField*			field;											// Pointer to a table/cursor field
 // 			SDatum			value;											// The actual value
 // 		};
-// 
+//
 // 		// If assign or access
 // 		SEM*		firstAccess;											// Source code executed whenever this variable is accessed
 // 		SEM*		firstAssign;											// Source code executed whenever this variable is assigned
@@ -813,22 +813,22 @@ return;
 // 			SLL			ll;													// Linked list
 // 			SObject*	parent;												// Pointer to parent object for this instance
 // 			SObject*	firstChild;											// Pointer to child objects (all objects are containers)
-// 
+//
 // 	#ifdef _EXTRA_DEBUGGING_DATA
 // 			SDatum		dbgClass;
 // 			SDatum		dbgName;
 // 	#endif
-// 
+//
 // 			// Defined class, class information
 // 			s32			objType;											// Object base type/class (see _OBJECT_TYPE_* constants)
-// 
+//
 // 			// Object flags
 // 			bool		isRendered;											// Is it rendered (can be rendered even if it's not visible)?
 // 			bool		isPublished;										// Should this control be published?  Every object has a .lockScreen property which allows it to not be published while changes are made.
 // 			bool		isDirtyRender;										// Is set if this or any child object needs re-rendered
 // 			bool		isDirtyPublish;										// Is set if this or any child object needs re-published
-// 
-// 
+//
+//
 // 			//////////
 // 			// Object size in pixels, per the .Left, .Top, .Width, and .Height properties
 // 			//////
@@ -837,28 +837,28 @@ return;
 // 				RECT		rcp;											// Original size of parent at creation
 // 				RECT		rcClient;										// Client portion within the size of the object
 // 				RECT		rcExtra;										// An extra portion used for object-specific components, such as rider tab location on carousels
-// 
-// 
+//
+//
 // 			//////////
 // 			// Common properties that are literal(p) and allocated(pa) values
 // 			//////
 // 				SProperties		p;											// Common object properties
 // 				SVariable**		props;										// An allocated array of properties (varies in size by object)
 // 				s32				propsCount;									// The number of property variables allocated
-// 
+//
 // 				// Related position in the member hierarchy
 // 				SVariable*	firstProperty;									// User-defined property (design time and runtime)
 // 				SEM*		firstMethod;									// User-defined methods (design time and runtime)
-// 
+//
 // 				// Related access and assign methods
 // 				bool		anyPropertyHasAccessOrAssignMethods;
 // 				SEM*		firstAccess;									// User-defined property access methods (design time and runtime)
 // 				SEM*		firstAssign;									// User-defined property assignment methods (design time and runtime)
-// 
+//
 // 				// Events
 // 				SEvents		ev;												// Events for this object
-// 
-// 
+//
+//
 // 			//////////
 // 			// Base drawing canvas
 // 			//////
@@ -884,27 +884,32 @@ return;
 //////
 	void iiJDebiC_decode_Rect(s8* buffer, RECT* rc)
 	{
-		sprintf(buffer, "{ left = %u, top = %u, right = %u, bottom = %u }\0", rc->left, rc->top, rc->right, rc->bottom);
+		sprintf(buffer, "{ left = %d, top = %d, right = %d, bottom = %d }\0", (s32)rc->left, (s32)rc->top, (s32)rc->right, (s32)rc->bottom);
 	}
 
 	void iiJDebiC_decode_POINT(s8* buffer, POINT pt)
 	{
-		sprintf(buffer, "{ x = %u, y = %u }\0", pt.x, pt.y);
+		sprintf(buffer, "{ x = %d, y = %d }\0", (s32)pt.x, (s32)pt.y);
+	}
+
+	cs8* iiYesNo(bool tlTest)
+	{
+		return((tlTest) ? "yes" : "no");
 	}
 
 	void iiJDebiC_decode_SMouseData(s8* buffer, SMouseData* md)
 	{
-		sprintf(buffer,   "{ positionInOsDesktop = { x = %u, y = %u }, "
-							"position = { x = %u, y = %u }, "
-							"whelDeltaV = %u, wheelDeltaH = %u, "
+		sprintf(buffer,   "{ positionInOsDesktop = { x = %d, y = %d }, "
+							"position = { x = %d, y = %d }, "
+							"whelDeltaV = %d, wheelDeltaH = %d, "
 
 							"buttonLeft = %u, buttonMiddle = %u, buttonRight = %u, buttonAnyDown = %u, "
-							"isCaps = %s, isCtrl = %s, isAlt = %s, isShift = % }\0",
+							"isCaps = %s, isCtrl = %s, isAlt = %s, isShift = %s }\0",
 
-							md->positionInOsDesktop.x,	md->positionInOsDesktop.y,
-							md->position.x,				md->position.y,
-							md->wheelDeltaV,			md->wheelDeltaH,
+							(s32)md->positionInOsDesktop.x,	(s32)md->positionInOsDesktop.y,
+							(s32)md->position.x,			(s32)md->position.y,
+							md->wheelDeltaV,				md->wheelDeltaH,
 
-							md->buttonLeft,		md->buttonMiddle,	md->buttonRight,	md->buttonAnyDown,
-							md->isCaps,			md->isCtrl,			md->isAlt,			md->isShift);
+							md->buttonLeft,			md->buttonMiddle,		md->buttonRight,	md->buttonAnyDown,
+							iiYesNo(md->isCaps),	iiYesNo(md->isCtrl),	iiYesNo(md->isAlt),	iiYesNo(md->isShift));
 	}

@@ -2087,7 +2087,7 @@
 			// Indicate where we are
 			return(wa->currentRecord);
 	}
-	
+
 
 
 
@@ -2156,7 +2156,7 @@
 						if (iDisk_setFilePosition(wa->fhDbf, lnOffset) != lnOffset)
 							return(_DBF_ERROR_SEEKING);
 					}
-					
+
 
 				//////////
 				// Write
@@ -3582,7 +3582,7 @@ debug_break;
 				for (lnI = 0, var = NULL; lnI < (s32)wa->fieldCount; lnI++, lfr2Ptr++)
 				{
 					// Length must match, and the field name must match
-					if (lfr2Ptr->fieldName_length == fieldNameLength && _memicmp(lfr2Ptr->name2, fieldName, fieldNameLength) == 0)
+					if (lfr2Ptr->fieldName_length == (s32)fieldNameLength && _memicmp(lfr2Ptr->name2, fieldName, fieldNameLength) == 0)
 					{
 						// We've found the field, create a variable reference to it
 						switch (lfr2Ptr->type)

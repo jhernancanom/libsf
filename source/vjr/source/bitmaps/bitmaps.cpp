@@ -3,7 +3,7 @@
 // /libsf/source/vjr/bitmaps.cpp
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -11,10 +11,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -3342,7 +3342,7 @@
 //////
 	void iBmp_dapple(SBitmap* bmp, SBitmap* bmpDapple, SBitmap* bmpDappleTmp, f32 tfBias, f32 tfInfluence)
 	{
-		s32		lnX, lnY, lnX2, lnY2, lnInfluence;
+		s32		lnX, lnY, lnX2, lnY2;
 		f32		lfGray;
 		SBgr*	lbgrd;
 		SBgr*	lbgrs;
@@ -3404,7 +3404,6 @@ return;
 			// Apply dappling
 			//////
 				tfInfluence	= (f32)((s32)tfInfluence);
-				lnInfluence	= (s32)tfInfluence + 1;
 				if (bmp->bi.biBitCount == 24)
 				{
 					if (bmpDapple->bi.biBitCount == 24)

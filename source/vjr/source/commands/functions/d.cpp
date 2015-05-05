@@ -576,7 +576,7 @@
 		// Return day
 		ifunction_day_month_year_common(thisCode, rpar, varParam, _DMY_COMMON_DAY);
 	}
-	
+
 	// Common date functions used for DAY(), MONTH(), YEAR()
 	void ifunction_day_month_year_common(SThisCode* thisCode, SFunctionParms* rpar, SVariable* varParam, u32 tnFunctionType)
 	{
@@ -669,7 +669,7 @@
 //
 //////
 // Returns:
-//    Character - If SET CENTURY is OFF, DMY( ) returns a character string in a dd-Month-yy format (for example, 16 February 98). 
+//    Character - If SET CENTURY is OFF, DMY( ) returns a character string in a dd-Month-yy format (for example, 16 February 98).
 //////
 	void function_dmy(SThisCode* thisCode, SFunctionParms* rpar)
 	{
@@ -708,7 +708,7 @@
 					     if (iVariable_isTypeDatetime(varParam))		iiDateMath_get_YyyyMmDd_from_julian					(varParam->value.data_dt->julian,			&lnYear, &lnMonth, &lnDay);
 					else if (iVariable_isTypeDatetimeX(varParam))		iiDateMath_get_YyyyMmDdHhMmSsMssNss_from_jseconds	(varParam->value.data_dtx->jseconds, NULL,	&lnYear, &lnMonth, &lnDay, NULL, NULL, NULL, NULL, NULL);
 					else /* date */										iiDateMath_get_YyyyMmDd_from_YYYYMMDD				(varParam->value.data_u8,					&lnYear, &lnMonth, &lnDay);
-		
+
 
 			} else {
 				// Use the current date
@@ -737,7 +737,7 @@
 						// YYYY
 						if (tnFunctionType == _DMY_COMMON_DMY)	sprintf(buffer, "%02u %s %04u\0", lnDay, cgcMonthNames[lnMonthIdx], lnYear);
 						else /*MDY*/							sprintf(buffer, "%s %02u, %04u\0", cgcMonthNames[lnMonthIdx], lnDay, lnYear);
-				
+
 					break;
 
 				case _DMY_COMMON_DTOS:
@@ -767,7 +767,7 @@
 
 	}
 
-	
+
 
 
 //////////
@@ -802,7 +802,7 @@
 	{
 		SVariable* varDateOrDatetime	= rpar->params[0];
 		SVariable* varFirstDow			= rpar->params[1];
-		
+
 		u32			lnYear, lnMonth, lnDay;
 		s32			lnDow, lnFirstDow;
 		SYSTEMTIME	lst;
@@ -946,7 +946,7 @@
 //////
 // Returns:
 //    DTOC( ) returns a character string corresponding to a Date or DateTime expression.
-//	  The date format is determined by SET CENTURY and SET DATE. 
+//	  The date format is determined by SET CENTURY and SET DATE.
 //
 //////
 	void function_dtoc(SThisCode* thisCode, SFunctionParms* rpar)
@@ -983,7 +983,7 @@
 					// An error extracting the value (should never happen)
 					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varFlag), false);
 					return;
-				}		
+				}
 
 				// DTOC(--, 1) is DTOS(--)
 				if (lnFlag == 1)
@@ -1000,7 +1000,7 @@
 
 		//////////
 		// Parameter 1 must be date or datetime
-		//////			
+		//////
 			if (varParam)
 			{
 // TODO:  Must also support DATETIMEX at some point
@@ -1016,7 +1016,7 @@
 					rpar->returns[0] = iVariable_convertForDisplay(thisCode, varParam);
 					return;
 				}
-				
+
 
 				//////////
 				// Grab year, month, day from datetime
@@ -1033,7 +1033,7 @@
 				lnMonth	= lst.wMonth;
 				lnDay	= lst.wDay;
 			}
-		
+
 
 		//////////
 		// Convert datetime or lst.* into a VJr date variable
@@ -1127,7 +1127,7 @@
 //////
 // Returns:
 //    Character - This function is useful for indexing tables on a Date or DateTime field.
-//	  It is equivalent to DTOC( ) when its optional 1 argument is included. 
+//	  It is equivalent to DTOC( ) when its optional 1 argument is included.
 //
 //////
 	void function_dtos(SThisCode* thisCode, SFunctionParms* rpar)
@@ -1209,8 +1209,8 @@
 //////////
 //
 // Function: DTRANSFROM()
-//  It takes an input formatting string and one or more dates or datetimes and 
-//	creates an output character string which prepares date information as indicated, 
+//  It takes an input formatting string and one or more dates or datetimes and
+//	creates an output character string which prepares date information as indicated,
 //	interspersed with other text.
 //
 //		**********
@@ -1437,7 +1437,7 @@
 						} else {
 							// Something else
 							iError_reportByNumber(thisCode, _ERROR_DATA_TYPE_MISMATCH, iVariable_getRelatedComp(thisCode, var), false);
-							return(NULL);
+							return(0);
 						}
 
 
@@ -1550,7 +1550,7 @@
 						{
 							iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
 							*tcResult = NULL;
-							return(NULL);
+							return(0);
 						}
 
 						// Store the allocated pointer

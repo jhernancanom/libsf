@@ -542,7 +542,8 @@
 	void function_set(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable*		varIdentifier	= rpar->params[0];
-		SVariable*		varExtraInfo	= rpar->params[1];
+//		SVariable*		varExtraInfo	= rpar->params[1];
+
 		s32				lnIndex;
 		SBasePropMap*	baseProp;
 		SObjPropMap*	objProp;
@@ -573,7 +574,7 @@
 			for (lnIndex = _INDEX_SET_FIRST_ITEM; gsProps_master[lnIndex].index != 0; lnIndex++)
 			{
 				// Does this setting name match?
-				if (gsProps_master[lnIndex].propNameLength == varIdentifier->value.length && _memicmp(gsProps_master[lnIndex].propName_s8, varIdentifier->value.data_s8, varIdentifier->value.length) == 0)
+				if ((s32)gsProps_master[lnIndex].propNameLength == varIdentifier->value.length && _memicmp(gsProps_master[lnIndex].propName_s8, varIdentifier->value.data_s8, varIdentifier->value.length) == 0)
 				{
 
 					//////////
@@ -825,9 +826,9 @@
 //////
 	void function_slice(SThisCode* thisCode, SFunctionParms* rpar)
 	{
-		SVariable* varString	= rpar->params[0];
-		SVariable* varStart		= rpar->params[1];
-		SVariable* varEnd		= rpar->params[2];
+//		SVariable* varString	= rpar->params[0];
+//		SVariable* varStart		= rpar->params[1];
+//		SVariable* varEnd		= rpar->params[2];
 
 
 		// Not yet completed
@@ -980,8 +981,8 @@
 	void function_startswith(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varString	= rpar->params[0];
-		SVariable* varSearch	= rpar->params[1];
-		SVariable* varStart		= rpar->params[2];
+//		SVariable* varSearch	= rpar->params[1];
+//		SVariable* varStart		= rpar->params[2];
 
 
 		// Not yet completed
@@ -1001,8 +1002,8 @@
 	void function_startswithc(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varString	= rpar->params[0];
-		SVariable* varSearch	= rpar->params[1];
-		SVariable* varStart		= rpar->params[2];
+//		SVariable* varSearch	= rpar->params[1];
+//		SVariable* varStart		= rpar->params[2];
 
 
 		// Not yet completed
@@ -1449,13 +1450,13 @@
 // Parameters:
 //		1				-- none
 //		2				-- none
-//		10				-- Numeric, julian day number 
+//		10				-- Numeric, julian day number
 //		2015			-- none
 //////
 // Returns:
 //		1				-- Character, returns the current system date as a Julian day number character string
 //		2				-- Numeric, returns the number of seconds elapsed since midnight
-//		10				-- Character, returns a Character-type date from a Julian day number 
+//		10				-- Character, returns a Character-type date from a Julian day number
 //		2015			-- Character, unique procedure name
 //////
 	void function_sys(SThisCode* thisCode, SFunctionParms* rpar)
@@ -1593,7 +1594,7 @@
 							return;
 						}
 
-					
+
 					//////////
 					// Must be in the range -- Sep.14.1752 to Dec.31.9999
 					//////

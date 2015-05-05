@@ -114,7 +114,7 @@
 	void function_cdow(SThisCode* thisCode, SFunctionParms* rpar)
 	{
 		SVariable* varParam = rpar->params[0];
-		
+
 		u32			lnYear, lnMonth, lnDay;
 		s8			lnDow;
 		SYSTEMTIME	lst;
@@ -944,7 +944,7 @@
 //////
 // Returns:
 //    Date data type. CTOD( ) returns a Date value
-// 
+//
 //////
 // Example:
 //    SET DATE MDY
@@ -1067,7 +1067,7 @@ debug_break;
 		//////////
 		// Iterate through every character
 		//////
-			for (lnI = 0, lnAmPm = -1; lnI < varDate->value.length && !lcYYYY || !lcMM || !lcDD; )
+			for (lnI = 0, lnAmPm = -1; lnI < varDate->value.length && (!lcYYYY || !lcMM || !lcDD); )
 			{
 				llYear		= false;
 				llValidate	= true;
