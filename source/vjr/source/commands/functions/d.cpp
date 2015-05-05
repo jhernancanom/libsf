@@ -1337,7 +1337,7 @@
 	{
 		// Fixup length (if need be)
 		if (tnLength < 0)
-			tnLength = strlen(tcSrc);
+			tnLength = (s32)strlen(tcSrc);
 
 		// Copy
 		memcpy(tcDst, tcSrc, tnLength);
@@ -1647,7 +1647,7 @@
 											case 'd':
 												// Day 2
 												sprintf(buffer, "%u\0", dt->wDay);
-												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
+												if (lnPass == 1)		lnAllocationLength	+= (s32)strlen(buffer);
 												else					lnOffset			+= iifunction_append_text(lcResult + lnOffset, buffer, -1);
 												break;
 
@@ -1666,7 +1666,7 @@
 
 											case 'b':	// Month 4
 												sprintf(buffer, "%u\0", dt->wMonth);
-												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
+												if (lnPass == 1)		lnAllocationLength	+= (s32)strlen(buffer);
 												else					lnOffset			+= iifunction_append_text(lcResult + lnOffset, buffer, -1);
 												break;
 
@@ -1699,14 +1699,14 @@
 											case 'I':	// Hour 02
 											case 'H':	// Hour 14
 												sprintf(buffer, "%02u\0", iTime_adjustHour_toAMPM(dt->wHour, (c == 'I')));
-												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
+												if (lnPass == 1)		lnAllocationLength	+= (s32)strlen(buffer);
 												else					lnOffset			+= iifunction_append_text(lcResult + lnOffset, buffer, -1);
 												break;
 
 											case 'i':	// Hour 2
 											case 'h':	// Hour 14
 												sprintf(buffer, "%u\0", iTime_adjustHour_toAMPM(dt->wHour, (c == 'i')));
-												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
+												if (lnPass == 1)		lnAllocationLength	+= (s32)strlen(buffer);
 												else					lnOffset			+= iifunction_append_text(lcResult + lnOffset, buffer, -1);
 												break;
 
@@ -1727,7 +1727,7 @@
 											case 'm':
 												// Minute 5
 												sprintf(buffer, "%u\0", dt->wMinute);
-												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
+												if (lnPass == 1)		lnAllocationLength	+= (s32)strlen(buffer);
 												else					lnOffset			+= iifunction_append_text(lcResult + lnOffset, buffer, -1);
 												break;
 
@@ -1748,7 +1748,7 @@
 											case 's':
 												// Seconds 9
 												sprintf(buffer, "%u\0", dt->wSecond);
-												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
+												if (lnPass == 1)		lnAllocationLength	+= (s32)strlen(buffer);
 												else					lnOffset			+= iifunction_append_text(lcResult + lnOffset, buffer, -1);
 												break;
 
@@ -1798,14 +1798,14 @@
 												// Julian day number
 												lnJulian = (u32)iiDateMath_get_julian_from_YyyyMmDd(&lfJulian, dt->wYear, dt->wMonth, dt->wDay);
 												sprintf(buffer, "%u", lnJulian);
-												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
+												if (lnPass == 1)		lnAllocationLength	+= (s32)strlen(buffer);
 												else					lnOffset			+= iifunction_append_text(lcResult + lnOffset, buffer, -1);
 												break;
 
 											case 'j':
 												// Day number into year
 												sprintf(buffer, "%u\0", iDateMath_getDayNumberIntoYear(dt->wYear, dt->wMonth, dt->wDay));
-												if (lnPass == 1)		lnAllocationLength	+= strlen(buffer);
+												if (lnPass == 1)		lnAllocationLength	+= (s32)strlen(buffer);
 												else					lnOffset			+= iifunction_append_text(lcResult + lnOffset, buffer, -1);
 												break;
 
@@ -1838,7 +1838,7 @@
 												break;
 
 											case 'A':	// Day of week
-												if (lnPass == 1)		lnAllocationLength	+= strlen(cgcDayOfWeekNames[dt->wDayOfWeek]);
+												if (lnPass == 1)		lnAllocationLength	+= (s32)strlen(cgcDayOfWeekNames[dt->wDayOfWeek]);
 												else					lnOffset			+= iifunction_append_text(lcResult + lnOffset, cgcDayOfWeekNames[dt->wDayOfWeek], -1);
 												break;
 
@@ -1848,7 +1848,7 @@
 												break;
 
 											case 'O':	// Cmonth
-												if (lnPass == 1)		lnAllocationLength	+= strlen(cgcMonthNames[dt->wMonth - 1]);
+												if (lnPass == 1)		lnAllocationLength	+= (s32)strlen(cgcMonthNames[dt->wMonth - 1]);
 												else					lnOffset			+= iifunction_append_text(lcResult + lnOffset, cgcMonthNames[dt->wMonth - 1], -1);
 												break;
 

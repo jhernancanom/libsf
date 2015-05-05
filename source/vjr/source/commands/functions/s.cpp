@@ -1650,7 +1650,7 @@
 					//////
 						memset(curdir, 0, sizeof(curdir));
 						GetCurrentDirectory(_MAX_PATH, curdir);
-						result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, curdir + 2, strlen(curdir + 2), false);
+						result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, curdir + 2, (s32)strlen(curdir + 2), false);
 						goto clean_exit;
 
 
@@ -1750,7 +1750,7 @@
 					//////
 						memset(curdir, 0, sizeof(curdir));
 						GetTempPath(sizeof(curdir), curdir);
-						result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, curdir, strlen(curdir), false);
+						result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, curdir, (s32)strlen(curdir), false);
 						goto clean_exit;
 
 

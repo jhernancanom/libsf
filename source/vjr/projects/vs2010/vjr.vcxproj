@@ -104,6 +104,7 @@
       <PreprocessorDefinitions>WIN64;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>\libsf\source\vjr\projects\vs2010</AdditionalIncludeDirectories>
       <StructMemberAlignment>1Byte</StructMemberAlignment>
+      <BasicRuntimeChecks>UninitializedLocalUsageCheck</BasicRuntimeChecks>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

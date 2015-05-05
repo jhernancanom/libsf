@@ -365,7 +365,7 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 			{
 				// Store the tag and the data
 				if (tnTagLength == -1)
-					tnTagLength = strlen(tcTag);
+					tnTagLength = (s32)strlen(tcTag);
 
 				dNew = new XmlData(tcTag, tnTagLength);
 				set_tag(dNew);
@@ -374,7 +374,7 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 			if (tcData)
 			{
 				if (tnDataLength == -1)
-					tnDataLength = strlen(tcData);
+					tnDataLength = (s32)strlen(tcData);
 
 				dNew = new XmlData(tcData, tnDataLength);
 				set_data(dNew);
@@ -388,7 +388,7 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 				if (tcAttributeData)
 				{
 					if (tnAttributeDataLength == -1)
-						tnAttributeDataLength = strlen(tcAttributeData);
+						tnAttributeDataLength = (s32)strlen(tcAttributeData);
 
 					tNewTag->set_data(new XmlData(tcAttributeData, tnAttributeDataLength));
 				}

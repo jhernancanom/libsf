@@ -173,7 +173,7 @@ return;
 
 
 		data.data	= tcText;
-		data.length	= strlen(tcText);
+		data.length	= (s32)strlen(tcText);
 		iJDebiC_transmit_viaPipe(&data, NULL, _WMJDEBIC_DATA_TYPE_TEXT);
 	}
 

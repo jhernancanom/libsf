@@ -4976,7 +4976,7 @@ debug_break;
 			{
 				// Fixup the length if need be
 				if (tnDataLength == -1)
-					tnDataLength = strlen(tcData);
+					tnDataLength = (s32)strlen(tcData);
 
 				// Allocate the SDatum
 				if (tcData && tnDataLength > 0)

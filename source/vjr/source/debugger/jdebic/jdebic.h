@@ -144,8 +144,8 @@
 // JDebiC
 //////
 	HWND		hwndJDebiC;						// The HWND to the remote
-	u32			handleJDebiCOut;				// The pipe handle to write data
-	u32			gnJDebiCOutPipeNumber;			// The pipe number we were allocated from the remote
+	uptr		handleJDebiCOut;				// The pipe handle to write data
+	uptr		gnJDebiCOutPipeNumber;			// The pipe number we were allocated from the remote
 
 
 //////////

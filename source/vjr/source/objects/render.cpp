@@ -702,7 +702,7 @@
 							//////////
 							// Save the cache
 							//////
-								iBmp_createCache(&obj->bc, obj->bmp, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)objRider_visible, (u32)varTabText_riderActive, varTabText_riderActive->value._data, varTabText_riderActive->value.length, lnSha1, 0, true);
+								iBmp_createCache(&obj->bc, obj->bmp, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)objRider_visible, (u32)varTabText_riderActive, (u32)varTabText_riderActive->value._data, varTabText_riderActive->value.length, lnSha1, 0, true);
 
 						} else {
 							// Copy everything over from the cache

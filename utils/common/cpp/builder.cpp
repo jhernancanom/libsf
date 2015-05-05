@@ -861,14 +861,14 @@
 			lnStart = buffRoot->populatedLength;
 
 			// Label
-			iBuilder_appendData(buffRoot, tcLabelText, strlen(tcLabelText));
+			iBuilder_appendData(buffRoot, tcLabelText, (s32)strlen(tcLabelText));
 
 			// Equals
 			iBuilder_appendData(buffRoot, " = ", 3);
 
 			// Value
 			sprintf(buffer, "%u\0", udata);
-			iBuilder_appendData(buffRoot, buffer, strlen(buffer));
+			iBuilder_appendData(buffRoot, buffer, (s32)strlen(buffer));
 
 			// CR/LF
 			iBuilder_appendCrLf(buffRoot);
@@ -904,14 +904,14 @@
 			lnStart = buffRoot->populatedLength;
 
 			// Label
-			iBuilder_appendData(buffRoot, tcLabelText, strlen(tcLabelText));
+			iBuilder_appendData(buffRoot, tcLabelText, (s32)strlen(tcLabelText));
 
 			// Equals
 			iBuilder_appendData(buffRoot, " = ", 3);
 
 			// Value
 			sprintf(buffer, "%d\0", sdata);
-			iBuilder_appendData(buffRoot, buffer, strlen(buffer));
+			iBuilder_appendData(buffRoot, buffer, (s32)strlen(buffer));
 
 			// CR/LF
 			iBuilder_appendCrLf(buffRoot);
@@ -946,13 +946,13 @@
 			lnStart = buffRoot->populatedLength;
 
 			// Label
-			iBuilder_appendData(buffRoot, tcLabelText, strlen(tcLabelText));
+			iBuilder_appendData(buffRoot, tcLabelText, (s32)strlen(tcLabelText));
 
 			// Equals
 			iBuilder_appendData(buffRoot, " = ", 3);
 
 			// Text
-			iBuilder_appendData(buffRoot, tcText, strlen(tcText));
+			iBuilder_appendData(buffRoot, tcText, (s32)strlen(tcText));
 
 			// CR/LF
 			iBuilder_appendCrLf(buffRoot);
@@ -986,7 +986,7 @@
 			lnStart = buffRoot->populatedLength;
 
 			// Label
-			iBuilder_appendData(buffRoot, tcLabelText, strlen(tcLabelText));
+			iBuilder_appendData(buffRoot, tcLabelText, (s32)strlen(tcLabelText));
 
 			// Equals
 			iBuilder_appendData(buffRoot, " = ", 3);
@@ -1027,7 +1027,7 @@
 			lnStart = buffRoot->populatedLength;
 
 			// Label
-			iBuilder_appendData(buffRoot, tcLabelText, strlen(tcLabelText));
+			iBuilder_appendData(buffRoot, tcLabelText, (s32)strlen(tcLabelText));
 
 			// Equals
 			iBuilder_appendData(buffRoot, " = ", 3);
