@@ -163,8 +163,13 @@
 
 	struct SFunctionParms
 	{
+		bool			error;								// Was there an error in processing?
+		u32				errorNum;							// The error number
+
 		SVariable*		returns[_MAX_RETURN_COUNT];			// Return parameters
-		s32				rcount;								// Number of return parameters specified
+		s32				rcount;								// Actual number of return parameters specified
+		s32				rmax;								// Maximum number allowed
+		s32				rmin;								// Minimum number required
 
 		SVariable*		params[_MAX_PARAMETER_COUNT];		// Input parameters
 		s32				pcount;								// Number of input parameters actually passed
@@ -179,7 +184,7 @@
 	SVariable*				iEngine_get_variableName_fromComponent	(SThisCode* thisCode, SComp* comp, bool* tlManufactured, bool tlByRef);
 	SVariable*				iEngine_get_variableName_fromText		(SThisCode* thisCode, cs8* tcText, u32 tnTextLength, SComp* comp, bool* tlManufactured, bool tlByRef);
 	SVariable*				iEngine_get_contiguousComponents		(SThisCode* thisCode, SComp* comp, bool* tlManufactured, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount);
-	SVariable*				iEngine_get_functionResult				(SThisCode* thisCode, SComp* comp);
+	void					iEngine_get_functionResult				(SThisCode* thisCode, SComp* comp, s32 tnRcount, SFunctionParms* rpar);
 	void					iEngine_executeSetter					(SThisCode* thisCode, cs8* name, SVariable* varOld, SVariable* varNew);
 	void					iEngine_executeSetter					(SThisCode* thisCode, s8*  name, SVariable* varOld, SVariable* varNew);
 	void					iEngine_error							(SThisCode* thisCode, u32 tnErrorNumber, SVariable* varRelated);
@@ -199,7 +204,7 @@
 	void					iEngine_update_meta8					(SThisCode* thisCode, SVariable* varSrc);
 	void					iEngine_update_meta9					(SThisCode* thisCode, SVariable* varSrc);
 
-	bool					iiEngine_getParametersBetween			(SThisCode* thisCode, SFunctionData* funcData, SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SVariable* params[]);
+	bool					iiEngine_getParametersBetween			(SThisCode* thisCode, SFunctionData* funcData, SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SFunctionParms* rpar);
 
 	void					iBreakpoint_delete						(SThisCode* thisCode, SBreakpoint** breakpoint);
 	SBreakpoint* 			iBreakpoint_add							(SThisCode* thisCode, SBreakpoint** breakpoint, u32 tnType);

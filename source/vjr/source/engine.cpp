@@ -96,6 +96,7 @@
 		SVariable*		var;	// Ignore the GCC warning message here... I don't know why it's throwing a warning.  var is used correctly below.
 		SVariable*		varExisting;
 		SVariable*		varText;
+		SFunctionParms	lrpar;
 		SCommandData*	cmd;
 
 
@@ -152,11 +153,15 @@
 							{
 								// It is something like "? func(x)"
 								llManufactured = true;
-								var = iEngine_get_functionResult(thisCode, compNext);
-								if (!var)
+								memset(&lrpar, 0, sizeof(lrpar));
+								iEngine_get_functionResult(thisCode, compNext, 10, &lrpar);
+								if (lrpar.error || !(var = lrpar.returns[0]))
 								{
 									// Unknown function, or parameters were not correct
-									// In any case, the iEngine_getFunctionResult() has reported the error
+									if (lrpar.error)
+										iError_reportByNumber(thisCode, lrpar.errorNum, compNext, false);
+
+									// Update the screen
 									_screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(thisCode, screenData, _screen);
 									iWindow_render(NULL, gWinJDebi, false);
 									return(false);
@@ -198,11 +203,15 @@
 							if (compThird->iCat == _ICAT_FUNCTION)
 							{
 								// It is something like "? func(x)"
-								var = iEngine_get_functionResult(thisCode, compThird);
-								if (!var)
+								memset(&lrpar, 0, sizeof(lrpar));
+								iEngine_get_functionResult(thisCode, compThird, 10, &lrpar);
+								if (lrpar.error || !(var = lrpar.returns[0]))
 								{
 									// Unknown function, or parameters were not correct
-									// In any case, the iEngine_getFunctionResult() has reported the error
+									if (lrpar.error)
+										iError_reportByNumber(thisCode, lrpar.errorNum, compThird, false);
+
+									// Update the screen
 									_screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(thisCode, screenData, _screen);
 									iWindow_render(NULL, gWinJDebi, false);
 									return(false);
@@ -658,11 +667,10 @@
 // Called to find the function, execute it, and return the result
 //
 //////
-	SVariable* iEngine_get_functionResult(SThisCode* thisCode, SComp* comp)
+	void iEngine_get_functionResult(SThisCode* thisCode, SComp* comp, s32 tnRcount, SFunctionParms* rpar)
 	{
 		u32				lnI, lnParamsFound;
 		SFunctionData*	funcData;
-		SFunctionParms	rpar;
 		SComp*			compLeftParen;
 
 
@@ -675,11 +683,7 @@
 			//////////
 			// Initialize our parameters and return variables
 			//////
-				for (lnI = 0; lnI < _MAX_RETURN_COUNT; lnI++)
-					rpar.returns[lnI] = NULL;
-
-				for (lnI = 0; lnI < _MAX_PARAMETER_COUNT; lnI++)
-					rpar.params[lnI] = NULL;
+				memset(rpar, 0, sizeof(*rpar));
 
 
 			//////////
@@ -694,21 +698,27 @@
 						//////////
 						// We need to find the minimum number of parameters between)
 						//////
-							if (!iiEngine_getParametersBetween(thisCode, funcData, compLeftParen, &lnParamsFound, funcData->req_pcount, funcData->max_pcount, &rpar.params[0]))
-								return(NULL);
+							if (!iiEngine_getParametersBetween(thisCode, funcData, compLeftParen, &lnParamsFound, funcData->req_pcount, funcData->max_pcount, rpar))
+							{
+								rpar->error		= true;
+								rpar->errorNum	= _ERROR_INVALID_PARAMETERS;
+								return;
+							}
 
 
 						//////////
 						// Update rcount and pcount
 						//////
-							rpar.rcount = 1;
-							rpar.pcount = lnParamsFound;
+							rpar->rmax		= funcData->max_rcount;
+							rpar->rmin		= funcData->req_rcount;
+							rpar->rcount	= tnRcount;
+							rpar->pcount	= lnParamsFound;
 
 
 						//////////
 						// Perform the function
 						//////
-							funcData->func(NULL, &rpar);
+							funcData->func(NULL, rpar);
 
 
 						//////////
@@ -716,16 +726,19 @@
 						//////
 							for (lnI = 0; lnI < _MAX_PARAMETER_COUNT; lnI++)
 							{
+
 								// Delete if populated
-								if (rpar.params[lnI])
-									iVariable_delete(thisCode, rpar.params[lnI], true);
+								if (rpar->params[lnI])
+									iVariable_delete(thisCode, rpar->params[lnI], true);
+
 							}
 
 
 						//////////
-						// Indicate our return value
+						// Return values are in rpar->returns[]
 						//////
-							return(rpar.returns[0]);
+							return;
+
 					}
 
 					// Move to next function
@@ -733,10 +746,14 @@
 				}
 
 				// If we get here, not found
-				iError_reportByNumber(thisCode, _ERROR_UNKNOWN_FUNCTION, comp, false);
+				rpar->error		= true;
+				rpar->errorNum	= _ERROR_UNKNOWN_FUNCTION;
 
+		} else {
+			// Syntax error
+			rpar->error		= true;
+			rpar->errorNum	= _ERROR_SYNTAX;
 		}
-		return(NULL);
 	}
 
 
@@ -1060,7 +1077,7 @@
 // Called to obtain the parameters between the indicated parenthesis.
 //
 //////
-	bool iiEngine_getParametersBetween(SThisCode* thisCode, SFunctionData* funcData, SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SVariable* params[])
+	bool iiEngine_getParametersBetween(SThisCode* thisCode, SFunctionData* funcData, SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SFunctionParms* rpar)
 	{
 		u32			lnI, lnParamCount;
 		bool		llManufactured, llByRef, llUdfParamsByRef;
@@ -1073,11 +1090,11 @@
 		//////
 			llUdfParamsByRef = propGet_settings_UdfParamsReference(_settings);
 			for (lnI = 0; lnI < _MAX_PARAMETER_COUNT; lnI++)
-				params[lnI] = NULL;
+				rpar->params[lnI] = NULL;
 
 
 		//////////
-		// Begin to the thing to the right of the left parenthesis
+		// Begin at the thing to the right of the left parenthesis
 		//////
 			lnParamCount	= 1;
 			comp			= compLeftParen->ll.nextComp;
@@ -1111,7 +1128,8 @@
 				//////
 					if (!funcData || !funcData->paramMap)		llByRef = llUdfParamsByRef;
 					else										llByRef = llUdfParamsByRef | (funcData->paramMap[lnI] == '1');
-					params[lnI] = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured, llByRef);
+
+					rpar->params[lnI] = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured, llByRef);
 
 
 				// Move to next component

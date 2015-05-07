@@ -253,7 +253,6 @@
 		// What format are we?
 		//////
 // TODO:  Need to set the return parameter count so we know what's happening
-debug_break;
 			rpar->returns[0] = NULL;
 			if (rpar->rcount == 1)
 			{

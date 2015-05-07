@@ -117,7 +117,7 @@
 
 
 		// Open the file specified by the user
-		lfh = sopen(filename, _O_BINARY | _O_RDWR, _SH_DENYNO, _S_IREAD);
+		lfh = _sopen(filename, _O_BINARY | _O_RDWR, _SH_DENYNO, _S_IREAD);
 		if (!lfh)
 			return(-101);		// No file could be opened
 

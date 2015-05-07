@@ -966,7 +966,7 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 
 			if (tcFilename)
 			{
-				lfh = sopen(tcFilename, _O_CREAT | _O_BINARY | _O_TRUNC | _O_RDWR, _SH_DENYRW, _S_IREAD | _S_IWRITE);
+				lfh = _sopen(tcFilename, _O_CREAT | _O_BINARY | _O_TRUNC | _O_RDWR, _SH_DENYRW, _S_IREAD | _S_IWRITE);
 				if (lfh)
 				{
 //////////
