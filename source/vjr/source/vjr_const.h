@@ -560,6 +560,13 @@ typedef SEM**		SEMpp;
 
 
 //////////
+// Constants
+//////
+	const u32			_MAX_PARAMETER_COUNT				= 26;						// 26 passed parameters
+	const u32			_MAX_RETURN_COUNT					= 10;						// 10 return parameters
+
+
+//////////
 // Object types
 //////
 	// Note:  This starting value of 1 is important.  It is used in at least iiObj_getBaseclass_byType() and related functions.
@@ -602,6 +609,28 @@ typedef SEM**		SEMpp;
 	const u32			_OBJ_TYPE_CUSTOM					= 37;						// A custom class
 	const u32			_OBJ_TYPE_EXCEPTION					= 38;						// An exception
 	const u32			_OBJ_TYPE_SETTINGS					= 39;						// Settings (SET TALK ON, etc.)
+
+
+//////////
+// Constants for date formats
+//////
+	const u32								_SET_DATE_START	= 1;
+	const u32			_SET_DATE_AMERICAN					= 1;			// mm/dd/yy
+	const u32			_SET_DATE_ANSI						= 2;			// yy.mm.dd
+	const u32			_SET_DATE_BRITISH					= 3;			// dd/mm/yy
+	const u32			_SET_DATE_FRENCH					= 4;			// dd/mm/yy
+	const u32			_SET_DATE_GERMAN					= 5;			// dd.mm.yy
+	const u32			_SET_DATE_ITALIAN					= 6;			// dd-mm-yy
+	const u32			_SET_DATE_JAPAN						= 7;			// yy/mm/dd
+	const u32			_SET_DATE_TAIWAN					= 8;			// yy/mm/dd
+	const u32			_SET_DATE_LONG						= 9;			// Dayofweek, Month dd, yyyy
+	const u32			_SET_DATE_SHORT						= 10;			// m/d/yy
+	const u32			_SET_DATE_USA						= 11;			// mm-dd-yy
+	const u32			_SET_DATE_DMY						= 12;			// dd/mm/yy
+	const u32			_SET_DATE_MDY						= 13;			// mm/dd/yy
+	const u32			_SET_DATE_YMD						= 14;			// yy/mm/dd
+	const u32								_SET_DATE_END	= 14;
+
 
 //////////
 // Event signals
@@ -670,6 +699,15 @@ typedef SEM**		SEMpp;
 	const u32			_EVENT_CAROUSEL_TAB					= 1;			// On a physical tab
 	const u32			_EVENT_CAROUSEL_TAB_CLOSE			= 2;			// On a physical tab's close button
 	const u32			_EVENT_CAROUSEL_TAB_RECTANGLE		= 3;			// Somewhere in the tab rectangle, but not on a tab
+
+
+//////////
+// Constants for .T. and .F. settings using LOGICALX()
+//
+//////
+	const u32			_LOGICAL_TF							= 1;
+	const u32			_LOGICAL_UD							= 2;
+	const u32			_LOGICAL_YN							= 3;
 
 
 //////////

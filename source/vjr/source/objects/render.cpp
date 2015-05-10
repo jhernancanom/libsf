@@ -1484,7 +1484,7 @@
 					if (buffer[strlen(buffer)] == '.')
 						buffer[strlen(buffer)] = 0;
 
-					lnSkip = iSkipWhitespaces(thisCode, buffer, (u32)strlen(buffer));
+					lnSkip = iSkip_whitespaces(thisCode, buffer, (u32)strlen(buffer));
 
 					SetRect(&lrc2,	obj->bmp->bi.biWidth / 7,
 									(obj->bmp->bi.biHeight / 2) - (obj->bmp->bi.biHeight / 7),

@@ -1003,7 +1003,7 @@ void iiComps_decodeSyntax_returns(SThisCode* thisCode, SCompileVxbContext* vxb)
 					{
 						// There is enough room for this component to be examined
 						// See if it matches
-						if (iTranslateToCompsTest(thisCode, lacs->keyword_u8, lcData + lnI, lacs->length) == 0)
+						if (iComps_xlatToComps_withTest(thisCode, lacs->keyword_u8, lcData + lnI, lacs->length) == 0)
 						{
 							// It matches
 							// mark its current condition
@@ -1013,7 +1013,7 @@ void iiComps_decodeSyntax_returns(SThisCode* thisCode, SCompileVxbContext* vxb)
 							if (lacs->repeats)
 							{
 								while (	lnStart + lnLength + lnLacsLength <= lnMaxLength
-										&& iTranslateToCompsTest(thisCode, lacs->keyword_u8, lcData + lnStart + lnLength, lacs->length) == 0)
+										&& iComps_xlatToComps_withTest(thisCode, lacs->keyword_u8, lcData + lnStart + lnLength, lacs->length) == 0)
 								{
 									// We found another repeated entry
 									lnLength += lnLacsLength;
@@ -2957,13 +2957,13 @@ void iiComps_decodeSyntax_returns(SThisCode* thisCode, SCompileVxbContext* vxb)
 		if (tcData && tnMaxLength > 0)
 		{
 			// Skip past any whitespaces
-			lnWhitespaces = iSkipWhitespaces(thisCode, tcData, tnMaxLength);
+			lnWhitespaces = iSkip_whitespaces(thisCode, tcData, tnMaxLength);
 			if (tnWhitespaces)
 				*tnWhitespaces = lnWhitespaces;
 
 
 			// Skip to the ending carriage return / line feed
-			lnLength = iSkipToCarriageReturnLineFeed(thisCode, tcData + lnWhitespaces, tnMaxLength - lnWhitespaces, &lnCRLF_Length);
+			lnLength = iSkip_toCrLf(thisCode, tcData + lnWhitespaces, tnMaxLength - lnWhitespaces, &lnCRLF_Length);
 			if (tnLength)
 				*tnLength = lnLength;
 		}
@@ -3284,7 +3284,7 @@ void iiComps_decodeSyntax_returns(SThisCode* thisCode, SCompileVxbContext* vxb)
 // Scans from the indicated location forward until finding a non-whitespace character
 //
 //////
-	u32 iSkipWhitespaces(SThisCode* thisCode, s8* tcData, u32 tnMaxLength)
+	u32 iSkip_whitespaces(SThisCode* thisCode, s8* tcData, u32 tnMaxLength)
 	{
 		u32 lnLength;
 
@@ -3310,7 +3310,7 @@ void iiComps_decodeSyntax_returns(SThisCode* thisCode, SCompileVxbContext* vxb)
 // Scans from the indicated location forward until finding CR/LF or any combination thereof
 //
 //////
-	u32 iSkipToCarriageReturnLineFeed(SThisCode* thisCode, s8* tcData, u32 tnMaxLength, u32* tnCRLF_Length)
+	u32 iSkip_toCrLf(SThisCode* thisCode, s8* tcData, u32 tnMaxLength, u32* tnCRLF_Length)
 	{
 		u32 lnLength, lnCRLF_Length;
 
@@ -3406,7 +3406,7 @@ void iiComps_decodeSyntax_returns(SThisCode* thisCode, SCompileVxbContext* vxb)
 	}
 
 	// Prepends or appends to the Start/end chain
-	void* iSEChain_appendOrPrepend (SThisCode* thisCode, SStartEnd* ptrSE, u32 tnUniqueId, u32 tnUniqueIdExtra, u32 tnSize, u32 tnBlockSizeIfNewBlockNeeded, bool tlPrepend, bool* tlResult)
+	void* iSEChain_appendOrPrepend(SThisCode* thisCode, SStartEnd* ptrSE, u32 tnUniqueId, u32 tnUniqueIdExtra, u32 tnSize, u32 tnBlockSizeIfNewBlockNeeded, bool tlPrepend, bool* tlResult)
 	{
 		SLL*			ptrCaller;
 		SMasterList*	ptrNew;
@@ -3593,129 +3593,6 @@ debug_break;
 
 //////////
 //
-// Search the haystack for the needle, the haystack can be tupels, as in "_az" meaning
-// (is it between "a" and "z" inclusive?)  To set this condition, use a length of 1,
-// a leading "_" in tcHaystack, and two characters (one of which must NOT be NULL) after.
-//
-// Examples:
-//		_az			= lower-case a to z inclusive
-//		_AZ			= upper-case a to z inclusive
-//		_09			= numeric 0 to 9 inclusive
-//		_azAZ09		= any of the above in a single succession
-//		_azAZ09__	= any of the above plus an underscore character (it must be done twice because of the from/to pattern
-//
-// Returns:
-//		0		= matches
-//		!0		= does not tmach
-//
-//////
-	s32 iTranslateToCompsTest(SThisCode* thisCode, cu8* tcHaystack, cu8* tcNeedle, s32 tnLength)
-	{
-		u32		lnI;
-		bool	llCase;
-
-
-		// Make sure our environment is sane
-		if (tnLength != 0)
-		{
-			// See if we're a signed or unsigned compare
-			if (tnLength < 0)
-			{
-				// Case-sensitive compare
-				tnLength	= -tnLength;
-				llCase		= true;
-
-			} else {
-				// Case-insensitive compare
-				llCase		= false;
-			}
-
-			// See if we're looking for a tuple, or a regular compare
-			if (tcHaystack[0] == '_' && tnLength == 1)
-			{
-				// It's an explicit match of a range (this is ALWAYS subject to case as it is an explicit range)
-				for (lnI = 1; tcHaystack[lnI] != 0 && tcHaystack[lnI + 1] != 0; lnI += 2)
-				{
-					//		within the range low			.........			up to the range high
-					if (tcNeedle[0] >= tcHaystack[lnI]			&&		tcNeedle[0] <= tcHaystack[lnI + 1])
-						return(0);		// It's a match, needle is in the range
-				}
-				// Not a match, will fall through to below
-
-			} else {
-				// Just a regular compare
-				if (llCase)		return(  memcmp((s8*)tcHaystack, (s8*)tcNeedle, tnLength));
-				else			return(_memicmp((s8*)tcHaystack, (s8*)tcNeedle, tnLength));
-			}
-		}
-		// If we get here, no match
-		return(-1);
-	}
-
-
-
-
-//////////
-//
-// Callback, used to translate existing components into other components
-// Note:  Always returns false, so it will continue being fed every component
-//
-//////
-	bool iioss_translateCompsToOthersCallback(SThisCode* thisCode, SStartEndCallback* cb)
-	{
-		s32						lnLacsLength;
-		SComp*					comp;
-		SAsciiCompSearcher*		lacs;
-
-
-		// Make sure the environment is sane
-		if (cb && cb->ptr)
-		{
-			// Grab our pointers into recognizable thingamajigs
-			comp	= (SComp*)cb->ptr;
-			lacs	= (SAsciiCompSearcher*)cb->extra;
-
-			// Iterate through this item to see if any match
-			for (	/* lacs is initialize above */;
-					lacs->length != 0;
-					lacs++		)
-			{
-				// Grab the normalized length
-				lnLacsLength = abs(lacs->length);
-
-				// We only test if they're the same length
-				if (lnLacsLength == comp->length || (lacs->repeats && lnLacsLength <= comp->length))
-				{
-					// We only test if this item is not the first item on line, or if must be the first
-					// item on the line, then this component must be the first component on the line.  Simple, yes? :-)
-					if (!lacs->firstOnLine || !comp->ll.prev)
-					{
-						// Physically conduct the exact comparison
-						if (iTranslateToCompsTest(thisCode,
-													lacs->keyword_u8,
-													comp->line->sourceCode->data_u8 + comp->start,
-													lacs->length) == 0)
-						{
-							// This is a match
-							// Convert it, translate it, whatever you want to call it, just make it be the new code, per the user's request, got it? :-)
-							comp->iCode = lacs->iCode;
-							// All done with this component
-							break;
-						}
-					}
-				}
-			}
-
-		}
-		// We always simulate a false condition so we'll keep receiving each item
-		return(false);
-	}
-
-
-
-
-//////////
-//
 // Search for the indicated record in the chain by using a user-defined callback on the pointer.
 // Callback function should return true when found, false to continue sending other items back.
 //
@@ -3815,217 +3692,6 @@ debug_break;
 				}
 			}
 		}
-	}
-
-
-
-
-
-//////////
-//
-// Called as a callback from the custom handler callback function, to do some manual insertion.
-// Note:  If a rogue component is inserted here, one not already defined in the ref's SOssLine parent,
-//        then it will need to be either manually added to the line->comps, or manually tended to.
-//
-//////
-	void iiComps_xlatToOthersCallback__insertCompByCompCallback(SThisCode* thisCode, SComp* compRef, SComp* compNew, bool tlInsertAfter)
-	{
-// TODO:  untested code, breakpoint and examine
-debug_break;
-		// Make sure our environment is sane
-		if (compRef && compNew)
-		{
-			// Before or after?
-			if (tlInsertAfter)
-			{
-				// Add the new comp after the reference comp
-				if (compRef->ll.next)
-					compRef->ll.next->prev	= (SLL*)compNew;	// One originally after ref points back to new
-
-				compNew->ll.next	= compRef->ll.next;			// New points forward to the one originally after ref
-				compNew->ll.prev	= (SLL*)compRef;			// New points back to ref
-				compRef->ll.next	= (SLL*)compNew;			// Ref points forward to new
-
-			} else {
-				// Add the new comp before the reference comp
-				if (compRef->ll.prev)
-					compRef->ll.prev->next	= (SLL*)compNew;	// One originally before ref points forward to new
-
-				compNew->ll.next	= (SLL*)compRef;			// New points forward to ref
-				compNew->ll.prev	= compRef->ll.prev;			// New points back to the one originally before ref
-				compRef->ll.prev	= (SLL*)compNew;			// Ref points back to new
-			}
-		}
-	}
-
-
-
-
-//////////
-//
-// Called as a callback from the custom handler callback function, to do some manual insertion.
-//
-//////
-	void iiComps_xlatToOthersCallback__insertCompByParamsCallback(SThisCode* thisCode, SComp* compRef, SLine* line, u32 tniCode, u32 tnStart, s32 tnLength, bool tlInsertAfter)
-	{
-		SComp* compNew;
-
-
-// TODO:  untested code, breakpoint and examine
-debug_break;
-		// Make sure our environment is sane
-		if (compRef && line && line->compilerInfo)
-		{
-			// Allocate a new pointer
-			compNew = (SComp*)iLl_appendNewNode((SLL**)&line->compilerInfo->firstComp, NULL, NULL, NULL, iGetNextUid(thisCode), sizeof(SComp));
-			if (compNew)
-			{
-				// Initialize it
-				memset(compNew, 0, sizeof(SComp));
-
-				// Populate it
-				compNew->line		= line;
-				compNew->iCode		= tniCode;
-				compNew->start		= tnStart;
-				compNew->length		= tnLength;
-
-				// Add the new component as a component
-				iiComps_xlatToOthersCallback__insertCompByCompCallback(thisCode, compRef, compNew, tlInsertAfter);
-			}
-		}
-	}
-
-
-
-
-//////////
-//
-// Called as a callback from the custom handler callback function, to do delete the
-// indicated component.
-//
-//////
-	void iiComps_xlatToOthersCallback__deleteCompsCallback(SThisCode* thisCode, SComp* comp, SLine* line)
-	{
-// TODO:  untested code, breakpoint and examine
-debug_break;
-		//////////
-		// Disconnect the component from its siblings
-		//////
-			// Make the one before point forward to one after
-			if (comp->ll.prev)
-				comp->ll.prev->next = comp->ll.next;
-
-			// Make the one after point back to the one before
-			if (comp->ll.next)
-				comp->ll.next->prev = comp->ll.prev;
-
-
-		//////////
-		// Delete it from the list of known components.
-		// Component go bye bye. :-)
-		//////
-			if (line)
-			{
-				// Delete the entry from line->comps
-				iLl_deleteNode((SLL*)comp, true);
-
-			} else {
-				// Free the rogue entry
-				free(comp);
-			}
-	}
-
-
-
-
-//////////
-//
-// Called as a callback from the custom handler callback function, to clone the indicated
-// component.  If line is not NULL, the component is automatically added to line->comps;
-//
-//////
-	SComp* iiComps_xlatToOthersCallback__cloneCompsCallback(SThisCode* thisCode, SComp* comp, SLine* line)
-	{
-		SComp* compNew;
-
-
-// TODO:  untested code, breakpoint and examine
-debug_break;
-		// Make sure our environment is sane
-		compNew = NULL;
-		if (comp)
-		{
-			// Are we adding to to a line?
-			if (line && line->compilerInfo)
-			{
-				// Add the new component to line->comps
-				compNew = (SComp*)iLl_appendNewNode((SLL**)&line->compilerInfo->firstComp, NULL, NULL, NULL, iGetNextUid(thisCode), sizeof(SComp));
-
-			} else {
-				// Just create a rogue one
-				compNew = (SComp*)malloc(sizeof(SComp));
-			}
-
-			// Was it valid?
-			if (compNew)
-			{
-				// Initialize it
-				memset(compNew, 0, sizeof(SComp));
-
-				// Populate it
-				compNew->line		= line;
-				compNew->iCode		= comp->iCode;
-				compNew->start		= comp->start;
-				compNew->length		= comp->length;
-
-				// All done!
-			}
-		}
-
-		// Return our new one, no matter if it was a success or not
-		return(compNew);
-	}
-
-
-
-
-//////////
-//
-// Called as a callback from the custom handler callback function, to do merge components into
-// a new one, and delete the one(s) which were merged.
-//
-// NOTE:  It's theoretically possible that there could be a gap here, such as a component next to
-//        another component where there used to be a whitespace inbetween (or anything else), so
-//        the components are no longer right by each other.  The caller will have to manually
-//        handle that condition.
-//
-//////
-	SComp* iiComps_xlatToOthersCallback__mergeCompsCallback(SThisCode* thisCode, SComp* comp, SLine* line, u32 tnCount, u32 tniCodeNew)
-	{
-		u32			lnI;
-		SComp*	compThis;
-
-
-// TODO:  untested code, breakpoint and examine
-debug_break;
-		// Make sure our environment is sane
-		if (comp)
-		{
-			// Iterate for each merging
-			for (lnI = 1, compThis = comp->ll.nextComp; compThis && lnI < tnCount; lnI++, compThis = comp->ll.nextComp)
-			{
-				// Absorb compThis's length into comp's "collective"
-				comp->length += compThis->length;
-
-				// Delete this component
-				iiComps_xlatToOthersCallback__deleteCompsCallback(thisCode, compThis, comp->line);
-
-				// Note:  compThis is always assigned comp->ll.next, because its next component keeps being updated after the delete
-			}
-			// When we get here, everything's merged
-		}
-		// Return the original component as a pass through (in case this is used as an intermediate function)
-		return(comp);
 	}
 
 
@@ -4292,6 +3958,335 @@ debug_break;
 
 
 
+//////////
+//
+// Search the haystack for the needle, the haystack can be tupels, as in "_az" meaning
+// (is it between "a" and "z" inclusive?)  To set this condition, use a length of 1,
+// a leading "_" in tcHaystack, and two characters (one of which must NOT be NULL) after.
+//
+// Examples:
+//		_az			= lower-case a to z inclusive
+//		_AZ			= upper-case a to z inclusive
+//		_09			= numeric 0 to 9 inclusive
+//		_azAZ09		= any of the above in a single succession
+//		_azAZ09__	= any of the above plus an underscore character (it must be done twice because of the from/to pattern
+//
+// Returns:
+//		0		= matches
+//		!0		= does not tmach
+//
+//////
+	s32 iComps_xlatToComps_withTest(SThisCode* thisCode, cu8* tcHaystack, cu8* tcNeedle, s32 tnLength)
+	{
+		u32		lnI;
+		bool	llCase;
+
+
+		// Make sure our environment is sane
+		if (tnLength != 0)
+		{
+			// See if we're a signed or unsigned compare
+			if (tnLength < 0)
+			{
+				// Case-sensitive compare
+				tnLength	= -tnLength;
+				llCase		= true;
+
+			} else {
+				// Case-insensitive compare
+				llCase		= false;
+			}
+
+			// See if we're looking for a tuple, or a regular compare
+			if (tcHaystack[0] == '_' && tnLength == 1)
+			{
+				// It's an explicit match of a range (this is ALWAYS subject to case as it is an explicit range)
+				for (lnI = 1; tcHaystack[lnI] != 0 && tcHaystack[lnI + 1] != 0; lnI += 2)
+				{
+					//		within the range low			.........			up to the range high
+					if (tcNeedle[0] >= tcHaystack[lnI]			&&		tcNeedle[0] <= tcHaystack[lnI + 1])
+						return(0);		// It's a match, needle is in the range
+				}
+				// Not a match, will fall through to below
+
+			} else {
+				// Just a regular compare
+				if (llCase)		return(  memcmp((s8*)tcHaystack, (s8*)tcNeedle, tnLength));
+				else			return(_memicmp((s8*)tcHaystack, (s8*)tcNeedle, tnLength));
+			}
+		}
+		// If we get here, no match
+		return(-1);
+	}
+
+
+
+
+//////////
+//
+// Callback, used to translate existing components into other components
+// Note:  Always returns false, so it will continue being fed every component
+//
+//////
+	bool iiComps_xlatToOthers_callback(SThisCode* thisCode, SStartEndCallback* cb)
+	{
+		s32						lnLacsLength;
+		SComp*					comp;
+		SAsciiCompSearcher*		lacs;
+
+
+		// Make sure the environment is sane
+		if (cb && cb->ptr)
+		{
+			// Grab our pointers into recognizable thingamajigs
+			comp	= (SComp*)cb->ptr;
+			lacs	= (SAsciiCompSearcher*)cb->extra;
+
+			// Iterate through this item to see if any match
+			for (	/* lacs is initialize above */;
+					lacs->length != 0;
+					lacs++		)
+			{
+				// Grab the normalized length
+				lnLacsLength = abs(lacs->length);
+
+				// We only test if they're the same length
+				if (lnLacsLength == comp->length || (lacs->repeats && lnLacsLength <= comp->length))
+				{
+					// We only test if this item is not the first item on line, or if must be the first
+					// item on the line, then this component must be the first component on the line.  Simple, yes? :-)
+					if (!lacs->firstOnLine || !comp->ll.prev)
+					{
+						// Physically conduct the exact comparison
+						if (iComps_xlatToComps_withTest(thisCode,
+													lacs->keyword_u8,
+													comp->line->sourceCode->data_u8 + comp->start,
+													lacs->length) == 0)
+						{
+							// This is a match
+							// Convert it, translate it, whatever you want to call it, just make it be the new code, per the user's request, got it? :-)
+							comp->iCode = lacs->iCode;
+							// All done with this component
+							break;
+						}
+					}
+				}
+			}
+
+		}
+		// We always simulate a false condition so we'll keep receiving each item
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called as a callback from the custom handler callback function, to do some manual insertion.
+// Note:  If a rogue component is inserted here, one not already defined in the ref's SOssLine parent,
+//        then it will need to be either manually added to the line->comps, or manually tended to.
+//
+//////
+	void iiComps_xlatToOthers_callback__insertCompByCompCallback(SThisCode* thisCode, SComp* compRef, SComp* compNew, bool tlInsertAfter)
+	{
+// TODO:  untested code, breakpoint and examine
+debug_break;
+		// Make sure our environment is sane
+		if (compRef && compNew)
+		{
+			// Before or after?
+			if (tlInsertAfter)
+			{
+				// Add the new comp after the reference comp
+				if (compRef->ll.next)
+					compRef->ll.next->prev	= (SLL*)compNew;	// One originally after ref points back to new
+
+				compNew->ll.next	= compRef->ll.next;			// New points forward to the one originally after ref
+				compNew->ll.prev	= (SLL*)compRef;			// New points back to ref
+				compRef->ll.next	= (SLL*)compNew;			// Ref points forward to new
+
+			} else {
+				// Add the new comp before the reference comp
+				if (compRef->ll.prev)
+					compRef->ll.prev->next	= (SLL*)compNew;	// One originally before ref points forward to new
+
+				compNew->ll.next	= (SLL*)compRef;			// New points forward to ref
+				compNew->ll.prev	= compRef->ll.prev;			// New points back to the one originally before ref
+				compRef->ll.prev	= (SLL*)compNew;			// Ref points back to new
+			}
+		}
+	}
+
+
+
+
+//////////
+//
+// Called as a callback from the custom handler callback function, to do some manual insertion.
+//
+//////
+	void iiComps_xlatToOthers_callback__insertCompByParamsCallback(SThisCode* thisCode, SComp* compRef, SLine* line, u32 tniCode, u32 tnStart, s32 tnLength, bool tlInsertAfter)
+	{
+		SComp* compNew;
+
+
+// TODO:  untested code, breakpoint and examine
+debug_break;
+		// Make sure our environment is sane
+		if (compRef && line && line->compilerInfo)
+		{
+			// Allocate a new pointer
+			compNew = (SComp*)iLl_appendNewNode((SLL**)&line->compilerInfo->firstComp, NULL, NULL, NULL, iGetNextUid(thisCode), sizeof(SComp));
+			if (compNew)
+			{
+				// Initialize it
+				memset(compNew, 0, sizeof(SComp));
+
+				// Populate it
+				compNew->line		= line;
+				compNew->iCode		= tniCode;
+				compNew->start		= tnStart;
+				compNew->length		= tnLength;
+
+				// Add the new component as a component
+				iiComps_xlatToOthers_callback__insertCompByCompCallback(thisCode, compRef, compNew, tlInsertAfter);
+			}
+		}
+	}
+
+
+
+
+//////////
+//
+// Called as a callback from the custom handler callback function, to do delete the
+// indicated component.
+//
+//////
+	void iiComps_xlatToOthers_callback__deleteCompsCallback(SThisCode* thisCode, SComp* comp, SLine* line)
+	{
+// TODO:  untested code, breakpoint and examine
+debug_break;
+		//////////
+		// Disconnect the component from its siblings
+		//////
+			// Make the one before point forward to one after
+			if (comp->ll.prev)
+				comp->ll.prev->next = comp->ll.next;
+
+			// Make the one after point back to the one before
+			if (comp->ll.next)
+				comp->ll.next->prev = comp->ll.prev;
+
+
+		//////////
+		// Delete it from the list of known components.
+		// Component go bye bye. :-)
+		//////
+			if (line)
+			{
+				// Delete the entry from line->comps
+				iLl_deleteNode((SLL*)comp, true);
+
+			} else {
+				// Free the rogue entry
+				free(comp);
+			}
+	}
+
+
+
+
+//////////
+//
+// Called as a callback from the custom handler callback function, to clone the indicated
+// component.  If line is not NULL, the component is automatically added to line->comps;
+//
+//////
+	SComp* iiComps_xlatToOthers_callback__cloneCompsCallback(SThisCode* thisCode, SComp* comp, SLine* line)
+	{
+		SComp* compNew;
+
+
+// TODO:  untested code, breakpoint and examine
+debug_break;
+		// Make sure our environment is sane
+		compNew = NULL;
+		if (comp)
+		{
+			// Are we adding to to a line?
+			if (line && line->compilerInfo)
+			{
+				// Add the new component to line->comps
+				compNew = (SComp*)iLl_appendNewNode((SLL**)&line->compilerInfo->firstComp, NULL, NULL, NULL, iGetNextUid(thisCode), sizeof(SComp));
+
+			} else {
+				// Just create a rogue one
+				compNew = (SComp*)malloc(sizeof(SComp));
+			}
+
+			// Was it valid?
+			if (compNew)
+			{
+				// Initialize it
+				memset(compNew, 0, sizeof(SComp));
+
+				// Populate it
+				compNew->line		= line;
+				compNew->iCode		= comp->iCode;
+				compNew->start		= comp->start;
+				compNew->length		= comp->length;
+
+				// All done!
+			}
+		}
+
+		// Return our new one, no matter if it was a success or not
+		return(compNew);
+	}
+
+
+
+
+//////////
+//
+// Called as a callback from the custom handler callback function, to do merge components into
+// a new one, and delete the one(s) which were merged.
+//
+// NOTE:  It's theoretically possible that there could be a gap here, such as a component next to
+//        another component where there used to be a whitespace inbetween (or anything else), so
+//        the components are no longer right by each other.  The caller will have to manually
+//        handle that condition.
+//
+//////
+	SComp* iiComps_xlatToOthers_callback__mergeCompsCallback(SThisCode* thisCode, SComp* comp, SLine* line, u32 tnCount, u32 tniCodeNew)
+	{
+		u32			lnI;
+		SComp*	compThis;
+
+
+// TODO:  untested code, breakpoint and examine
+debug_break;
+		// Make sure our environment is sane
+		if (comp)
+		{
+			// Iterate for each merging
+			for (lnI = 1, compThis = comp->ll.nextComp; compThis && lnI < tnCount; lnI++, compThis = comp->ll.nextComp)
+			{
+				// Absorb compThis's length into comp's "collective"
+				comp->length += compThis->length;
+
+				// Delete this component
+				iiComps_xlatToOthers_callback__deleteCompsCallback(thisCode, compThis, comp->line);
+
+				// Note:  compThis is always assigned comp->ll.next, because its next component keeps being updated after the delete
+			}
+			// When we get here, everything's merged
+		}
+		// Return the original component as a pass through (in case this is used as an intermediate function)
+		return(comp);
+	}
 //////////
 //
 // Called to create a new node and attach it to the hint as indicated.

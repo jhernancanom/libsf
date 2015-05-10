@@ -567,7 +567,7 @@ struct SObjPropMap;
 	bool					iDoesHaystackStartWithNeedle			(s8* haystack, s32 haystackLength, s8* needle, s32 needleLength);
 	bool					iDoesHaystackStartWithNeedleCase		(s8* haystack, s32 haystackLength, s8* needle, s32 needleLength);
 	s8						iLowerCharacter							(s8 ch);
-	u32						iSkipWhitespaces						(s8* source, u32* offset, u32 maxLength);
+	u32						iSkip_whitespaces						(s8* source, u32* offset, u32 maxLength);
 	u32						iiCountContiguousCharacters				(s8* source, u32 maxExpectedLength);
 	u32						iiCountContiguousCharacters				(u8* source, u32 maxExpectedLength);
 

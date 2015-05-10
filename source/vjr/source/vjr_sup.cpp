@@ -758,7 +758,7 @@
 		//////////
 		// Create base objects
 		//////
-			_settings = iObj_create(NULL, _OBJ_TYPE_SETTINGS, NULL);
+			_settings				= iObj_create(NULL, _OBJ_TYPE_SETTINGS, NULL);
 
 
 		//////////
@@ -3415,7 +3415,7 @@
 
 		// Skip past any whitespaces
 		lnWhitespaces = 0;
-		iSkipWhitespaces(haystack, (u32*)&lnWhitespaces, haystackLength);
+		iSkip_whitespaces(haystack, (u32*)&lnWhitespaces, haystackLength);
 
 		// Check to see if the specified word / phrase / whatever exists on this line
 		if (haystackLength - lnWhitespaces >= needleLength)
@@ -3440,7 +3440,7 @@
 
 		// Skip past any whitespaces
 		lnWhitespaces = 0;
-		iSkipWhitespaces(haystack, (u32*)&lnWhitespaces, haystackLength);
+		iSkip_whitespaces(haystack, (u32*)&lnWhitespaces, haystackLength);
 
 		// Check to see if the specified word / phrase / whatever exists on this line
 		if (haystackLength - lnWhitespaces >= needleLength)
@@ -3470,7 +3470,7 @@
 // whitespace character, and indicate how many we skipped.
 //
 //////
-	u32 iSkipWhitespaces(s8* source, u32* offset, u32 maxLength)
+	u32 iSkip_whitespaces(s8* source, u32* offset, u32 maxLength)
 	{
 		s8		c;
 		u32		lnLength, lnOffset;

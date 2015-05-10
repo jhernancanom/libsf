@@ -82,27 +82,30 @@
 
 
 
+// Julian and seconds stored separately
 struct SDateTime
 {
 	s32		julian;							// Julian day number
 	f32		seconds;						// Seconds elapsed since midnight
 };
 
+// Julian-seconds stored as an integer
 struct SDateTimeX
 {
-	u64		jseconds;						// Julian-seconds, formula is the sum of:	  millisecond / 1000    or    nanosecond  / 1000000
-											//											+ second
-											//											+ minute      * 60
-											//											+ hour        * 60 * 60
-											//											+ julian      * 60 * 60 * 24
+	u64		jseconds;						// Julian-seconds, formula is the sum of:	/ nanosecond  * 1    \		// Note:  Only one of these is used for input, but both are extracted for output
+											//											\ millisecond * 1000 /
+											//											+ second      * 1000000
+											//											+ minute      * 1000000 * 60
+											//											+ hour        * 1000000 * 60 * 60
+											//											+ julian      * 1000000 * 60 * 60 * 24
 };
 
 // Text format of YyyyMmDd date, as in 20150404 for Apr.04.2015
 struct SDate
 {
 	u8		yyyy[4];						// 4-digit year
-	u8		mm[4];							// 2-digit month
-	u8		dd[4];							// 2-digit day
+	u8		mm[2];							// 2-digit month
+	u8		dd[2];							// 2-digit day
 };
 
 struct SFont
@@ -126,12 +129,12 @@ struct SFont
 	HFONT		hfont;
 
 	// Internal Windows settings
-	s32			_sizeUsedForCreateFont;
-	u32			_size;
-	u32			_weight;
-	u32			_italics;
-	u32			_underline;
-	TEXTMETRIC	tm;
+	s32			_sizeUsedForCreateFont;		// Computed value based on passed font size
+	u32			_size;						// Actual point size
+	u32			_weight;					// Actual weight
+	u32			_italics;					// Actual italics setting
+	u32			_underline;					// Actual underline setting
+	TEXTMETRIC	tm;							// Text metrics computed at the time of creation
 };
 
 struct SHover
@@ -139,6 +142,60 @@ struct SHover
 	HWND		hwnd;						// Window for the hover
 	SBitmap*	bmp;						// Bitmap for the hover text
 };
+
+
+//////////
+// Structures used for processing
+//////
+	//////////
+	// Changes made here must sync up with iJDebiC_thisCode()
+	// BEGIN
+	//////
+		//////
+			//
+// TODO:  These should be moved to a shared file for use with iJDebiC_thisCode()
+			struct SSourceCode
+			{
+				SFunction*		firstFunction;			// First function in the program
+
+				SVariable*		params;					// The first parameter in the function
+				SVariable*		returns;				// The first return variable declared
+				SVariable*		privates;				// The first private variable declared
+				SVariable*		locals;					// The first local variable declared
+				SVariable*		scoped;					// The first scoped/temporary variable used by the function
+
+				SEM*			sem;					// The source code for this program
+			};
+
+			struct SThisCode
+			{
+				SLL				ll;
+
+				SWindow*		win;					// Current window
+				SSourceCode*	definition;				// As defined at compile time
+				SSourceCode*	live;					// As exists live in this instance at this level
+			};
+			//
+		//////
+	//////
+	// END
+	//////////
+
+
+struct SFunctionParms
+{
+	bool			error;								// Was there an error in processing?
+	u32				errorNum;							// The error number
+
+	SVariable*		returns[_MAX_RETURN_COUNT];			// Return parameters
+	s32				rcount;								// Actual number of return parameters specified
+	s32				rmax;								// Maximum number allowed
+	s32				rmin;								// Minimum number required
+
+	SVariable*		params[_MAX_PARAMETER_COUNT];		// Input parameters
+	s32				pcount;								// Number of input parameters actually passed
+};
+
 
 struct SEvent
 {

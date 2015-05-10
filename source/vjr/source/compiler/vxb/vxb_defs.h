@@ -190,28 +190,29 @@ struct SThisCode;
 	bool					iFindFirstOccurrenceOfAsciiCharacter		(SThisCode* thisCode, s8* tcHaystack, u32 tnHaystackLength, s8 tcNeedle, u32* tnPosition);
 	u32						iGetNextUid									(SThisCode* thisCode);
 
+	// Start end chains
 	void*					iSEChain_prepend							(SThisCode* thisCode, SStartEnd* ptrSE, u32 tnUniqueId, u32 tnUniqueIdExtra, u32 tnSize, u32 tnBlockSizeIfNewBlockNeeded, bool* tlResult);
 	void*					iSEChain_append								(SThisCode* thisCode, SStartEnd* ptrSE, u32 tnUniqueId, u32 tnUniqueIdExtra, u32 tnSize, u32 tnBlockSizeIfNewBlockNeeded, bool* tlResult);
 	void*					iSEChain_appendOrPrepend					(SThisCode* thisCode, SStartEnd* ptrSE, u32 tnUniqueId, u32 tnUniqueIdExtra, u32 tnSize, u32 tnBlockSizeIfNewBlockNeeded, bool tlPrepend, bool* tlResult);
-	u32						iSkipWhitespaces							(SThisCode* thisCode, s8* tcData, u32 tnMaxLength);
-	u32						iSkipToCarriageReturnLineFeed				(SThisCode* thisCode, s8* tcData, u32 tnMaxLength, u32* tnCRLF_Length);
+	u32						iSkip_whitespaces							(SThisCode* thisCode, s8* tcData, u32 tnMaxLength);
+	u32						iSkip_toCrLf								(SThisCode* thisCode, s8* tcData, u32 tnMaxLength, u32* tnCRLF_Length);
 	void					iSEChain_appendMasterList					(SThisCode* thisCode, SStartEnd* ptrSE, SMasterList* ptrNew, u32 tnHint, u32 tnBlockSizeIfNewBlockNeeded);
 	bool					iSEChain_allocateAdditionalMasterSlots		(SThisCode* thisCode, SStartEnd* ptrSE, u32 tnBlockSize);
-
-	s32						iTranslateToCompsTest						(SThisCode* thisCode, cu8* tcHaystack, cu8* tcNeedle, s32 tnLength);
-	bool					iioss_translateCompsToOthersCallback		(SThisCode* thisCode, SStartEndCallback* cb);
 	void*					iSEChain_searchByCallback					(SThisCode* thisCode, SStartEnd* ptrSE, SStartEndCallback* cb);
 	void*					iSEChain_searchByUniqueId					(SThisCode* thisCode, SStartEnd* ptrSE, u64 tnUniqueId);
 	void					iSEChain_iterateThroughForCallback			(SThisCode* thisCode, SStartEnd* ptrSE, SStartEndCallback* cb);
-	void					iiComps_xlatToOthersCallback__insertCompByCompCallback		(SThisCode* thisCode, SComp* compRef, SComp* compNew, bool tlInsertAfter);
-	void					iiComps_xlatToOthersCallback__insertCompByParamsCallback	(SThisCode* thisCode, SComp* compRef, SLine* line, u32 tniCode, u32 tnStart, s32 tnLength, bool tlInsertAfter);
-	void					iiComps_xlatToOthersCallback__deleteCompsCallback			(SThisCode* thisCode, SComp* comp, SLine* line);
-	SComp*					iiComps_xlatToOthersCallback__cloneCompsCallback			(SThisCode* thisCode, SComp* comp, SLine* line);
-	SComp*					iiComps_xlatToOthersCallback__mergeCompsCallback			(SThisCode* thisCode, SComp* comp, SLine* line, u32 tnCount, u32 tniCodeNew);
 	void					iSEChain_deleteFrom							(SThisCode* thisCode, SStartEnd* ptrSE, void* ptrCaller, bool tlDeletePointers);
 	SLL*					iSEChain_completelyMigrateSLLByPtr			(SThisCode* thisCode, SStartEnd* ptrSEDst, SStartEnd* ptrSESrc, SLL* ptr, u32 tnHint, u32 tnBlockSize);
 	SLL*					iSEChain_completelyMigrateSLLByNum			(SThisCode* thisCode, SStartEnd* ptrSEDst, SStartEnd* ptrSESrc, u32 lnSrcNum, u32 tnHint, u32 tnBlockSize);
 	SMasterList*			iSEChain_migrateByNum						(SThisCode* thisCode, SStartEnd* ptrSEDst, SStartEnd* ptrSESrc, u32 lnSrcNum, u32 tnHint, u32 tnBlockSize);
+
+	s32						iComps_xlatToComps_withTest					(SThisCode* thisCode, cu8* tcHaystack, cu8* tcNeedle, s32 tnLength);
+	bool					iiComps_xlatToOthers_callback				(SThisCode* thisCode, SStartEndCallback* cb);
+	void					iiComps_xlatToOthers_callback__insertCompByCompCallback		(SThisCode* thisCode, SComp* compRef, SComp* compNew, bool tlInsertAfter);
+	void					iiComps_xlatToOthers_callback__insertCompByParamsCallback	(SThisCode* thisCode, SComp* compRef, SLine* line, u32 tniCode, u32 tnStart, s32 tnLength, bool tlInsertAfter);
+	void					iiComps_xlatToOthers_callback__deleteCompsCallback			(SThisCode* thisCode, SComp* comp, SLine* line);
+	SComp*					iiComps_xlatToOthers_callback__cloneCompsCallback			(SThisCode* thisCode, SComp* comp, SLine* line);
+	SComp*					iiComps_xlatToOthers_callback__mergeCompsCallback			(SThisCode* thisCode, SComp* comp, SLine* line, u32 tnCount, u32 tniCodeNew);
 
 	// Node functions
 	SNode*					iNode_create								(SThisCode* thisCode, SNode** root, SNode* hint, u32 tnDirection, SNode* parent, SNode* prev, SNode* next, SNode* left, SNode* right);
