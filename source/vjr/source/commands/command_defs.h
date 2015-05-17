@@ -399,6 +399,26 @@ struct SFunctionParms;
 	void				function_secondsxbundle						(SThisCode* thisCode, SFunctionParms* rpar);
 	void				function_secondsxunbundle					(SThisCode* thisCode, SFunctionParms* rpar);
 
+	// May.17.2015 -- Functions Rick is currently working on, see rick_in_progress.cpp
+	void				function_pdjobstart							(SThisCode* thisCode, SFunctionParms* rpar);
+	void				function_pdaddpage							(SThisCode* thisCode, SFunctionParms* rpar);
+	void				function_pdaddpanel							(SThisCode* thisCode, SFunctionParms* rpar);
+	void				function_pdtext								(SThisCode* thisCode, SFunctionParms* rpar);
+	void				function_pdtexteval							(SThisCode* thisCode, SFunctionParms* rpar);
+	void				function_pdimage							(SThisCode* thisCode, SFunctionParms* rpar);
+	void				function_pdpanel							(SThisCode* thisCode, SFunctionParms* rpar);
+	void				function_pdhline							(SThisCode* thisCode, SFunctionParms* rpar);
+	void				function_pdvline							(SThisCode* thisCode, SFunctionParms* rpar);
+	void				function_pdrect								(SThisCode* thisCode, SFunctionParms* rpar);
+	void				function_pdpagedelete						(SThisCode* thisCode, SFunctionParms* rpar);
+	void				function_pdpagereorder						(SThisCode* thisCode, SFunctionParms* rpar);
+	void				function_pdwidth							(SThisCode* thisCode, SFunctionParms* rpar);
+	void				function_pdheight							(SThisCode* thisCode, SFunctionParms* rpar);
+	void				function_pdpmetrics							(SThisCode* thisCode, SFunctionParms* rpar);
+	void				function_pdtextmetrics						(SThisCode* thisCode, SFunctionParms* rpar);
+	void				function_pdjobdelete						(SThisCode* thisCode, SFunctionParms* rpar);
+
+
 
 // Added temporarily until the processing engine is coded
 	void				function_concatenate						(SThisCode* thisCode, SFunctionParms* rpar);
@@ -428,6 +448,9 @@ struct SFunctionParms;
 	void				command_open								(SThisCode* thisCode, SComp* compCommand, SFunctionParms* rpar);
 	void				command_set									(SThisCode* thisCode, SComp* compCommand, SFunctionParms* rpar);
 	void				command_use									(SThisCode* thisCode, SComp* compCommand, SFunctionParms* rpar);
+
+	// May.17.2015 -- Functions Rick is currently working on, see rick_in_progress.cpp
+	void				command_report								(SThisCode* thisCode, SComp* compCommand, SFunctionParms* rpar);
 
 
 

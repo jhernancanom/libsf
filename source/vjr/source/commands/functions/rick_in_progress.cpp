@@ -1173,3 +1173,676 @@
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
 		return;
 	}
+
+
+
+
+//////////
+//
+// Function: PDJOBSTART()
+// Starts a new PrintDoc job.
+//
+//////
+// Version 0.70
+// Last update:
+//     May.17.2015
+//////
+// Change log:
+//     May.17.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     r1			-- Output job handle
+//     p1			-- Job name
+//////
+// Example:
+//    lnJob = PDJOBSTART("My Print Job")
+//////
+	void function_pdjobstart(SThisCode* thisCode, SFunctionParms* rpar)
+	{
+		SVariable*	varDocName = rpar->params[0];
+
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return;
+	}
+
+
+
+
+//////////
+//
+// Function: PDADDPAGE()
+// Adds a new page to the PrintDoc job.
+//
+//////
+// Version 0.70
+// Last update:
+//     May.17.2015
+//////
+// Change log:
+//     May.17.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     r1			-- Output page handle
+//     p1			-- Job handle
+//     p2			-- Page color
+//     p3			-- Width
+//     p4			-- Height
+//     p5			-- Left margin
+//     p6			-- Top margin
+//     p7			-- Right margin
+//     p8			-- Bottom margin
+//////
+// Example:
+//    lnPage = PDADDPAGE(lnJob, RGB(255,255,255), 8.5, 11.0, 0.75, 0.75, 0.75, 0.75)
+//////
+	void function_pdaddpage(SThisCode* thisCode, SFunctionParms* rpar)
+	{
+		SVariable*	varJobHandle	= rpar->params[0];
+		SVariable*	varPageColor	= rpar->params[1];
+		SVariable*	varWidth		= rpar->params[2];
+		SVariable*	varHeight		= rpar->params[3];
+		SVariable*	varLeft			= rpar->params[4];
+		SVariable*	varTop			= rpar->params[5];
+		SVariable*	varRight		= rpar->params[6];
+		SVariable*	varBottom		= rpar->params[7];
+
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return;
+	}
+
+
+
+
+//////////
+//
+// Function: PDADDPANEL()
+// Adds a new panel to the PrintDoc job.
+//
+//////
+// Version 0.70
+// Last update:
+//     May.17.2015
+//////
+// Change log:
+//     May.17.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     r1			-- Output page handle
+//     p1			-- Job handle
+//     p2			-- Panel color
+//     p3			-- Width		&& If negative, then has no defined width and uses its extents
+//     p4			-- Height		&& If negative, then has no defined height and uses its extents
+//////
+// Example:
+//    lnPage = PDADDPAGE(lnJob, RGB(255,255,255), 8.5, 11.0, 0.75, 0.75, 0.75, 0.75)
+//////
+	void function_pdaddpanel(SThisCode* thisCode, SFunctionParms* rpar)
+	{
+		SVariable*	varJobHandle	= rpar->params[0];
+		SVariable*	varPanelColor	= rpar->params[1];
+		SVariable*	varWidth		= rpar->params[2];
+		SVariable*	varHeight		= rpar->params[3];
+
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return;
+	}
+
+
+
+
+//////////
+//
+// Function: PDTEXT()
+// Adds text to the PrintDoc job.
+//
+//////
+// Version 0.70
+// Last update:
+//     May.17.2015
+//////
+// Change log:
+//     May.17.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Job handle
+//     p2			-- Page or panel handle
+//     p3			-- Upper-left Y coordinate for text		&& If negative, uses the current coordinate
+//     p4			-- Upper-left X coordinate for text		&& If negative, uses the current coordinate
+//     p5			-- Back color
+//     p6			-- Fore color
+//     p7			-- Text
+//     p8			-- Font name
+//     p9			-- Font size
+//     p10			-- Font flags (any combination of B=bold, I=italics, U=underline, S=strikethru)
+//////
+// Example:
+//    PDTEXT(lnJob, lnPage, 1.0, 1.0, RGB(255,255,0), RGB(0,0,0), "Sample text", "Ubuntu", 12, "B")
+//////
+	void function_pdtext(SThisCode* thisCode, SFunctionParms* rpar)
+	{
+		SVariable*	varJobHandle			= rpar->params[0];
+		SVariable*	varPageOrPanelHandle	= rpar->params[1];
+		SVariable*	varUpperLeftY			= rpar->params[2];
+		SVariable*	varUpperLeftX			= rpar->params[3];
+		SVariable*	varBackColor			= rpar->params[4];
+		SVariable*	varForeColor			= rpar->params[5];
+		SVariable*	varText					= rpar->params[6];
+		SVariable*	varFontName				= rpar->params[7];
+		SVariable*	varFontSize				= rpar->params[8];
+		SVariable*	varFontFlags			= rpar->params[9];
+
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return;
+	}
+
+
+
+
+//////////
+//
+// Function: PDTEXTEVAL()
+// Adds an EVAL() to the PrintDoc job, to be evaluated programmatically when printed.
+//
+//////
+// Version 0.70
+// Last update:
+//     May.17.2015
+//////
+// Change log:
+//     May.17.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Job handle
+//     p2			-- Page or panel handle
+//     p3			-- Upper-left Y coordinate for text		&& If negative, uses the current coordinate
+//     p4			-- Upper-left X coordinate for text		&& If negative, uses the current coordinate
+//     p5			-- Back color
+//     p6			-- Fore color
+//     p7			-- Formula to evaluate at runtime
+//     p8			-- Font name
+//     p9			-- Font size
+//     p10			-- Font flags (any combination of B=bold, I=italics, U=underline, S=strikethru)
+//////
+// Example:
+//    PDTEXTEVAL(lnJob, lnPage, 1.0, 1.0, RGB(255,255,0), RGB(0,0,0), "ALLTRIM(myAlias.cField)", "Ubuntu", 12, "B")
+//////
+	void function_pdtexteval(SThisCode* thisCode, SFunctionParms* rpar)
+	{
+		SVariable*	varJobHandle			= rpar->params[0];
+		SVariable*	varPageOrPanelHandle	= rpar->params[1];
+		SVariable*	varUpperLeftY			= rpar->params[2];
+		SVariable*	varUpperLeftX			= rpar->params[3];
+		SVariable*	varBackColor			= rpar->params[4];
+		SVariable*	varForeColor			= rpar->params[5];
+		SVariable*	varTextEval				= rpar->params[6];
+		SVariable*	varFontName				= rpar->params[7];
+		SVariable*	varFontSize				= rpar->params[8];
+		SVariable*	varFontFlags			= rpar->params[9];
+
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return;
+	}
+
+
+
+
+//////////
+//
+// Function: PDIMAGE()
+// Adds an image to the PrintDoc job.
+//
+//////
+// Version 0.70
+// Last update:
+//     May.17.2015
+//////
+// Change log:
+//     May.17.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Job handle
+//     p2			-- Page or panel handle
+//     p3			-- Upper-left Y coordinate for text		&& If negative, uses the current coordinate
+//     p4			-- Upper-left X coordinate for text		&& If negative, uses the current coordinate
+//     p5			-- Width to use for the image (will scale up/down as needed based on image resolution)
+//     p6			-- Height to use for the image (will scale up/down as needed based on image resolution)
+//     p7			-- Pathname to image
+//////
+// Example:
+//    PDIMAGE(lnJob, lnPage, 1.0, 1.0, 3.0, 3.0, "c:\path\to\myimg.png")
+//////
+	void function_pdimage(SThisCode* thisCode, SFunctionParms* rpar)
+	{
+		SVariable*	varJobHandle			= rpar->params[0];
+		SVariable*	varPageOrPanelHandle	= rpar->params[1];
+		SVariable*	varUpperLeftY			= rpar->params[2];
+		SVariable*	varUpperLeftX			= rpar->params[3];
+		SVariable*	varWidth				= rpar->params[4];
+		SVariable*	varHeight				= rpar->params[5];
+		SVariable*	varPathname				= rpar->params[6];
+
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return;
+	}
+
+
+
+
+//////////
+//
+// Function: PDPANEL()
+// Places a panel onto/into another panel or page for the PrintDoc job.
+//
+//////
+// Version 0.70
+// Last update:
+//     May.17.2015
+//////
+// Change log:
+//     May.17.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Job handle
+//     p2			-- Page or panel handle for destination
+//     p3			-- Panel handle for source
+//     p4			-- Upper-left Y coordinate to merge into
+//     p5			-- Upper-left X coordinate to merge into
+//     p6			-- Width to use (if less than panel's width, will appear as a stub on print preview which can be expanded)
+//     p7			-- Height to use (if less than panel's height, will appear as a stub on print preview which can be expanded)
+//////
+// Example:
+//    PDPANEL(lnJob, lnPage, lnPanel, 1.0, 1.0, 4.5, 1.5,)
+//////
+	void function_pdpanel(SThisCode* thisCode, SFunctionParms* rpar)
+	{
+		SVariable*	varJobHandle			= rpar->params[0];
+		SVariable*	varPageOrPanelHandleDst	= rpar->params[1];
+		SVariable*	varPanelHandleSrc		= rpar->params[2];
+		SVariable*	varUpperLeftY			= rpar->params[3];
+		SVariable*	varUpperLeftX			= rpar->params[4];
+		SVariable*	varWidth				= rpar->params[5];
+		SVariable*	varHeight				= rpar->params[6];
+
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return;
+	}
+
+
+
+
+//////////
+//
+// Function: PDHLINE()
+// Places a horizontal line onto panel or page for the PrintDoc job.
+//
+//////
+// Version 0.70
+// Last update:
+//     May.17.2015
+//////
+// Change log:
+//     May.17.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Job handle
+//     p2			-- Page or panel handle for destination
+//     p3			-- Color
+//     p4			-- Y coordinate vertically
+//     p5			-- Left-most X coordinate
+//     p6			-- Right-most X coordinate
+//     p7			-- Line thickness to use in inches
+//////
+// Example:
+//    PDHLINE(lnJob, lnPage, RGB(0,0,0), 3.0, 1.0, 7.5, 0.1)
+//////
+	void function_pdhline(SThisCode* thisCode, SFunctionParms* rpar)
+	{
+		SVariable*	varJobHandle			= rpar->params[0];
+		SVariable*	varPageOrPanelHandle	= rpar->params[1];
+		SVariable*	varColor				= rpar->params[2];
+		SVariable*	varY					= rpar->params[3];
+		SVariable*	varLeftX				= rpar->params[4];
+		SVariable*	varRightX				= rpar->params[5];
+		SVariable*	varThickness			= rpar->params[6];
+
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return;
+	}
+
+
+
+
+//////////
+//
+// Function: PDHLINE()
+// Places a vertical line onto panel or page for the PrintDoc job.
+//
+//////
+// Version 0.70
+// Last update:
+//     May.17.2015
+//////
+// Change log:
+//     May.17.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Job handle
+//     p2			-- Page or panel handle for destination
+//     p3			-- Color
+//     p4			-- X coordinate horizontally
+//     p5			-- Top-most Y coordinate
+//     p6			-- Bottom-most Y coordinate
+//     p7			-- Line thickness to use in inches
+//////
+// Example:
+//    PDVLINE(lnJob, lnPage, RGB(0,0,0), 3.0, 1.0, 7.5, 0.1)
+//////
+	void function_pdVline(SThisCode* thisCode, SFunctionParms* rpar)
+	{
+		SVariable*	varJobHandle			= rpar->params[0];
+		SVariable*	varPageOrPanelHandle	= rpar->params[1];
+		SVariable*	varColor				= rpar->params[2];
+		SVariable*	varx					= rpar->params[3];
+		SVariable*	varTopY					= rpar->params[4];
+		SVariable*	varBottomY				= rpar->params[5];
+		SVariable*	varThickness			= rpar->params[6];
+
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return;
+	}
+
+
+
+
+//////////
+//
+// Function: PDRECT()
+// Places a rectangle onto panel or page for the PrintDoc job.
+//
+//////
+// Version 0.70
+// Last update:
+//     May.17.2015
+//////
+// Change log:
+//     May.17.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Job handle
+//     p2			-- Page or panel handle for destination
+//     p3			-- Color
+//     p4			-- Upper-left Y coordinate
+//     p5			-- Upper-left X coordinate
+//     p6			-- Lower-right Y coordinate
+//     p7			-- Lower-right X coordinate
+//     p8			-- Line thickness to use in inches
+//////
+// Example:
+//    PDRECT(lnJob, lnPage, RGB(0,0,0), 1.0, 1.0, 4.0, 4.0, 0.1)
+//////
+	void function_pdrect(SThisCode* thisCode, SFunctionParms* rpar)
+	{
+		SVariable*	varJobHandle			= rpar->params[0];
+		SVariable*	varPageOrPanelHandle	= rpar->params[1];
+		SVariable*	varColor				= rpar->params[2];
+		SVariable*	varUpperLeftY			= rpar->params[3];
+		SVariable*	varUpperLeftX			= rpar->params[4];
+		SVariable*	varLowerRightY			= rpar->params[5];
+		SVariable*	varLowerRightX			= rpar->params[6];
+		SVariable*	varThickness			= rpar->params[7];
+
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return;
+	}
+
+
+
+
+//////////
+//
+// Function: PDPAGEDELETE()
+// Deletes a page from the PrintDoc job.
+//
+//////
+// Version 0.70
+// Last update:
+//     May.17.2015
+//////
+// Change log:
+//     May.17.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Job handle
+//     p2			-- Page handle to delete
+//////
+// Example:
+//    PDPAGEDELETE(lnJob, lnPage)
+//////
+	void function_pdpagedelete(SThisCode* thisCode, SFunctionParms* rpar)
+	{
+		SVariable*	varJobHandle	= rpar->params[0];
+		SVariable*	varPageHandle	= rpar->params[1];
+
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return;
+	}
+
+
+
+
+//////////
+//
+// Function: PDPAGEREORDER()
+// Reorders a page within the PrintDoc job.
+//
+//////
+// Version 0.70
+// Last update:
+//     May.17.2015
+//////
+// Change log:
+//     May.17.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Job handle
+//     p2			-- Page handle for reference
+//     p3			-- Page handle to move
+//     p4			-- Move after?
+//////
+// Example:
+//    PGPAGEREORDER(lnJob, lnPage, lnPageMove, .t.)
+//////
+	void function_pdpagereorder(SThisCode* thisCode, SFunctionParms* rpar)
+	{
+		SVariable*	varJobHandle		= rpar->params[0];
+		SVariable*	varPageHandleRef	= rpar->params[1];
+		SVariable*	varPageHandleMove	= rpar->params[2];
+		SVariable*	varMoveAfter		= rpar->params[3];
+
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return;
+	}
+
+
+
+
+//////////
+//
+// Function: PDWIDTH()
+// Returns the width of the page or panel from the PrintDoc job.
+//
+//////
+// Version 0.70
+// Last update:
+//     May.17.2015
+//////
+// Change log:
+//     May.17.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     r1			-- Output Width
+//     p1			-- Job handle
+//     p2			-- Page or panel to query
+//////
+// Example:
+//    lfWidth = PDWIDTH(lnJob, lnPage)
+//    lfWidth = PDWIDTH(lnJob, lnPanel)
+//////
+	void function_pdwidth(SThisCode* thisCode, SFunctionParms* rpar)
+	{
+		SVariable*	varJobHandle	= rpar->params[0];
+		SVariable*	varPageHandle	= rpar->params[1];
+
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return;
+	}
+
+
+
+
+//////////
+//
+// Function: PDHEIGHT()
+// Returns the height of the page or panel from the PrintDoc job.
+//
+//////
+// Version 0.70
+// Last update:
+//     May.17.2015
+//////
+// Change log:
+//     May.17.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     r1			-- Output Height
+//     p1			-- Job handle
+//     p2			-- Page or panel to query
+//////
+// Example:
+//    lfHeight = PDHEIGHT(lnJob, lnPage)
+//    lfHeight = PDHEIGHT(lnJob, lnPanel)
+//////
+	void function_pdheight(SThisCode* thisCode, SFunctionParms* rpar)
+	{
+		SVariable*	varJobHandle	= rpar->params[0];
+		SVariable*	varPageHandle	= rpar->params[1];
+
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return;
+	}
+
+
+
+
+//////////
+//
+// Function: PDPMETRICS()
+// Returns the current state of the page or panel from the PrintDoc job.
+//
+//////
+// Version 0.70
+// Last update:
+//     May.17.2015
+//////
+// Change log:
+//     May.17.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     r1			-- Output Current Y
+//     r2			-- Output Current X
+//     r3			-- Output Width of panel or page
+//     r4			-- Output Height of panel or page
+//     r5			-- Output Left margin
+//     r6			-- Output Top margin
+//     r7			-- Output Right margin
+//     r8			-- Output Bottom margin
+//     p1			-- Job handle
+//     p2			-- Page or panel to query
+//////
+// Example:
+//    lfHeight = PDPMETRICS(lnJob, lnPage)
+//    lfHeight = PDPMETRICS(lnJob, lnPanel)
+//////
+	void function_pdpmetrics(SThisCode* thisCode, SFunctionParms* rpar)
+	{
+		SVariable*	varJobHandle			= rpar->params[0];
+		SVariable*	varPageOrPanelHandle	= rpar->params[1];
+
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return;
+	}
+
+
+
+
+//////////
+//
+// Function: PDTEXTMETRICS()
+// Returns the width and height of the what the text would be on the page or panel from the PrintDoc job.
+//
+//////
+// Version 0.70
+// Last update:
+//     May.17.2015
+//////
+// Change log:
+//     May.17.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     r1			-- Output Width
+//     r2			-- Output Height
+//     p1			-- Job handle
+//     p2			-- Page or panel to query
+//     p3			-- Text
+//     p4			-- Font name
+//     p5			-- Font size
+//     p6			-- Font flags
+//////
+// Example:
+//    lfHeight = PDTEXTMETRICS(lnJob, lnPage, "Sample text", "Ubuntu", 12, "B")
+//    lfHeight = PDTEXTMETRICS(lnJob, lnPanel, "Sample text", "Ubuntu", 12, "B")
+//////
+	void function_pdtextmetrics(SThisCode* thisCode, SFunctionParms* rpar)
+	{
+		SVariable*	varJobHandle			= rpar->params[0];
+		SVariable*	varPageOrPanelHandle	= rpar->params[1];
+		SVariable*	varText					= rpar->params[2];
+		SVariable*	varFontName				= rpar->params[3];
+		SVariable*	varFontSize				= rpar->params[4];
+		SVariable*	varFontFlags			= rpar->params[5];
+
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return;
+	}
+
+
+
+
+//////////
+//
+// Function: PDJOBDELETE()
+// Deletes a PrintDoc job.
+// Note:  Normally printdoc jobs are auto-deleted after their REPORT PRINTDOC command.
+// Note:  If NORELEASE is specified, then the job remains, and this function can be used to delete it
+//
+//////
+// Version 0.70
+// Last update:
+//     May.17.2015
+//////
+// Change log:
+//     May.17.2015 - Initial creation by Rick C. Hodgin
+//////
+// Parameters:
+//     p1			-- Job handle
+//////
+// Example:
+//    PDJOBDELETE(lnJob)
+//////
+	void function_pdjobdelete(SThisCode* thisCode, SFunctionParms* rpar)
+	{
+		SVariable*	varJobHandle	= rpar->params[0];
+
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return;
+	}
