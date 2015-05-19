@@ -1785,7 +1785,7 @@ void iiComps_decodeSyntax_returns(SThisCode* thisCode, SCompileVxbContext* vxb)
 // iCode is updated as well.
 //
 //////
-	u32 iComps_combineN(SThisCode* thisCode, SComp* comp, u32 tnCount, s32 tnNewICode, s32 tnNewICat, SBgra* newColor)
+	u32 iComps_combineN(SThisCode* thisCode, SComp* comp, u32 tnCount, s32 tnNew_iCode, u32 tnNew_iCat, SBgra* newColor)
 	{
 		u32		lnCount;
 		SComp*	compNext;
@@ -1822,10 +1822,10 @@ void iiComps_decodeSyntax_returns(SThisCode* thisCode, SCompileVxbContext* vxb)
 			//////////
 			// Mark it as the new iCode
 			//////
-				if (tnNewICode > 0)
+				if (tnNew_iCode > 0)
 				{
-					comp->iCode = tnNewICode;
-					comp->iCat	= tnNewICat;
+					comp->iCode = tnNew_iCode;
+					comp->iCat	= tnNew_iCat;
 					comp->color	= newColor;
 				}
 
@@ -1852,7 +1852,7 @@ void iiComps_decodeSyntax_returns(SThisCode* thisCode, SCompileVxbContext* vxb)
 // component of [c:\some\dir\file.txt].
 //
 //////
-	u32 iComps_combineAdjacent(SThisCode* thisCode, SComp* compLeftmost, s32 tniCode, s32 tniCat, SBgra* tnColor, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount)
+	u32 iComps_combineAdjacent(SThisCode* thisCode, SComp* compLeftmost, s32 tniCode, u32 tniCat, SBgra* tnColor, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount)
 	{
 		u32 lnCombined;
 
@@ -2271,7 +2271,7 @@ void iiComps_decodeSyntax_returns(SThisCode* thisCode, SCompileVxbContext* vxb)
 // Called to search for unmatched codes, a left and right, and combines everything between
 //
 //////
-	u32 iComps_combineAllBetween2(SThisCode* thisCode, SLine* line, s32 tniCodeNeedleLeft, s32 tniCodeNeedleRight, s32 tniCodeCombined, s32 tniCat, SBgra* syntaxHighlightColor, bool tlUseBoldFont)
+	u32 iComps_combineAllBetween2(SThisCode* thisCode, SLine* line, s32 tniCodeNeedleLeft, s32 tniCodeNeedleRight, s32 tniCodeCombined, u32 tniCat, SBgra* syntaxHighlightColor, bool tlUseBoldFont)
 	{
 		u32		lnCount;
 		SComp*	compNext;

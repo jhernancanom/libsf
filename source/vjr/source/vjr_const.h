@@ -107,6 +107,12 @@ typedef SEM**		SEMpp;
 
 
 //////////
+// For the lower 256 values of flag-mapped comp->iCat codes
+//////
+	#define iCat(x)										(x & 0xff)
+
+
+//////////
 // Macro helpers
 //////
 	// Note:  A variable can still have its original type and be NULL, so you must also test var->value members:

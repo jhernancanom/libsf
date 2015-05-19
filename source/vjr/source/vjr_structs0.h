@@ -469,7 +469,7 @@ struct SAsciiCompSearcher
 	bool		repeats;												// Can this item repeat?  Or is this a one-shot keyword?
 	s32			iCode;													// An associated code to store when this entry is found
 	bool		firstOnLine;											// Should this item ONLY be the first on line?
-	s32			iCat;													// This entry's general category (function, operator, keyword, flow)
+	u32			iCat;													// This entry's general category (function, operator, keyword, flow)
 
 	// For syntax highlighting
 	SBgra*		syntaxHighlightColor;									// Color to display this component in
@@ -527,7 +527,7 @@ struct SComp
 	// Information about the component
 	SLine*			line;											// The line this component relates to
 	s32				iCode;											// Refer to _ICODE_* constants
-	s32				iCat;											// Refer to _ICAT_* constants
+	u32				iCat;											// Refer to _ICAT_* constants
 	SBgra*			color;											// Syntax highlight color
 	s32				start;											// Start into the indicates line's source code
 	s32				length;											// Length of the component
