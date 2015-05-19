@@ -85,14 +85,14 @@
 
 	// Force the bitmaps to be for definition
 	#define _BMP_LOCALITY 1
-	#include "graphics\bitmaps.h"
+	#include "\libsf\source\vjr\source\bmps\graphics\bitmaps.h"
 
 #elif defined(__GNUC__)
 	#include "/libsf/utils/common/cpp/common_types.h"
 
 	// Force the bitmaps to be for definition
 	#define _BMP_LOCALITY 1
-	#include "graphics/bitmaps.h"
+	#include "/libsf/source/vjr/source/bmps/graphics/bitmaps.h"
 
 #else
 	#error Unknown target for compilation (must be Windows or Linux)

@@ -130,7 +130,7 @@
 	#define _USE_MATH_DEFINES
 	#include <math.h>
 
-	#include "3rd_party\mapm\m_apm.h"
+	#include "\libsf\source\vjr\source\3rd_party\mapm\m_apm.h"
 
 	#include "sound\SDL-1.2.15\include\sdl\SDL.h"
 	#include "sound\SDL-1.2.15\include\sdl\SDL_audio.h"
@@ -159,49 +159,49 @@
 
 	#include "vjr_structs0.h"
 
-	#include "compiler\common\compiler_common.h"
+	#include "\libsf\source\vjr\source\compiler\common\compiler_common.h"
 
-	#include "compiler\vxb\vxb_const.h"
-	#include "compiler\vxb\vxb_structs.h"
-	#include "compiler\vxb\vxb_defs.h"
-	#include "compiler\vxb\vxb_dictionary.h"
-	#include "compiler\vxb\vxb_globals.h"
+	#include "\libsf\source\vjr\source\compiler\vxb\vxb_const.h"
+	#include "\libsf\source\vjr\source\compiler\vxb\vxb_structs.h"
+	#include "\libsf\source\vjr\source\compiler\vxb\vxb_defs.h"
+	#include "\libsf\source\vjr\source\compiler\vxb\vxb_dictionary.h"
+	#include "\libsf\source\vjr\source\compiler\vxb\vxb_globals.h"
 
-	#include "compiler\rdc\rdc_const.h"
-	#include "compiler\rdc\rdc_structs.h"
-	#include "compiler\rdc\rdc_defs.h"
-	#include "compiler\rdc\rdc_globals.h"
+	#include "\libsf\source\vjr\source\compiler\rdc\rdc_const.h"
+	#include "\libsf\source\vjr\source\compiler\rdc\rdc_structs.h"
+	#include "\libsf\source\vjr\source\compiler\rdc\rdc_defs.h"
+	#include "\libsf\source\vjr\source\compiler\rdc\rdc_globals.h"
 
-	#include "compiler\licoa\licoa_const.h"
-	#include "compiler\licoa\licoa_structs.h"
-	#include "compiler\licoa\licoa_defs.h"
-	#include "compiler\licoa\licoa_globals.h"
+	#include "\libsf\source\vjr\source\compiler\licoa\licoa_const.h"
+	#include "\libsf\source\vjr\source\compiler\licoa\licoa_structs.h"
+	#include "\libsf\source\vjr\source\compiler\licoa\licoa_defs.h"
+	#include "\libsf\source\vjr\source\compiler\licoa\licoa_globals.h"
 
-	#include "compiler\sourcelight\sourcelight_globals.h"
+	#include "\libsf\source\vjr\source\compiler\sourcelight\sourcelight_globals.h"
 
 	#include "dbf\dbf.h"
 
-	#include "sem\sem.h"
-	#include "sem\sem_line.h"
-	#include "sem\sem_extra_info.h"
+	#include "\libsf\source\vjr\source\sem\sem.h"
+	#include "\libsf\source\vjr\source\sem\sem_line.h"
+	#include "\libsf\source\vjr\source\sem\sem_extra_info.h"
 
-	#include "forms3d\grace.h"
+	#include "\libsf\source\vjr\source\forms3d\grace.h"
 
 	#include "vjr_structs.h"
 	#include "vjr_defs.h"
 	#include "vjr_globals.h"
 
-	#include "debugger\jdebic\jdebic.h"
+	#include "\libsf\source\vjr\source\debugger\jdebic\jdebic.h"
 	#include "fonts.h"
-	#include "bitmaps\bitmaps.h"
+	#include "\libsf\source\vjr\source\bitmaps\bitmaps.h"
 
-	#include "commands\command_defs.h"
+	#include "\libsf\source\vjr\source\commands\command_defs.h"
 	#include "sound\sound.h"
 	#include "engine.h"
-	#include "objects\accessors.h"
+	#include "\libsf\source\vjr\source\objects\accessors.h"
 
-	#include "bmps\graphics\bitmaps.h"
-	#include "settings\settings.h"
+	#include "\libsf\source\vjr\source\bmps\graphics\bitmaps.h"
+	#include "\libsf\source\vjr\source\settings\settings.h"
 
 	#include "\libsf\utils\sha1\sha1.h"
 	#include "\libsf\utils\sha1\sha1.cpp"
@@ -211,7 +211,7 @@
 	// Added for test purposes
 	//////
 		void iTest1(SThisCode* thisCode, SFunctionParms* rpar);
-		#include "test\test.cpp"
+		#include "\libsf\source\vjr\source\test\test.cpp"
 
 
 	//////////
@@ -219,32 +219,32 @@
 	// for ease of compilation across platforms and compilers.
 	//////
 		#include "vjr_sup.cpp"
-		#include "objects\accessors.cpp"
-		#include "objects\base.cpp"
-		#include "objects\callbacks.cpp"
-		#include "objects\copy.cpp"
-		#include "objects\create.cpp"
-		#include "objects\delete.cpp"
-		#include "objects\events.cpp"
-		#include "objects\render.cpp"
-		#include "objects\reset.cpp"
-		#include "bitmaps\bitmaps.cpp"
-		#include "compiler\vxb\vxb_compiler.cpp"
-		#include "compiler\vxb\vxb_dictionary.cpp"
-		#include "compiler\rdc\rdc_compiler.cpp"
-		#include "compiler\licoa\licoa_compiler.cpp"
-		#include "debugger\jdebic\jdebic.cpp"
-		#include "commands\commands.cpp"
+		#include "\libsf\source\vjr\source\objects\accessors.cpp"
+		#include "\libsf\source\vjr\source\objects\base.cpp"
+		#include "\libsf\source\vjr\source\objects\callbacks.cpp"
+		#include "\libsf\source\vjr\source\objects\copy.cpp"
+		#include "\libsf\source\vjr\source\objects\create.cpp"
+		#include "\libsf\source\vjr\source\objects\delete.cpp"
+		#include "\libsf\source\vjr\source\objects\events.cpp"
+		#include "\libsf\source\vjr\source\objects\render.cpp"
+		#include "\libsf\source\vjr\source\objects\reset.cpp"
+		#include "\libsf\source\vjr\source\bitmaps\bitmaps.cpp"
+		#include "\libsf\source\vjr\source\compiler\vxb\vxb_compiler.cpp"
+		#include "\libsf\source\vjr\source\compiler\vxb\vxb_dictionary.cpp"
+		#include "\libsf\source\vjr\source\compiler\rdc\rdc_compiler.cpp"
+		#include "\libsf\source\vjr\source\compiler\licoa\licoa_compiler.cpp"
+		#include "\libsf\source\vjr\source\debugger\jdebic\jdebic.cpp"
+		#include "\libsf\source\vjr\source\commands\commands.cpp"
 		#include "engine.cpp"
-		#include "sem\sem.cpp"
-		#include "sem\sem_line.cpp"
-		#include "sem\sem_extra_info.cpp"
-		#include "sound\sound.cpp"
-		#include "dbf\dbc.cpp"
-		#include "dbf\dbf.cpp"
-		#include "dbf\cdx.cpp"
-		#include "forms3d\grace.cpp"
-		#include "fonts.cpp"
+		#include "\libsf\source\vjr\source\sem\sem.cpp"
+		#include "\libsf\source\vjr\source\sem\sem_line.cpp"
+		#include "\libsf\source\vjr\source\sem\sem_extra_info.cpp"
+		#include "\libsf\source\vjr\source\sound\sound.cpp"
+		#include "\libsf\source\vjr\source\dbf\dbc.cpp"
+		#include "\libsf\source\vjr\source\dbf\dbf.cpp"
+		#include "\libsf\source\vjr\source\dbf\cdx.cpp"
+		#include "\libsf\source\vjr\source\forms3d\grace.cpp"
+		#include "\libsf\source\vjr\source\fonts.cpp"
 
 
 #elif defined(__GNUC__)
@@ -287,7 +287,7 @@
 	#define _USE_MATH_DEFINES
 	#include <math.h>
 
-	#include "3rd_party/mapm/m_apm.h"
+	#include "/libsf/source/vjr/source/3rd_party/mapm/m_apm.h"
 	
 	#if defined(__linux__)
 		#include <SDL2/SDL.h>
@@ -323,49 +323,49 @@
 
 	#include "vjr_structs0.h"
 
-	#include "compiler/common/compiler_common.h"
+	#include "/libsf/source/vjr/source/compiler/common/compiler_common.h"
 
-	#include "compiler/vxb/vxb_const.h"
-	#include "compiler/vxb/vxb_structs.h"
-	#include "compiler/vxb/vxb_defs.h"
-	#include "compiler/vxb/vxb_dictionary.h"
-	#include "compiler/vxb/vxb_globals.h"
+	#include "/libsf/source/vjr/source/compiler/vxb/vxb_const.h"
+	#include "/libsf/source/vjr/source/compiler/vxb/vxb_structs.h"
+	#include "/libsf/source/vjr/source/compiler/vxb/vxb_defs.h"
+	#include "/libsf/source/vjr/source/compiler/vxb/vxb_dictionary.h"
+	#include "/libsf/source/vjr/source/compiler/vxb/vxb_globals.h"
 
-	#include "compiler/rdc/rdc_const.h"
-	#include "compiler/rdc/rdc_structs.h"
-	#include "compiler/rdc/rdc_defs.h"
-	#include "compiler/rdc/rdc_globals.h"
+	#include "/libsf/source/vjr/source/compiler/rdc/rdc_const.h"
+	#include "/libsf/source/vjr/source/compiler/rdc/rdc_structs.h"
+	#include "/libsf/source/vjr/source/compiler/rdc/rdc_defs.h"
+	#include "/libsf/source/vjr/source/compiler/rdc/rdc_globals.h"
 
-	#include "compiler/licoa/licoa_const.h"
-	#include "compiler/licoa/licoa_structs.h"
-	#include "compiler/licoa/licoa_defs.h"
-	#include "compiler/licoa/licoa_globals.h"
+	#include "/libsf/source/vjr/source/compiler/licoa/licoa_const.h"
+	#include "/libsf/source/vjr/source/compiler/licoa/licoa_structs.h"
+	#include "/libsf/source/vjr/source/compiler/licoa/licoa_defs.h"
+	#include "/libsf/source/vjr/source/compiler/licoa/licoa_globals.h"
 
-	#include "compiler/sourcelight/sourcelight_globals.h"
+	#include "/libsf/source/vjr/source/compiler/sourcelight/sourcelight_globals.h"
 
-	#include "dbf/dbf.h"
+	#include "/libsf/source/vjr/source/dbf/dbf.h"
 
-	#include "sem/sem.h"
-	#include "sem/sem_line.h"
-	#include "sem/sem_extra_info.h"
+	#include "/libsf/source/vjr/source/sem/sem.h"
+	#include "/libsf/source/vjr/source/sem/sem_line.h"
+	#include "/libsf/source/vjr/source/sem/sem_extra_info.h"
 
-	#include "forms3d/grace.h"
+	#include "/libsf/source/vjr/source/forms3d/grace.h"
 
 	#include "vjr_structs.h"
 	#include "vjr_defs.h"
 	#include "vjr_globals.h"
 
-	#include "debugger/jdebic/jdebic.h"
+	#include "/libsf/source/vjr/source/debugger/jdebic/jdebic.h"
 	#include "fonts.h"
-	#include "bitmaps/bitmaps.h"
+	#include "/libsf/source/vjr/source/bitmaps/bitmaps.h"
 
-	#include "commands/command_defs.h"
-	#include "sound/sound.h"
+	#include "/libsf/source/vjr/source/commands/command_defs.h"
+	#include "/libsf/source/vjr/source/sound/sound.h"
 	#include "engine.h"
-	#include "objects/accessors.h"
+	#include "/libsf/source/vjr/source/objects/accessors.h"
 
-	#include "bmps/graphics/bitmaps.h"
-	#include "settings/settings.h"
+	#include "/libsf/source/vjr/source/bmps/graphics/bitmaps.h"
+	#include "/libsf/source/vjr/source/settings/settings.h"
 
 	#include "/libsf/utils/sha1/sha1.h"
 	#include "/libsf/utils/sha1/sha1.cpp"
@@ -375,7 +375,7 @@
 	// Added for test purposes
 	//////
 		void iTest1(SThisCode* thisCode, SFunctionParms* rpar);
-		#include "test/test.cpp"
+		#include "/libsf/source/vjr/source/test/test.cpp"
 
 
 	//////////
@@ -383,32 +383,32 @@
 	// for ease of compilation across platforms and compilers.
 	//////
 		#include "vjr_sup.cpp"
-		#include "objects/accessors.cpp"
-		#include "objects/base.cpp"
-		#include "objects/callbacks.cpp"
-		#include "objects/copy.cpp"
-		#include "objects/create.cpp"
-		#include "objects/delete.cpp"
-		#include "objects/events.cpp"
-		#include "objects/render.cpp"
-		#include "objects/reset.cpp"
-		#include "bitmaps/bitmaps.cpp"
-		#include "compiler/vxb/vxb_compiler.cpp"
-		#include "compiler/vxb/vxb_dictionary.cpp"
-		#include "compiler/rdc/rdc_compiler.cpp"
-		#include "compiler/licoa/licoa_compiler.cpp"
-		#include "debugger/jdebic/jdebic.cpp"
-		#include "commands/commands.cpp"
+		#include "/libsf/source/vjr/source/objects/accessors.cpp"
+		#include "/libsf/source/vjr/source/objects/base.cpp"
+		#include "/libsf/source/vjr/source/objects/callbacks.cpp"
+		#include "/libsf/source/vjr/source/objects/copy.cpp"
+		#include "/libsf/source/vjr/source/objects/create.cpp"
+		#include "/libsf/source/vjr/source/objects/delete.cpp"
+		#include "/libsf/source/vjr/source/objects/events.cpp"
+		#include "/libsf/source/vjr/source/objects/render.cpp"
+		#include "/libsf/source/vjr/source/objects/reset.cpp"
+		#include "/libsf/source/vjr/source/bitmaps/bitmaps.cpp"
+		#include "/libsf/source/vjr/source/compiler/vxb/vxb_compiler.cpp"
+		#include "/libsf/source/vjr/source/compiler/vxb/vxb_dictionary.cpp"
+		#include "/libsf/source/vjr/source/compiler/rdc/rdc_compiler.cpp"
+		#include "/libsf/source/vjr/source/compiler/licoa/licoa_compiler.cpp"
+		#include "/libsf/source/vjr/source/debugger/jdebic/jdebic.cpp"
+		#include "/libsf/source/vjr/source/commands/commands.cpp"
 		#include "engine.cpp"
-		#include "sem/sem.cpp"
-		#include "sem/sem_line.cpp"
-		#include "sem/sem_extra_info.cpp"
-		#include "sound/sound.cpp"
-		#include "dbf/dbc.cpp"
-		#include "dbf/dbf.cpp"
-		#include "dbf/cdx.cpp"
-		#include "forms3d/grace.cpp"
-		#include "fonts.cpp"
+		#include "/libsf/source/vjr/source/sem/sem.cpp"
+		#include "/libsf/source/vjr/source/sem/sem_line.cpp"
+		#include "/libsf/source/vjr/source/sem/sem_extra_info.cpp"
+		#include "/libsf/source/vjr/source/sound/sound.cpp"
+		#include "/libsf/source/vjr/source/dbf/dbc.cpp"
+		#include "/libsf/source/vjr/source/dbf/dbf.cpp"
+		#include "/libsf/source/vjr/source/dbf/cdx.cpp"
+		#include "/libsf/source/vjr/source/forms3d/grace.cpp"
+		#include "/libsf/source/vjr/source/fonts.cpp"
 
 		#if defined(__linux__)
 			#include "/libsf/utils/common/cpp/linux/windows.cpp"

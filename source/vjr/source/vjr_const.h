@@ -101,69 +101,6 @@ typedef SEM**		SEMpp;
 
 
 //////////
-// Colors
-//////
-	struct SBgr
-	{
-		union {
-			u8	blu;
-			u8	blu_u8;
-			s8	blu_s8;
-		};
-
-		union {
-			u8	grn;
-			u8	grn_u8;
-			s8	grn_s8;
-		};
-
-		union {
-			u8	red;
-			u8	red_u8;
-			s8	red_s8;
-		};
-	};
-
-	struct SBgra
-	{
-		union {
-			u32		color;
-			struct {
-				union {
-					u8	blu;
-					u8	blu_u8;
-					s8	blu_s8;
-				};
-				union {
-					u8	grn;
-					u8	grn_u8;
-					s8	grn_s8;
-				};
-				union {
-					u8	red;
-					u8	red_u8;
-					s8	red_s8;
-				};
-				union {
-					u8	alp;
-					u8	alp_u8;
-					s8	alp_s8;
-				};
-			};
-		};
-	};
-
-	struct SBgraf
-	{
-		f32		blu;				// 24-bit RGB values in bitmap files are physically stored as BGR
-		f32		grn;
-		f32		red;
-		f32		alp;				// For 32-bit bitmaps
-		f32		area;				// Holds area
-	};
-
-
-//////////
 // Union helper
 //////
 	#define _union(x, y, z) union { x z; y _ ## z; };

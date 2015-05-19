@@ -261,7 +261,9 @@
 //////
 	SEM*					iSEM_allocate						(SThisCode* thisCode, bool tlIsSourceCode);
 	SBuilder*				iSEM_accumulateBuilder				(SThisCode* thisCode, SEM* sem, SLine* ecHintStart, SLine* ecHintEnd);
+	bool					iSEM_saveToDisk						(SThisCode* thisCode,                     SEM* sem, cs8* tcPathname);
 	bool					iSEM_saveToDisk						(SThisCode* thisCode,                     SEM* sem, cu8* tcPathname);
+	bool					iSEM_loadFromDisk					(SThisCode* thisCode, SObject* objParent, SEM* sem, cs8* tcPathname, bool isSourceCode, bool tlLogIt);
 	bool					iSEM_loadFromDisk					(SThisCode* thisCode, SObject* objParent, SEM* sem, cu8* tcPathname, bool isSourceCode, bool tlLogIt);
 	bool					iSEM_duplicate						(SThisCode* thisCode, SEM** root, SEM* chain, bool tlIncludeUndoHistory);
 	void					iSEM_delete							(SThisCode* thisCode, SEM** root, bool tlDeleteSelf);

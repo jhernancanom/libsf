@@ -211,6 +211,10 @@
 // Called to save the indicated EM to disk.  Saved as a raw text file.
 //
 //////
+	bool iSEM_saveToDisk(SThisCode* thisCode, SEM* sem, cs8* tcPathname)
+	{
+		return(iSEM_saveToDisk(thisCode, sem, (cu8*)tcPathname));
+	}
 	bool iSEM_saveToDisk(SThisCode* thisCode, SEM* sem, cu8* tcPathname)
 	{
 		SBuilder* content;
@@ -246,6 +250,10 @@
 // Loads in a text file into an EM beginning optionally near ecHint.
 //
 //////
+	bool iSEM_loadFromDisk(SThisCode* thisCode, SObject* objParent, SEM* sem, cs8* tcPathname, bool isSourceCode, bool tlLogIt)
+	{
+		return(iSEM_loadFromDisk(thisCode, objParent, sem, (cu8*)tcPathname, isSourceCode, tlLogIt));
+	}
 	bool iSEM_loadFromDisk(SThisCode* thisCode, SObject* objParent, SEM* sem, cu8* tcPathname, bool isSourceCode, bool tlLogIt)
 	{
 		s32			lnI, lnJ, lnLast, lnPathnameLength, lnFnameLength;

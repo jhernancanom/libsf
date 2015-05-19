@@ -1893,7 +1893,9 @@
 					//////////
 					// Register the general window class if need be
 					//////
+#ifdef IDI_VJR
 						icon = ((icon <= 0) ? IDI_VJR : icon);
+#endif
 						sprintf(bufferClass, "%s%u\0", (s8*)cgcWindowClass, icon);
 						if (!GetClassInfoExA(ghInstance, bufferClass, &classex))
 						{
@@ -1905,7 +1907,9 @@
 							classex.hInstance			= ghInstance;
 							classex.style				= CS_OWNDC | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
 							classex.lpszClassName		= bufferClass;
+#ifdef IDI_VJR
 							classex.hIcon				= LoadIcon(ghInstance, MAKEINTRESOURCE(icon));
+#endif
 							classex.hCursor				= LoadCursor(null0, IDC_ARROW);
 							classex.lpfnWndProc			= &iWindow_wndProcForms;
 
