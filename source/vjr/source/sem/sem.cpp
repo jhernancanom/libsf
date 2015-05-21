@@ -1250,7 +1250,7 @@ debug_break;
 						// If they're on the cursor line, on a flow control directive, and holding down Ctrl+Alt+Shift, then we want to show that directive's mate on the line above
 						line = sem->line_cursor;
 						comp = iComps_activeComp_inSEM(thisCode, sem);
-						if (comp->iCat == _ICAT_FLOW && iComps_getMateDirection(thisCode, comp, &lnMateDirection))
+						if (iCat(comp->iCat) == _ICAT_FLOW && iComps_getMateDirection(thisCode, comp, &lnMateDirection))
 						{
 							// Search for the mated line
 							lineMate = (SLine*)iSEM_findMate(thisCode, sem, line, comp);
@@ -1816,7 +1816,7 @@ debug_break;
 		{
 			// Based on the directive, search backward or forward to find the mate
 			lnLevel = 0;
-			if (comp->iCat == _ICAT_FLOW)
+			if (iCat(comp->iCat) == _ICAT_FLOW)
 			{
 				// Searching by lines
 				do {

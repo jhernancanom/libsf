@@ -527,7 +527,7 @@ struct SComp
 	// Information about the component
 	SLine*			line;											// The line this component relates to
 	s32				iCode;											// Refer to _ICODE_* constants
-	u32				iCat;											// Refer to _ICAT_* constants
+	u32				iCat;											// Refer to _ICAT_* constants, and use iCat() macro for accessing the lower portion without bit flags influencing its value
 	SBgra*			color;											// Syntax highlight color
 	s32				start;											// Start into the indicates line's source code
 	s32				length;											// Length of the component

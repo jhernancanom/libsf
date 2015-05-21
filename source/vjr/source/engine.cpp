@@ -149,7 +149,7 @@
 
 						} else {
 							// It's a number, display it
-							if (compNext->iCat == _ICAT_FUNCTION)
+							if (iCat(compNext->iCat) == _ICAT_FUNCTION)
 							{
 								// It is something like "? func(x)"
 								llManufactured = true;
@@ -167,7 +167,7 @@
 									return(false);
 								}
 
-							} else if (compNext->iCat == _ICAT_GENERIC) {
+							} else if (iCat(compNext->iCat) == _ICAT_GENERIC) {
 								// It is something like "? k" or "? 29"
 								var = iEngine_get_variableName_fromComponent(thisCode, compNext, &llManufactured, false);
 								if (!var)
@@ -200,7 +200,7 @@
 						{
 							// It is an assignment
 							compThird = compNext->ll.nextComp;
-							if (compThird->iCat == _ICAT_FUNCTION)
+							if (iCat(compThird->iCat) == _ICAT_FUNCTION)
 							{
 								// It is something like "? func(x)"
 								memset(&lrpar, 0, sizeof(lrpar));
@@ -217,7 +217,7 @@
 									return(false);
 								}
 
-							} else if (compThird->iCat == _ICAT_GENERIC) {
+							} else if (iCat(compThird->iCat) == _ICAT_GENERIC) {
 								// It is something like "x = y" or "x = 29"
 								if (!(var = iEngine_get_variableName_fromComponent(thisCode, compThird, &llManufactured, false)))
 								{
