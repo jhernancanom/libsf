@@ -124,8 +124,20 @@ RDC Specifications Document
 	s16,u16		-- Signed and unsigned 16-bit quantities
 	s32,u32		-- Signed and unsigned 32-bit quantities
 	s64,u64		-- Signed and unsigned 64-bit quantities
-	f32,f64		-- 32-bit and 64-bit floating points
-
+	f32,f64,f80	-- 32-bit, 64-bit, and 80-bit floating point (if hardware doesn't support, wraps to bfp)
+	
+	as8,au8		-- Auto-converting signed and unsigned 32-bit quantities, load and stored as 8-bit quantities with signed/unsigned saturation
+	as16,au16	-- Auto-converting signed and unsigned 32-bit quantities, load and stored as 16-bit quantities with signed/unsigned saturation
+	as24,au24	-- Auto-converting signed and unsigned 32-bit quantities, load and stored as 24-bit quantities with signed/unsigned saturation
+	
+	xs8,xu8		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 8-bit quantities with signed/unsigned saturation
+	xs16,uu16	-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 16-bit quantities with signed/unsigned saturation
+	xs24,uu24	-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 24-bit quantities with signed/unsigned saturation
+	xs32,uu32	-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 32-bit quantities with signed/unsigned saturation
+	xs40,uu40	-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 40-bit quantities with signed/unsigned saturation
+	xs48,uu48	-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 48-bit quantities with signed/unsigned saturation
+	xs56,uu56	-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 56-bit quantities with signed/unsigned saturation
+	
 	bi			-- Arbitrary precision big integer, defaults to 128 bits
 	bfp			-- Arbitrary precision floating point, defaults to 256 bits
 	datum		-- An explicitly allocated piece of data with a pointer and length
