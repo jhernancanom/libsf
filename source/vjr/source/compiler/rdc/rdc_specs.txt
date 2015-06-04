@@ -157,10 +157,11 @@ RDC Specifications Document
 	static			-- Augments a definition to make it a singleton
 	extern			-- Augments a type to indicate its body is populated elsewhere
 	sizeof			-- Returns the size of a type
+	countof			-- Returns the count of a type
 	offsetof		-- Returns the offset of a type
 
-	NULL			-- A constant pointer to 0
-	null			-- A constant integer value of 0
+	NULL			-- A constant pointer to 0x0
+	null			-- A constant integer value of 0 or 0.0 (depending on context)
 	true			-- Sets a bool to 0xff
 	yes				-- Sets a bool to 0xff
 	false			-- Sets a bool to 0x00
@@ -169,6 +170,9 @@ RDC Specifications Document
 	and				-- A verbose form of &&
 	or				-- A verbose form of ||
 	not				-- A verbose form of !
+	xor				-- A verbose form of ^
+	shiftl			-- A verbose form of <<
+	shiftr			-- A verbose form of >>
 
 	#define			-- Pragma definition of a token or macro
 	#undefine		-- Pragma un-definition of a token
@@ -181,30 +185,39 @@ RDC Specifications Document
 	#align			-- An alignment directive
 	#push			-- Pushes a token value onto the stack
 	#pop			-- Pops a token value from the stack
+	#out			-- Displays text at compile time
+	#warning		-- Displays a warning at the indicated location
+	#error			-- Displays an error at the indicated location
 	typedef			-- Typedefs one type to another name
 
 	struct			-- A structure definition
 	class			-- A class definition
-	operator		-- An operator override definition
+	operator		-- For operator override definitions
 	extends			-- A class extends another class (can extend multiple simultaneously)
+	inherits		-- A pseudonym of extends
 	parent			-- A reference to the immediate parent in an inheritance chain
+	super			-- A pseudonym for parent
 	child			-- A reference to the immediate child in an inheritance chain
 	union			-- A merging of two or more types
 	enum			-- An enumeration of items
 	new				-- Creates an instance of a class
-	delete			-- Deltes an instance of a class
+	newscope		-- Creates an instance of a class, automatically deleting it when it leaves current scope
+	delete			-- Deletes an instance of a class
+	deleteall		-- Deletes all instances of all classes defined in current scope
 
 	adhoc			-- Declares an adhoc
 	function		-- Declares a function
 	port			-- Declares an initial launch port within a function
 	purpose			-- Declares a purpose within a function
 	params			-- Declares input parameters
-	returns			-- Declares return values
-	inline			-- Provides an optimization hint
-	optimize		-- Provides an optimization level hint (0=none)
+	returns			-- Declares output return values
+	inline			-- Provides an explicit optimization hint
+	optimize		-- Provides an optimization hint level (0=none, 9=max)
 	nodebug			-- Declares that a function should not be entered on single-step debugging
+	nodbg			-- A pseudonym for nodebug
 	breakpoint		-- Code will trap to the debugger if connected and engaged, ignored otherwise
-	accessor		-- Indicates the member function is an accessor, thereby removing the accessor() syntax requirement from those member functions
+	debug			-- A pseudonym for breakpoint
+	accessor		-- Document and indicate the member function is an accessor, thereby removing the () syntax access requirement (use class->func->xyz rather than class->func()->xyz).
 
 	do				-- Loop which always enters once, requires trailing while test
 	while			-- Conditionally tests loop logic and continues in the loop if true
@@ -216,33 +229,34 @@ RDC Specifications Document
 	if				-- A conditional test on true
 	else			-- An else clause on an if or unless
 	elseif			-- An elseif clause on an
-	lif				-- A line conditional test on true which executes multiple items on source-code line without braces
-	lelse			-- A line conditional test on false which executes multiple items on source-code line without braces
-	lelseif			-- A line elseif clause on an if or unless
-	fif				-- A full conditional test on true which executes one line, no braces
+	lif				-- A line conditional test on true which executes multiple items on source-code line without braces, separated by semicolons
+	lelse			-- A line conditional test on false which executes multiple items on source-code line without braces, separated by semicolons
+	lelseif			-- A line elseif clause on an if or unless, which executes multiple items on source-code line without braces, separated by semicolons
+	fif				-- A full test of all conditionals
 	felse			-- An else statement in the fif..felseif..felse form, identical to else
-	felseif			-- A full elseif clause on an if or unless
+	felseif			-- An elseif with full test of all conditionals
 	switch			-- A switch statement
 	case			-- A member test of a switch statement
-	mefa,meta		-- Called on logic test results, mefa=false, meta=true
+	meta,mefa		-- Called on logic test result (meta called on true, mefa called on false)
 	quit			-- Quits the application explicitly (calls OS's endProcess() function)
 
-	in				-- Create a new thread
-	andin			-- Create an additional new thread
+	in				-- Creates a new thread
+	andin			-- Creates an additional new thread (used at the same time as in { })
 	out				-- Leave a thread
-	join			-- Joins the current thread to one or more other threads before continuing
-	timeout			-- Called for each join-attempted thread that did not out before timeout
-	success			-- Called if threads join successfully before the timeout
+	join			-- Joins the current thread to one (or more) thread(s) before continuing
+	timeout			-- Callback for each join-attempted thread that did not out before timeout (typically an adhoc or utility cask)
+	success			-- Callback if threads joined successfully before the timeout (typically an adhoc or utility cask)
 
 	engage			-- Launches another process
 	unengage		-- Explicitly ends a running process launched with engage
 
-	marker			-- Establish a marker through a process, allowing for multi-level returns.
-	in				-- Code to execute upon natural entry into the chain
-	out				-- Code to execute upon natural exit from the chain
+	marker			-- Create a marker, allowing for explicit for multi-level returns to this location by marker name
+	enter			-- Code to execute upon natural entry into the chain
+	leave			-- Code to execute upon natural exit from the chain
 	flow			-- Code to execute when flow control returns to the home marker explicitly.
 
 	default			-- In a port or switch statement, specifies the unspecified operation
+	otherwise		-- A pseudonym for default
 	break			-- Breaks the current loop
 	breakto			-- Breaks to the indicated goto level
 	continue		-- Continues to the current level
@@ -262,10 +276,11 @@ RDC Specifications Document
 	flowto			-- Flow to a member of a structured flow control block
 	subflow			-- Defines a subflow member of a strutured flow control block
 	meia			-- Called on an inquiry
-	mema			-- Called on receipt of a particular message
+	mema			-- Called on a message (an extra and optional return message from a called thing)
 
 	flowof			-- Defines a function to be a flow of another function
-	super			-- Executes commands from the parent's point of view (as in "super return;")
+	assuper			-- Executes commands from the parent's point of view (as in "assuper return;")
+	asmarker		-- Executes commands from the marker's point of view (as in "asmarker x = 5;" updates the 'x' in scope as at the marker)
 
 
 1.1 - New Operators
@@ -349,7 +364,7 @@ RDC Specifications Document
 	Adhocs are special functions which can be declared near to some location which needs
 	to have its logic extracted.  They reference the local variable environment of where
 	they are defined, and also prvide for their own discreet additions.  As with flow {...}
-	blocks, issuing super return; will exit out of the parent function, and not out of
+	blocks, issuing assuper return; will exit out of the parent function, and not out of
 	itself.  The general C/C++ syntax form is allowable here as well.  RDC adds an
 	additional syntax form allowance:
 	
@@ -807,7 +822,7 @@ RDC Specifications Document
 				return;
 
 				// To explicitly return completely out of the flow block:
-				super return;
+				assuper return;
 
 				// To explicitly flow out of the flow block:
 				flowout;
