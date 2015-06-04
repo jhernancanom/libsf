@@ -104,167 +104,168 @@ RDC Specifications Document
 1.0 - Reserved Keywords
 -----------------------
 
-	(|cask|)	-- Reference cask
-	[|cask|]	-- Definition cask
-	<|cask|>	-- Logic cask
-	~|cask|~	-- Utility cask
+	(|cask|)		-- Reference cask
+	[|cask|]		-- Definition cask
+	<|cask|>		-- Logic cask
+	~|cask|~		-- Utility cask
 
-	void		-- An unspecified type
-	bool		-- 8-bit boolean quantity which explicitly tests 0 for false, all others true
-	char		-- 8-bit signed quantity
-	short		-- 16-bit signed quantity
-	int			-- 32-bit signed quantity
-	long		-- 64-bit signed quantity
-	float		-- 32-bit floating point
-	double		-- 64-bit floating point
-	var			-- A weakly typed variable defined by usage
-	alias		-- Alias a token to a longer form for ease of typing (alias rc = hwndx->window->properties->geometry.rc;)
+	void			-- An unspecified type
+	bool			-- 8-bit boolean quantity which explicitly tests 0 for false, all others true
+	char			-- 8-bit signed quantity
+	short			-- 16-bit signed quantity
+	int				-- 32-bit signed quantity
+	long			-- 64-bit signed quantity
+	real4,float		-- 32-bit floating point
+	real8,double	-- 64-bit floating point
+	real10			-- 80-bit floating point
+	var				-- A weakly typed variable defined by usage
+	alias			-- Alias a token to a longer form for ease of typing (alias rc = hwndx->window->properties->geometry.rc;)
 
-	s8,u8		-- Signed and unsigned 8-bit quantities
-	s16,u16		-- Signed and unsigned 16-bit quantities
-	s32,u32		-- Signed and unsigned 32-bit quantities
-	s64,u64		-- Signed and unsigned 64-bit quantities
-	f32,f64,f80	-- 32-bit, 64-bit, and 80-bit floating point (if hardware doesn't support, wraps to bfp)
+	s8,u8			-- Signed and unsigned 8-bit quantities
+	s16,u16			-- Signed and unsigned 16-bit quantities
+	s32,u32			-- Signed and unsigned 32-bit quantities
+	s64,u64			-- Signed and unsigned 64-bit quantities
+	f32,f64,f80		-- 32-bit, 64-bit, and 80-bit floating point (if hardware doesn't support, wraps to bfp)
 	
-	as8,au8		-- Auto-converting signed and unsigned 32-bit quantities, load and stored as 8-bit quantities with signed/unsigned saturation
-	as16,au16	-- Auto-converting signed and unsigned 32-bit quantities, load and stored as 16-bit quantities with signed/unsigned saturation
-	as24,au24	-- Auto-converting signed and unsigned 32-bit quantities, load and stored as 24-bit quantities with signed/unsigned saturation
+	as8,au8			-- Auto-converting signed and unsigned 32-bit quantities, load and stored as 8-bit quantities with signed/unsigned saturation
+	as16,au16		-- Auto-converting signed and unsigned 32-bit quantities, load and stored as 16-bit quantities with signed/unsigned saturation
+	as24,au24		-- Auto-converting signed and unsigned 32-bit quantities, load and stored as 24-bit quantities with signed/unsigned saturation
 	
-	xs8,xu8		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 8-bit quantities with signed/unsigned saturation
-	xs16,uu16	-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 16-bit quantities with signed/unsigned saturation
-	xs24,uu24	-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 24-bit quantities with signed/unsigned saturation
-	xs32,uu32	-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 32-bit quantities with signed/unsigned saturation
-	xs40,uu40	-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 40-bit quantities with signed/unsigned saturation
-	xs48,uu48	-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 48-bit quantities with signed/unsigned saturation
-	xs56,uu56	-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 56-bit quantities with signed/unsigned saturation
+	xs8,xu8			-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 8-bit quantities with signed/unsigned saturation
+	xs16,uu16		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 16-bit quantities with signed/unsigned saturation
+	xs24,uu24		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 24-bit quantities with signed/unsigned saturation
+	xs32,uu32		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 32-bit quantities with signed/unsigned saturation
+	xs40,uu40		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 40-bit quantities with signed/unsigned saturation
+	xs48,uu48		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 48-bit quantities with signed/unsigned saturation
+	xs56,uu56		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 56-bit quantities with signed/unsigned saturation
 	
-	bi			-- Arbitrary precision big integer, defaults to 128 bits
-	bfp			-- Arbitrary precision floating point, defaults to 256 bits
-	datum		-- An explicitly allocated piece of data with a pointer and length
-	date		-- A date with year, month, day
-	datetime	-- A datetime with year, month, day, hour, minute, second, millisecond
-	thread		-- A thread variable
-	process		-- A process variable
+	bi				-- Arbitrary precision big integer, defaults to 128 bits
+	bfp				-- Arbitrary precision floating point, defaults to 256 bits
+	datum			-- An explicitly allocated piece of data with a pointer and length
+	date			-- A date with year, month, day
+	datetime		-- A datetime with year, month, day, hour, minute, second, millisecond
+	thread			-- A thread variable
+	process			-- A process variable
 
-	const,ro	-- Augments a type to indicate it is read-only
-	rw			-- Augments a type to explicitly indicate it is read-write
-	volatile	-- Augments a type to indicate it is to be coded as conveyed
-	successive	-- Variables put into the successive block are always expressed exactly that way in memory (no reordering)
-	literal		-- Specifies the data form is to be used literally, and remain unchanged changed even during optimization
-	hide		-- Augments a type to indicate it should not be visible in SourceLight (typically used for unused / reserved members)
-	unsigned	-- Augments char, short, int, long to make it unsigned
-	static		-- Augments a definition to make it a singleton
-	extern		-- Augments a type to indicate its body is populated elsewhere
-	sizeof		-- Returns the size of a type
-	offsetof	-- Returns the offset of a type
+	const,ro		-- Augments a type to indicate it is read-only
+	rw				-- Augments a type to explicitly indicate it is read-write
+	volatile		-- Augments a type to indicate it is to be coded as conveyed
+	successive		-- Variables put into the successive block are always expressed exactly that way in memory (no reordering)
+	literal			-- Specifies the data form is to be used literally, and remain unchanged changed even during optimization
+	hide			-- Augments a type to indicate it should not be visible in SourceLight (typically used for unused / reserved members)
+	unsigned		-- Augments char, short, int, long to make it unsigned
+	static			-- Augments a definition to make it a singleton
+	extern			-- Augments a type to indicate its body is populated elsewhere
+	sizeof			-- Returns the size of a type
+	offsetof		-- Returns the offset of a type
 
-	NULL		-- A constant pointer to 0
-	null		-- A constant integer value of 0
-	true		-- Sets a bool to 0xff
-	yes			-- Sets a bool to 0xff
-	false		-- Sets a bool to 0x00
-	no			-- Sets a bool to 0x00
+	NULL			-- A constant pointer to 0
+	null			-- A constant integer value of 0
+	true			-- Sets a bool to 0xff
+	yes				-- Sets a bool to 0xff
+	false			-- Sets a bool to 0x00
+	no				-- Sets a bool to 0x00
 
-	and			-- A verbose form of &&
-	or			-- A verbose form of ||
-	not			-- A verbose form of !
+	and				-- A verbose form of &&
+	or				-- A verbose form of ||
+	not				-- A verbose form of !
 
-	#define		-- Pragma definition of a token or macro
-	#undefine	-- Pragma un-definition of a token
-	#if			-- Pragma logic test for conditionally compiled code
-	#ifdef		-- Pragma logic test for the existence of a token
-	#ifndef		-- Pragma logic test for the non-existence of a token
-	#else		-- Pragma logic test for conditionally compiled code
-	#elseif		-- Pragma logic test for conditionally compiled code
-	#endif		-- Pragma termination of a conditional test block
-	#align		-- An alignment directive
-	#push		-- Pushes a token value onto the stack
-	#pop		-- Pops a token value from the stack
-	typedef		-- Typedefs one type to another name
+	#define			-- Pragma definition of a token or macro
+	#undefine		-- Pragma un-definition of a token
+	#if				-- Pragma logic test for conditionally compiled code
+	#ifdef			-- Pragma logic test for the existence of a token
+	#ifndef			-- Pragma logic test for the non-existence of a token
+	#else			-- Pragma logic test for conditionally compiled code
+	#elseif			-- Pragma logic test for conditionally compiled code
+	#endif			-- Pragma termination of a conditional test block
+	#align			-- An alignment directive
+	#push			-- Pushes a token value onto the stack
+	#pop			-- Pops a token value from the stack
+	typedef			-- Typedefs one type to another name
 
-	struct		-- A structure definition
-	class		-- A class definition
-	operator	-- An operator override definition
-	extends		-- A class extends another class (can extend multiple simultaneously)
-	parent		-- A reference to the immediate parent in an inheritance chain
-	child		-- A reference to the immediate child in an inheritance chain
-	union		-- A merging of two or more types
-	enum		-- An enumeration of items
-	new			-- Creates an instance of a class
-	delete		-- Deltes an instance of a class
+	struct			-- A structure definition
+	class			-- A class definition
+	operator		-- An operator override definition
+	extends			-- A class extends another class (can extend multiple simultaneously)
+	parent			-- A reference to the immediate parent in an inheritance chain
+	child			-- A reference to the immediate child in an inheritance chain
+	union			-- A merging of two or more types
+	enum			-- An enumeration of items
+	new				-- Creates an instance of a class
+	delete			-- Deltes an instance of a class
 
-	adhoc		-- Declares an adhoc
-	function	-- Declares a function
-	port		-- Declares an initial launch port within a function
-	purpose		-- Declares a purpose within a function
-	params		-- Declares input parameters
-	returns		-- Declares return values
-	inline		-- Provides an optimization hint
-	optimize	-- Provides an optimization level hint (0=none)
-	nodebug		-- Declares that a function should not be entered on single-step debugging
-	breakpoint	-- Code will trap to the debugger if connected and engaged, ignored otherwise
-	accessor	-- Indicates the member function is an accessor, thereby removing the accessor() syntax requirement from those member functions
+	adhoc			-- Declares an adhoc
+	function		-- Declares a function
+	port			-- Declares an initial launch port within a function
+	purpose			-- Declares a purpose within a function
+	params			-- Declares input parameters
+	returns			-- Declares return values
+	inline			-- Provides an optimization hint
+	optimize		-- Provides an optimization level hint (0=none)
+	nodebug			-- Declares that a function should not be entered on single-step debugging
+	breakpoint		-- Code will trap to the debugger if connected and engaged, ignored otherwise
+	accessor		-- Indicates the member function is an accessor, thereby removing the accessor() syntax requirement from those member functions
 
-	do			-- Loop which always enters once, requires trailing while test
-	while		-- Conditionally tests loop logic and continues in the loop if true
-	until		-- Conditionally tests loop logic and continues in the loop if false
-	iterate		-- Repeat a task a specified number of times
-	for			-- A for loop
-	unless		-- A conditional test on false
-	roll		-- Executes as many of the conditionals as possible (until one evaluates to false)
-	if			-- A conditional test on true
-	else		-- An else clause on an if or unless
-	elseif		-- An elseif clause on an
-	lif			-- A line conditional test on true which executes multiple items on source-code line without braces
-	lelse		-- A line conditional test on false which executes multiple items on source-code line without braces
-	lelseif		-- A line elseif clause on an if or unless
-	fif			-- A full conditional test on true which executes one line, no braces
-	felse		-- An else statement in the fif..felseif..felse form, identical to else
-	felseif		-- A full elseif clause on an if or unless
-	switch		-- A switch statement
-	case		-- A member test of a switch statement
-	mefa,meta	-- Called on logic test results, mefa=false, meta=true
-	quit		-- Quits the application explicitly (calls OS's endProcess() function)
+	do				-- Loop which always enters once, requires trailing while test
+	while			-- Conditionally tests loop logic and continues in the loop if true
+	until			-- Conditionally tests loop logic and continues in the loop if false
+	iterate			-- Repeat a task a specified number of times
+	for				-- A for loop
+	unless			-- A conditional test on false
+	roll			-- Executes as many of the conditionals as possible (until one evaluates to false)
+	if				-- A conditional test on true
+	else			-- An else clause on an if or unless
+	elseif			-- An elseif clause on an
+	lif				-- A line conditional test on true which executes multiple items on source-code line without braces
+	lelse			-- A line conditional test on false which executes multiple items on source-code line without braces
+	lelseif			-- A line elseif clause on an if or unless
+	fif				-- A full conditional test on true which executes one line, no braces
+	felse			-- An else statement in the fif..felseif..felse form, identical to else
+	felseif			-- A full elseif clause on an if or unless
+	switch			-- A switch statement
+	case			-- A member test of a switch statement
+	mefa,meta		-- Called on logic test results, mefa=false, meta=true
+	quit			-- Quits the application explicitly (calls OS's endProcess() function)
 
-	in			-- Create a new thread
-	andin		-- Create an additional new thread
-	out			-- Leave a thread
-	join		-- Joins the current thread to one or more other threads before continuing
-	timeout		-- Called for each join-attempted thread that did not out before timeout
-	success		-- Called if threads join successfully before the timeout
+	in				-- Create a new thread
+	andin			-- Create an additional new thread
+	out				-- Leave a thread
+	join			-- Joins the current thread to one or more other threads before continuing
+	timeout			-- Called for each join-attempted thread that did not out before timeout
+	success			-- Called if threads join successfully before the timeout
 
-	engage		-- Launches another process
-	unengage	-- Explicitly ends a running process launched with engage
+	engage			-- Launches another process
+	unengage		-- Explicitly ends a running process launched with engage
 
-	marker		-- Establish a marker through a process, allowing for multi-level returns.
-	in			-- Code to execute upon natural entry into the chain
-	out			-- Code to execute upon natural exit from the chain
-	flow		-- Code to execute when flow control returns to the home marker explicitly.
+	marker			-- Establish a marker through a process, allowing for multi-level returns.
+	in				-- Code to execute upon natural entry into the chain
+	out				-- Code to execute upon natural exit from the chain
+	flow			-- Code to execute when flow control returns to the home marker explicitly.
 
-	default		-- In a port or switch statement, specifies the unspecified operation
-	break		-- Breaks the current loop
-	breakto		-- Breaks to the indicated level
-	continue	-- Continues to the current level
-	continueto	-- Continues to the indicated level
-	exit		-- A pseudonym for break
-	exitto		-- A pseudonym for breakto
-	loop		-- A pseudonym for continue
-	loopto		-- A pseudonym for continueto
-	goto		-- Goes to the indicated label or named block
-	return		-- Returns from a called function and optionally explicitly returns
-				   one or more of the following:  a value, values, a meia, mema, or
-				   home.
+	default			-- In a port or switch statement, specifies the unspecified operation
+	break			-- Breaks the current loop
+	breakto			-- Breaks to the indicated goto level
+	continue		-- Continues to the current level
+	continueto		-- Continues to the indicated goto level
+	exit			-- A pseudonym for break
+	exitto			-- A pseudonym for breakto
+	loop			-- A pseudonym for continue
+	loopto			-- A pseudonym for continueto
+	goto			-- Goes to the indicated label or named block
+	return			-- Returns from a called function and optionally explicitly returns
+					   one or more of the following:  a value, values, a meia, mema, or
+					   home.
 
-	flow		-- A structured flow control block
-	flowout		-- Exit a structured flow control block 
-	flowoutto	-- Exit a structured flow control block to an indicated level
-	flowto		-- Flow to a member of a structured flow control block
-	subflow		-- Defines a subflow member of a strutured flow control block
-	meia		-- Called on an inquiry
-	mema		-- Called on receipt of a particular message
+	flow			-- A structured flow control block
+	flowout			-- Exit a structured flow control block 
+	flowoutto		-- Exit a structured flow control block to an indicated goto level
+	flowto			-- Flow to a member of a structured flow control block
+	subflow			-- Defines a subflow member of a strutured flow control block
+	meia			-- Called on an inquiry
+	mema			-- Called on receipt of a particular message
 
-	flowof		-- Defines a function to be a flow of another function
-	super		-- Executes commands from the parent's point of view (as in "super return;")
+	flowof			-- Defines a function to be a flow of another function
+	super			-- Executes commands from the parent's point of view (as in "super return;")
 
 
 1.1 - New Operators
@@ -274,12 +275,12 @@ RDC Specifications Document
 	code execution in a command window.  Rather than reversing the typewritten
 	quantity, the > < surround operators allow it to be reversed programmatically.
 	
-		>-<		-- Reverse minus, such as b - a; equals a >-< b;
-		>+<		-- Reverse plus, such as b + a; equals a >+< b;
-		>*<		-- Reverse multiply, such as b * a; equals a >*< b;
-		>/<		-- Reverse divide, such as b / a; equals a >/< b;
+		>-<		-- Reversing minus, such as b - a; is computed as a >-< b;
+		>+<		-- Reversing plus, such as b + a; is computed as a >+< b;
+		>*<		-- Reversing multiply, such as b * a; is computed as a >*< b;
+		>/<		-- Reversing divide, such as b / a; is computed as a >/< b;
 		
-		Note:  Some of these are useful only in floating point numbers.
+		Note:  Some of these have significance in floating point numbers.
 
 1.2 - Simplified Pointers
 -------------------------
