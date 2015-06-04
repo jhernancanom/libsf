@@ -132,12 +132,12 @@ RDC Specifications Document
 	as24,au24		-- Auto-converting signed and unsigned 32-bit quantities, load and stored as 24-bit quantities with signed/unsigned saturation
 	
 	xs8,xu8			-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 8-bit quantities with signed/unsigned saturation
-	xs16,uu16		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 16-bit quantities with signed/unsigned saturation
-	xs24,uu24		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 24-bit quantities with signed/unsigned saturation
-	xs32,uu32		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 32-bit quantities with signed/unsigned saturation
-	xs40,uu40		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 40-bit quantities with signed/unsigned saturation
-	xs48,uu48		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 48-bit quantities with signed/unsigned saturation
-	xs56,uu56		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 56-bit quantities with signed/unsigned saturation
+	xs16,xu16		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 16-bit quantities with signed/unsigned saturation
+	xs24,xu24		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 24-bit quantities with signed/unsigned saturation
+	xs32,xu32		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 32-bit quantities with signed/unsigned saturation
+	xs40,xu40		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 40-bit quantities with signed/unsigned saturation
+	xs48,xu48		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 48-bit quantities with signed/unsigned saturation
+	xs56,xu56		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 56-bit quantities with signed/unsigned saturation
 	
 	bi				-- Arbitrary precision big integer, defaults to 128 bits
 	bfp				-- Arbitrary precision floating point, defaults to 256 bits
