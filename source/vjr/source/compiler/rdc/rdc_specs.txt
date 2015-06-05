@@ -127,17 +127,17 @@ RDC Specifications Document
 	s64,u64			-- Signed and unsigned 64-bit quantities
 	f32,f64,f80		-- 32-bit, 64-bit, and 80-bit floating point (if hardware doesn't support, wraps to bfp)
 	
-	as8,au8			-- Auto-converting signed and unsigned 32-bit quantities, load and stored as 8-bit quantities with signed/unsigned saturation
-	as16,au16		-- Auto-converting signed and unsigned 32-bit quantities, load and stored as 16-bit quantities with signed/unsigned saturation
-	as24,au24		-- Auto-converting signed and unsigned 32-bit quantities, load and stored as 24-bit quantities with signed/unsigned saturation
+	as8,au8			-- Auto-converting signed and unsigned 32-bit quantity, loaded and stored as an 8-bit quantity with signed/unsigned saturation
+	as16,au16		-- Auto-converting signed and unsigned 32-bit quantity, loaded and stored as a 16-bit quantity with signed/unsigned saturation
+	as24,au24		-- Auto-converting signed and unsigned 32-bit quantity, loaded and stored as a 24-bit quantity with signed/unsigned saturation
 	
-	xs8,xu8			-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 8-bit quantities with signed/unsigned saturation
-	xs16,xu16		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 16-bit quantities with signed/unsigned saturation
-	xs24,xu24		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 24-bit quantities with signed/unsigned saturation
-	xs32,xu32		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 32-bit quantities with signed/unsigned saturation
-	xs40,xu40		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 40-bit quantities with signed/unsigned saturation
-	xs48,xu48		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 48-bit quantities with signed/unsigned saturation
-	xs56,xu56		-- Extended auto-converting signed and unsigned 64-bit quantities, load and stored as 56-bit quantities with signed/unsigned saturation
+	xs8,xu8			-- Extended auto-converting signed and unsigned 64-bit quantity, loaded and stored as an 8-bit quantity with signed/unsigned saturation
+	xs16,xu16		-- Extended auto-converting signed and unsigned 64-bit quantity, loaded and stored as a 16-bit quantity with signed/unsigned saturation
+	xs24,xu24		-- Extended auto-converting signed and unsigned 64-bit quantity, loaded and stored as a 24-bit quantity with signed/unsigned saturation
+	xs32,xu32		-- Extended auto-converting signed and unsigned 64-bit quantity, loaded and stored as a 32-bit quantity with signed/unsigned saturation
+	xs40,xu40		-- Extended auto-converting signed and unsigned 64-bit quantity, loaded and stored as a 40-bit quantity with signed/unsigned saturation
+	xs48,xu48		-- Extended auto-converting signed and unsigned 64-bit quantity, loaded and stored as a 48-bit quantity with signed/unsigned saturation
+	xs56,xu56		-- Extended auto-converting signed and unsigned 64-bit quantity, loaded and stored as a 56-bit quantity with signed/unsigned saturation
 	
 	bi				-- Arbitrary precision big integer, defaults to 128 bits
 	bfp				-- Arbitrary precision floating point, defaults to 256 bits
@@ -161,7 +161,7 @@ RDC Specifications Document
 	offsetof		-- Returns the offset of a type
 
 	NULL			-- A constant pointer to 0x0
-	null			-- A constant integer value of 0 or 0.0 (depending on context)
+	null			-- A constant value of 0 or 0.0 (depending on context)
 	true			-- Sets a bool to 0xff
 	yes				-- Sets a bool to 0xff
 	false			-- Sets a bool to 0x00
@@ -185,9 +185,10 @@ RDC Specifications Document
 	#align			-- An alignment directive
 	#push			-- Pushes a token value onto the stack
 	#pop			-- Pops a token value from the stack
-	#out			-- Displays text at compile time
-	#warning		-- Displays a warning at the indicated location
-	#error			-- Displays an error at the indicated location
+	#text			-- Displays some text at compile time
+	#warning		-- Displays an explicit warning at the indicated location at compile time
+	#error			-- Displays an explicit error at the indicated location at compile time
+	#meia			-- Triggers an explicit inquiry at the indicated location at runtime
 	typedef			-- Typedefs one type to another name
 
 	struct			-- A structure definition
@@ -250,7 +251,7 @@ RDC Specifications Document
 	engage			-- Launches another process
 	unengage		-- Explicitly ends a running process launched with engage
 
-	marker			-- Create a marker, allowing for explicit for multi-level returns to this location by marker name
+	marker			-- Create a marker, allowing for explicit for multi-level returns to this location by marker name, and for references to be made relative to its code location
 	enter			-- Code to execute upon natural entry into the chain
 	leave			-- Code to execute upon natural exit from the chain
 	flow			-- Code to execute when flow control returns to the home marker explicitly.
@@ -279,8 +280,8 @@ RDC Specifications Document
 	mema			-- Called on a message (an extra and optional return message from a called thing)
 
 	flowof			-- Defines a function to be a flow of another function
-	assuper			-- Executes commands from the parent's point of view (as in "assuper return;")
-	asmarker		-- Executes commands from the marker's point of view (as in "asmarker x = 5;" updates the 'x' in scope as at the marker)
+	as_super		-- Executes commands from the parent's point of view (as in "as_super return;")
+	as_marker		-- Executes commands from the marker's point of view (as in "as_marker x = 5;" updates the 'x' in scope as at the marker)
 
 
 1.1 - New Operators
@@ -288,14 +289,21 @@ RDC Specifications Document
 
 	Reverse operators are addd for source code convenience, as well as ad hoc
 	code execution in a command window.  Rather than reversing the typewritten
-	quantity, the > < surround operators allow it to be reversed programmatically.
+	quantity, the > < surround operators allow it to be reversed automatically
+	within the expression.
 	
-		>-<		-- Reversing minus, such as b - a; is computed as a >-< b;
-		>+<		-- Reversing plus, such as b + a; is computed as a >+< b;
-		>*<		-- Reversing multiply, such as b * a; is computed as a >*< b;
-		>/<		-- Reversing divide, such as b / a; is computed as a >/< b;
+		>-<		-- Reversing minus,    such as b >-< a; is computed as a - b;
+		>+<		-- Reversing plus,     such as b >+< a; is computed as a + b;
+		>*<		-- Reversing multiply, such as b >*< a; is computed as a * b;
+		>/<		-- Reversing divide,   such as b >/< a; is computed as a / b;
+		>%<		-- Reversing modulo,   such as b >%< a; is computed as a % b;
 		
-		Note:  Some of these have significance in floating point numbers.
+		>&=<	-- Reversing AND,      such as b >&=< a; is computed as a &= b;
+		>^=<	-- Reversing XOR,      such as b >^=< a; is computed as a ^= b;
+		>|=<	-- Reversing OR,       such as b >|=< a; is computed as a |= b;
+		>!=<	-- Reversing NOT,      such as b >!=< a; is computed as a != b;
+		
+		Note:  Some of these have extra significance in floating point numbers.
 
 1.2 - Simplified Pointers
 -------------------------
@@ -364,7 +372,7 @@ RDC Specifications Document
 	Adhocs are special functions which can be declared near to some location which needs
 	to have its logic extracted.  They reference the local variable environment of where
 	they are defined, and also prvide for their own discreet additions.  As with flow {...}
-	blocks, issuing assuper return; will exit out of the parent function, and not out of
+	blocks, issuing as_super return; will exit out of the parent function, and not out of
 	itself.  The general C/C++ syntax form is allowable here as well.  RDC adds an
 	additional syntax form allowance:
 	
@@ -822,7 +830,7 @@ RDC Specifications Document
 				return;
 
 				// To explicitly return completely out of the flow block:
-				assuper return;
+				as_super return;
 
 				// To explicitly flow out of the flow block:
 				flowout;
