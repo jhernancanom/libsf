@@ -5,7 +5,7 @@ supplication, knowing that He is able to do exceedingly abundantly beyond any
 of our needs.  Jesus Christ, our Savior, to Him be all the glory.
 
 
-View the readme.txt file for additional information.
+View the readme.txt file for additional information...
 
 
 Follow along on Facebook:
