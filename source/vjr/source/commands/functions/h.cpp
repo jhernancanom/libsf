@@ -194,3 +194,53 @@
 			rpar->returns[0] = result;
 
 	}
+
+	
+	
+	
+	
+//////////
+//
+// Function: HOME()
+// Returns the directory from which VJr was started. No additional parameters yet.
+// [same as SYS(2004)]
+// 
+//////
+// Version 0.57-----------------------------------------
+// Last Update:
+//		Jun.07.2015
+//////
+// Change log:
+//		Jun.07.2015 - Initial creation
+//////
+// Parameters:
+//		none -- (hcm: not yet)
+//////
+// Returns:
+//		Character		-- The directory from which VJr was started
+//////
+	void function_home(SThisCode* thisCode, SFunctionParms* rpar)
+	{
+		u8			home[_MAX_PATH];
+		//u8			path[_MAX_PATH];
+		SVariable*	result;
+		
+		// Get the directory
+		memset(home, 0, sizeof(home));
+		GetModuleFileName(NULL, (s8*)home, _MAX_PATH );
+		
+		//String path = home; 
+		//path = home.SubString(1, home.LastDelimiter("\:")); 
+		
+		// String path = ExtractFilePath(home);
+
+		// Create the output variable
+		result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, home, (u32)strlen(home), false);
+		if (!result)
+			iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
+
+		// Indicate our result
+		rpar->returns[0] = result;
+	}
+
+

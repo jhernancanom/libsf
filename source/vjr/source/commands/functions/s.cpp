@@ -524,6 +524,8 @@
 // Function: SET()
 // Retrieves current settings
 //
+// See also SYS(2001) 
+// 
 //////
 // Version 0.57
 // Last update:
@@ -1477,7 +1479,14 @@
 		SVariable*	varTemp;
 		SVariable*	result;
 
+	    SVariable*		varIdentifier	= varP1;  // rpar->params[0];
+      //SVariable*		varExtraInfo	= rpar->params[1];
+		s32				lnIndex1;  // el "contador" de SET()
+		SBasePropMap*	baseProp;
+		SObjPropMap*	objProp;
+		SVariable*		var;
 
+		
 // TODO:  Untested function, breakpoint and examine
 // debug_break;
 		//////////
@@ -1572,6 +1581,14 @@
 						goto clean_exit;
 
 
+				// SYS(16) -- The file name of the program being executed.  No additional parameters yet
+				case 16:
+						memset(curdir, 0, sizeof(curdir));
+						GetModuleFileName(NULL, (s8*)curdir, _MAX_PATH );
+						result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, curdir, (u32)strlen(curdir), false);
+						goto clean_exit;
+
+
 				// SYS(10) -- Julian string from day number
 				case 10:
 					//////////
@@ -1655,6 +1672,69 @@
 						goto clean_exit;
 
 
+				// SYS(2004) -- The file name of the program being executed.
+				// [same as HOME()]
+				case 2004:
+						memset(curdir, 0, sizeof(curdir));
+						GetModuleFileName(NULL, (s8*)curdir, _MAX_PATH );
+						result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, curdir, (u32)strlen(curdir), false);
+						goto clean_exit;
+
+
+				// SYS(2001) -- The status of the specified SET commands. Similar to SET().
+				case 2001:
+				
+					//////////
+					// Parameter for SYS(2001) must be character
+					//////
+						if (!iVariable_isValid(varP1) || !iVariable_isTypeCharacter(varP1))
+						{
+							iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP1), false);
+							return;                      // _ERROR_P1_IS_INCORRECT
+						}
+
+		//////////
+		// Locate the indicated setting
+		//////
+			for (lnIndex1 = _INDEX_SET_FIRST_ITEM; gsProps_master[lnIndex1].index != 0; lnIndex1++)
+			{
+				// Does this setting name match?
+				if ((s32)gsProps_master[lnIndex1].propNameLength == varIdentifier->value.length && _memicmp(gsProps_master[lnIndex1].propName_s8, varIdentifier->value.data_s8, varIdentifier->value.length) == 0)
+				{
+
+					//////////
+					// This is the setting
+					//////
+						var = iObjProp_get_variable_byIndex(thisCode, _settings, gsProps_master[lnIndex1].index, &baseProp, &objProp);
+						if (!var || !baseProp || !objProp)
+						{
+							// Should never happen, if it does it means something's not setup properly in the properties, or there's a memory corruption
+							iError_signal(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varIdentifier), false, NULL, false);
+							return;
+						}
+						// Note:  var is the actual _settings variable, so a copy must be made if returning this value.
+
+
+					//////////
+					// If there's a getter, translate the actual variable into its displayable form
+					//////
+						if (objProp->_getterObject_get)
+						{
+							rpar->returns[0] = objProp->getterObject_get(thisCode, var, iVariable_getRelatedComp(thisCode, varIdentifier), false);
+							return;
+						}
+
+					//////////
+					// If we get here, return a copy of the value
+					//////
+						result = iVariable_copy(thisCode, var, false);
+
+				}
+			}
+							// Check our result
+							goto clean_exit;
+
+			
 				// SYS(3)		-- Legal filename
 				// SYS(2015)	-- Unique procedure name
 				case 3:

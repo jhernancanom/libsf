@@ -246,6 +246,7 @@ struct SFunctionParms;
 	void				function_grayscale							(SThisCode* thisCode, SFunctionParms* rpar);
 	void				function_grn								(SThisCode* thisCode, SFunctionParms* rpar);
 	void				function_hour		/* Stefano D'Amico */	(SThisCode* thisCode, SFunctionParms* rpar);
+	void				function_home		/* Hernan Cano */		(SThisCode* thisCode, SFunctionParms* rpar);
 	void				ifunction_hhmmss_common						(SThisCode* thisCode, SFunctionParms* rpar, SVariable* varParam, u32 tnFunctionType);
 	void				function_iif								(SThisCode* thisCode, SFunctionParms* rpar);
 	void				function_inlist								(SThisCode* thisCode, SFunctionParms* rpar);
@@ -569,6 +570,7 @@ struct SFunctionParms;
 		{	_ICODE_GRAYSCALE,		1,			1,				false,		(uptr)&function_grayscale,		1,				2,				NULL,			&gsSourceLight_grayscale[0]		},
 		{	_ICODE_GRN,				1,			1,				false,		(uptr)&function_grn,			1,				1,				NULL,			&gsSourceLight_grn[0]			},
 		{	_ICODE_HOUR,			1,			1,				false,		(uptr)&function_hour,			0,				1,				NULL,			&gsSourceLight_hour[0]			},	// HOUR() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_HOME,			1,			1,				false,		(uptr)&function_home,			0,				1,				NULL,			&gsSourceLight_home[0]			},	// HOME() by Hernan Cano, VJr 0.57--, Jun.07.2015
 		{	_ICODE_IIF,				1,			1,				false,		(uptr)&function_iif,			2,				3,				NULL,			&gsSourceLight_iif[0]			},
 		{	_ICODE_INLIST,			1,			1,				false,		(uptr)&function_inlist,			2,				26,				NULL,			&gsSourceLight_inlist[0]		},
 		{	_ICODE_INT,				1,			1,				false,		(uptr)&function_int,			1,				1,				NULL,			&gsSourceLight_int[0]			},
